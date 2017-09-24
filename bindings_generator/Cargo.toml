@@ -1,0 +1,11 @@
+[package]
+name = "bindings_generator"
+version = "0.1.0"
+authors = ["Joshua Groves <josh@joshgroves.com>"]
+
+[dependencies]
+bindgen = "0.30.0"
+
+[[bin]]
+name = "bindings_generator"
+path = "src/main.rs"
