@@ -1,0 +1,6 @@
+/target/
+examples/target/
+spirv_cross/target/
+**/*.rs.bk
+Cargo.lock
+.vscode

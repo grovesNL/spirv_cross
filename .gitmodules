@@ -1,0 +1,3 @@
+[submodule "spirv_cross/src/vendor/SPIRV-Cross"]
+	path = spirv_cross/src/vendor/SPIRV-Cross
+	url = git@github.com:grovesNL/SPIRV-Cross.git

@@ -1,0 +1,11 @@
+[package]
+name = "examples"
+version = "0.1.0"
+authors = ["Joshua Groves <josh@joshgroves.com>"]
+
+[dependencies]
+spirv_cross = { path = "../spirv_cross" }
+
+[[bin]]
+name = "hlsl"
+path = "src/hlsl/main.rs"
