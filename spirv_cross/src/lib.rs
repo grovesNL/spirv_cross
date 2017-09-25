@@ -42,8 +42,9 @@ pub mod compile {
     pub struct ParsedSpirvModule {
         // TODO: Currently parsing and compilation must occur with the same compiler instance
         // (i.e. as opposed to splitting the parser/compiler which would be the ideal)
-        // So temporarily we create the compiler instance during parse and reuse it during compilation
-        // See https://github.com/KhronosGroup/SPIRV-Cross/issues/287
+        // So temporarily we create the compiler instance during parse
+        // and reuse it during compilation
+        // see https://github.com/KhronosGroup/SPIRV-Cross/issues/287
         internal_compiler: *mut c_void,
         internal_delete_compiler: fn(*mut c_void),
     }
@@ -99,7 +100,7 @@ pub mod compile {
                 check!(sc_internal_compiler_hlsl_new(
                     &mut compiler,
                     ptr,
-                    module.ir.len() as usize
+                    module.ir.len() as usize,
                 ));
 
                 Ok(ParsedSpirvModule {
