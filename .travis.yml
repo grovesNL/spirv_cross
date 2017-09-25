@@ -3,6 +3,7 @@ rust:
   - stable
   - beta
   - nightly
+os: osx
 matrix:
   allow_failures:
     - rust: nightly
@@ -23,10 +24,6 @@ matrix:
           packages:
             - clang-3.8
           sources: *sources
-os:
-  - linux
-  - osx
-
 script:
   - cargo build --verbose --all
   - cargo test --verbose --all
