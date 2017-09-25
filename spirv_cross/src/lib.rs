@@ -28,6 +28,7 @@ pub mod compile {
         Unhandled = 1,
     }
 
+    #[derive(Debug, Clone)]
     pub struct SpirvModule<'a> {
         ir: &'a [u32],
     }
@@ -41,8 +42,9 @@ pub mod compile {
     pub struct ParsedSpirvModule {
         // TODO: Currently parsing and compilation must occur with the same compiler instance
         // (i.e. as opposed to splitting the parser/compiler which would be the ideal)
-        // So temporarily we create the compiler instance during parse and reuse it during compilation
-        // See https://github.com/KhronosGroup/SPIRV-Cross/issues/287
+        // So temporarily we create the compiler instance during parse
+        // and reuse it during compilation
+        // see https://github.com/KhronosGroup/SPIRV-Cross/issues/287
         internal_compiler: *mut c_void,
         internal_delete_compiler: fn(*mut c_void),
     }
@@ -53,14 +55,16 @@ pub mod compile {
         }
     }
 
-    pub struct HlslParseOptions;
+    #[derive(Debug, Clone)]
+    pub struct SpirvParseOptions;
 
-    impl HlslParseOptions {
-        pub fn new() -> HlslParseOptions {
-            HlslParseOptions
+    impl SpirvParseOptions {
+        pub fn new() -> SpirvParseOptions {
+            SpirvParseOptions
         }
     }
 
+    #[derive(Debug, Clone)]
     pub struct HlslCompileOptions;
 
     impl HlslCompileOptions {
@@ -68,8 +72,6 @@ pub mod compile {
             HlslCompileOptions
         }
     }
-
-    pub struct HlslCompiler;
 
     fn internal_delete_compiler_hlsl(internal_compiler: *mut c_void) {
         unsafe {
@@ -79,6 +81,9 @@ pub mod compile {
         }
     }
 
+    #[derive(Debug, Clone)]
+    pub struct HlslCompiler;
+
     impl HlslCompiler {
         pub fn new() -> HlslCompiler {
             HlslCompiler
@@ -87,7 +92,7 @@ pub mod compile {
         pub fn parse(
             &self,
             module: &SpirvModule,
-            _options: &HlslParseOptions,
+            _options: &SpirvParseOptions,
         ) -> Result<ParsedSpirvModule, ErrorCode> {
             let ptr = module.ir.as_ptr() as *const u32;
             let mut compiler = ptr::null_mut();
@@ -95,7 +100,7 @@ pub mod compile {
                 check!(sc_internal_compiler_hlsl_new(
                     &mut compiler,
                     ptr,
-                    module.ir.len() as usize
+                    module.ir.len() as usize,
                 ));
 
                 Ok(ParsedSpirvModule {
