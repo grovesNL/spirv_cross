@@ -1,6 +1,6 @@
 [package]
 name = "spirv_cross"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Joshua Groves <josh@joshgroves.com>"]
 description = "Safe wrapper around SPIRV-Cross"
 license = "Apache-2.0"
