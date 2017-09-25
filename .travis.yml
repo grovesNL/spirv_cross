@@ -3,6 +3,10 @@ rust:
   - stable
   - beta
   - nightly
+cache:
+  cargo: true
+  directories:
+   - $HOME/deps
 os: osx
 matrix:
   allow_failures:
