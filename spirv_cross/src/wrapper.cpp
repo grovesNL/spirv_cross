@@ -25,7 +25,7 @@ ScInternalResult sc_internal_compiler_hlsl_new(ScInternalCompilerHlsl **compiler
     INTERNAL_RESULT(
             *compiler = new spirv_cross::CompilerHLSL(ir, size);)
 }
-ScInternalResult sc_internal_compiler_hlsl_delete(const ScInternalCompilerHlsl *compiler)
+ScInternalResult sc_internal_compiler_hlsl_delete(ScInternalCompilerHlsl *compiler)
 {
     INTERNAL_RESULT(
         delete compiler;)
