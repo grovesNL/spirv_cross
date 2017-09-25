@@ -4,3 +4,5 @@ spirv_cross/target/
 **/*.rs.bk
 Cargo.lock
 .vscode
+# Added in directory by bindgen
+flag_check.exe
