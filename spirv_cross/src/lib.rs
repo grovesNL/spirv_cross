@@ -28,6 +28,7 @@ pub mod compile {
         Unhandled = 1,
     }
 
+    #[derive(Debug, Clone)]
     pub struct SpirvModule<'a> {
         ir: &'a [u32],
     }
@@ -53,14 +54,16 @@ pub mod compile {
         }
     }
 
-    pub struct HlslParseOptions;
+    #[derive(Debug, Clone)]
+    pub struct SpirvParseOptions;
 
-    impl HlslParseOptions {
-        pub fn new() -> HlslParseOptions {
-            HlslParseOptions
+    impl SpirvParseOptions {
+        pub fn new() -> SpirvParseOptions {
+            SpirvParseOptions
         }
     }
 
+    #[derive(Debug, Clone)]
     pub struct HlslCompileOptions;
 
     impl HlslCompileOptions {
@@ -68,8 +71,6 @@ pub mod compile {
             HlslCompileOptions
         }
     }
-
-    pub struct HlslCompiler;
 
     fn internal_delete_compiler_hlsl(internal_compiler: *mut c_void) {
         unsafe {
@@ -79,6 +80,9 @@ pub mod compile {
         }
     }
 
+    #[derive(Debug, Clone)]
+    pub struct HlslCompiler;
+
     impl HlslCompiler {
         pub fn new() -> HlslCompiler {
             HlslCompiler
@@ -87,7 +91,7 @@ pub mod compile {
         pub fn parse(
             &self,
             module: &SpirvModule,
-            _options: &HlslParseOptions,
+            _options: &SpirvParseOptions,
         ) -> Result<ParsedSpirvModule, ErrorCode> {
             let ptr = module.ir.as_ptr() as *const u32;
             let mut compiler = ptr::null_mut();
