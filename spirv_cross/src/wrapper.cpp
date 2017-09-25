@@ -28,11 +28,11 @@ ScInternalResult sc_internal_compiler_hlsl_new(ScInternalCompilerHlsl **compiler
 ScInternalResult sc_internal_compiler_hlsl_delete(ScInternalCompilerHlsl *compiler)
 {
     INTERNAL_RESULT(
-        delete compiler;)
+        delete (spirv_cross::CompilerHLSL *)compiler;)
 }
-ScInternalResult sc_internal_compiler_hlsl_compile(const ScInternalCompilerHlsl *c, char **hlsl)
+ScInternalResult sc_internal_compiler_hlsl_compile(const ScInternalCompilerHlsl *compiler, char **hlsl)
 {
-    INTERNAL_RESULT(*hlsl = strdup(((spirv_cross::CompilerHLSL *)c)->compile().c_str());)
+    INTERNAL_RESULT(*hlsl = strdup(((spirv_cross::CompilerHLSL *)compiler)->compile().c_str());)
 }
 ScInternalResult sc_internal_deallocate_string(char *str)
 {
