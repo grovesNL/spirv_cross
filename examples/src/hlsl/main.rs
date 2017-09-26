@@ -1,5 +1,6 @@
 extern crate spirv_cross;
-use spirv_cross::compile::{HlslCompileOptions, HlslCompiler, SpirvParseOptions, SpirvModule};
+use spirv_cross::{CompileTarget, HlslCompiler, HlslCompilerOptions, SpirvModule, SpirvParser,
+                  SpirvParserOptions};
 
 fn ir_words_from_bytes(buf: &[u8]) -> &[u32] {
     unsafe {
@@ -12,12 +13,11 @@ fn ir_words_from_bytes(buf: &[u8]) -> &[u32] {
 
 fn main() {
     let vertex_module = SpirvModule::new(ir_words_from_bytes(include_bytes!("vertex.spv")));
-    let hlsl_compiler = HlslCompiler::new();
-    let parsed_vertex_module = hlsl_compiler
-        .parse(&vertex_module, &SpirvParseOptions::new())
+    let parsed_vertex_module = SpirvParser::new(CompileTarget::Hlsl)
+        .parse(&vertex_module, &SpirvParserOptions::new())
         .unwrap();
-    let hlsl = hlsl_compiler
-        .compile(&parsed_vertex_module, &HlslCompileOptions::new())
+    let hlsl = HlslCompiler::new()
+        .compile(&parsed_vertex_module, &HlslCompilerOptions::new())
         .unwrap();
     println!("{}", hlsl);
 }
