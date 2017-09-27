@@ -1383,10 +1383,63 @@ pub mod root {
             fn clone(&self) -> Self { *self }
         }
     }
+    pub type ScInternalCompilerBase = ::std::os::raw::c_void;
     pub type ScInternalCompilerHlsl = ::std::os::raw::c_void;
     #[repr(i32)]
     #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
     pub enum ScInternalResult { Success = 0, Unhandled = 1, }
+    #[repr(C)]
+    #[derive(Debug, Copy)]
+    pub struct ScEntryPoint {
+        pub name: *mut ::std::os::raw::c_char,
+        pub execution_model: root::spv::ExecutionModel,
+        pub workgroup_size_x: u32,
+        pub workgroup_size_y: u32,
+        pub workgroup_size_z: u32,
+    }
+    #[test]
+    fn bindgen_test_layout_ScEntryPoint() {
+        assert_eq!(::std::mem::size_of::<ScEntryPoint>() , 24usize , concat !
+                   ( "Size of: " , stringify ! ( ScEntryPoint ) ));
+        assert_eq! (::std::mem::align_of::<ScEntryPoint>() , 8usize , concat !
+                    ( "Alignment of " , stringify ! ( ScEntryPoint ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScEntryPoint ) ) . name as * const _
+                    as usize } , 0usize , concat ! (
+                    "Alignment of field: " , stringify ! ( ScEntryPoint ) ,
+                    "::" , stringify ! ( name ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScEntryPoint ) ) . execution_model as
+                    * const _ as usize } , 8usize , concat ! (
+                    "Alignment of field: " , stringify ! ( ScEntryPoint ) ,
+                    "::" , stringify ! ( execution_model ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScEntryPoint ) ) . workgroup_size_x
+                    as * const _ as usize } , 12usize , concat ! (
+                    "Alignment of field: " , stringify ! ( ScEntryPoint ) ,
+                    "::" , stringify ! ( workgroup_size_x ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScEntryPoint ) ) . workgroup_size_y
+                    as * const _ as usize } , 16usize , concat ! (
+                    "Alignment of field: " , stringify ! ( ScEntryPoint ) ,
+                    "::" , stringify ! ( workgroup_size_y ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScEntryPoint ) ) . workgroup_size_z
+                    as * const _ as usize } , 20usize , concat ! (
+                    "Alignment of field: " , stringify ! ( ScEntryPoint ) ,
+                    "::" , stringify ! ( workgroup_size_z ) ));
+    }
+    impl Clone for ScEntryPoint {
+        fn clone(&self) -> Self { *self }
+    }
+    extern "C" {
+        pub fn sc_internal_compiler_base_get_entry_points(compiler:
+                                                              *const root::ScInternalCompilerBase,
+                                                          entry_points:
+                                                              *mut *mut root::ScEntryPoint,
+                                                          size: *mut usize)
+         -> root::ScInternalResult;
+    }
     extern "C" {
         pub fn sc_internal_compiler_hlsl_new(compiler:
                                                  *mut *mut root::ScInternalCompilerHlsl,
@@ -1395,18 +1448,18 @@ pub mod root {
     }
     extern "C" {
         pub fn sc_internal_compiler_hlsl_delete(compiler:
-                                                    *const root::ScInternalCompilerHlsl)
+                                                    *mut root::ScInternalCompilerHlsl)
          -> root::ScInternalResult;
     }
     extern "C" {
         pub fn sc_internal_compiler_hlsl_compile(compiler:
                                                      *const root::ScInternalCompilerHlsl,
-                                                 compiled:
+                                                 hlsl:
                                                      *mut *mut ::std::os::raw::c_char)
          -> root::ScInternalResult;
     }
     extern "C" {
-        pub fn sc_internal_deallocate_string(str: *mut ::std::os::raw::c_char)
+        pub fn sc_internal_free_pointer(pointer: *mut ::std::os::raw::c_void)
          -> root::ScInternalResult;
     }
 }

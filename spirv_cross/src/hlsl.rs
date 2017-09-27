@@ -46,7 +46,7 @@ impl Compiler {
                 Err(_) => return Err(ErrorCode::Unhandled),
                 Ok(v) => v,
             };
-            check!(sc_internal_deallocate_string(hlsl_ptr));
+            check!(sc_internal_free_pointer(hlsl_ptr as *mut c_void));
             Ok(hlsl)
         }
     }

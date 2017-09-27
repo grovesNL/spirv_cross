@@ -3,6 +3,23 @@ use hlsl;
 use bindings::root::*;
 use std::ptr;
 use std::os::raw::c_void;
+use std::ffi::CStr;
+
+pub use bindings::root::spv::ExecutionModel;
+
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+pub struct WorkgroupSize {
+    pub x: u32,
+    pub y: u32,
+    pub z: u32,
+}
+
+#[derive(Debug, Clone)]
+pub struct EntryPoint {
+    pub name: String,
+    pub execution_model: ExecutionModel,
+    pub workgroup_size: WorkgroupSize,
+}
 
 #[derive(Debug, Clone)]
 pub struct Module<'a> {
@@ -20,6 +37,47 @@ pub struct ParsedModule {
     pub(crate) internal_compiler: *mut c_void,
     pub(crate) internal_delete_compiler: fn(*mut c_void),
     pub(crate) compile_target: CompileTarget,
+}
+
+impl ParsedModule {
+    pub fn get_entry_points(&self) -> Result<Vec<EntryPoint>, ErrorCode> {
+        unsafe {
+            let mut entry_points = ptr::null_mut();
+            let mut entry_points_length = 0 as usize;
+
+            check!(sc_internal_compiler_base_get_entry_points(
+                self.internal_compiler,
+                &mut entry_points,
+                &mut entry_points_length,
+            ));
+
+            (0..entry_points_length)
+                .map(|offset| {
+                    let ep_ptr = entry_points.offset(offset as isize);
+                    let ep = *ep_ptr;
+                    let name = match CStr::from_ptr(ep.name).to_owned().into_string() {
+                        Ok(n) => n,
+                        _ => return Err(ErrorCode::Unhandled),
+                    };
+
+                    let entry_point = EntryPoint {
+                        name,
+                        execution_model: ep.execution_model,
+                        workgroup_size: WorkgroupSize {
+                            x: ep.workgroup_size_x,
+                            y: ep.workgroup_size_y,
+                            z: ep.workgroup_size_z,
+                        },
+                    };
+
+                    check!(sc_internal_free_pointer(ep.name as *mut c_void));
+                    check!(sc_internal_free_pointer(ep_ptr as *mut c_void));
+
+                    Ok(entry_point)
+                })
+                .collect::<Result<Vec<_>, _>>()
+        }
+    }
 }
 
 impl Drop for ParsedModule {
