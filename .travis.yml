@@ -1,16 +1,12 @@
 language: rust
 rust:
   - stable
-  - beta
-  - nightly
 cache:
   cargo: true
   directories:
    - $HOME/deps
 os: osx
 matrix:
-  allow_failures:
-    - rust: nightly
   include:
     - os: linux
       env: COMPILER_NAME=gcc CXX=g++-5 CC=gcc-5

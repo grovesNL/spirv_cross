@@ -1,5 +1,7 @@
 extern crate spirv_cross;
-use spirv_cross::compile::{HlslCompileOptions, HlslCompiler, SpirvParseOptions, SpirvModule};
+use spirv_cross::spirv;
+use spirv_cross::hlsl;
+use spirv_cross::CompileTarget;
 
 fn ir_words_from_bytes(buf: &[u8]) -> &[u32] {
     unsafe {
@@ -11,13 +13,22 @@ fn ir_words_from_bytes(buf: &[u8]) -> &[u32] {
 }
 
 fn main() {
-    let vertex_module = SpirvModule::new(ir_words_from_bytes(include_bytes!("vertex.spv")));
-    let hlsl_compiler = HlslCompiler::new();
-    let parsed_vertex_module = hlsl_compiler
-        .parse(&vertex_module, &SpirvParseOptions::new())
+    let vertex_module = spirv::Module::new(ir_words_from_bytes(include_bytes!("vertex.spv")));
+
+    // Parse a SPIR-V module
+    let parsed_vertex_module = spirv::Parser::new(CompileTarget::Hlsl)
+        .parse(&vertex_module, &spirv::ParserOptions::new())
         .unwrap();
-    let hlsl = hlsl_compiler
-        .compile(&parsed_vertex_module, &HlslCompileOptions::new())
+
+    // List all entry points
+    for entry_point in parsed_vertex_module.get_entry_points().unwrap() {
+        println!("{:?}", entry_point);
+    }
+
+    // Compile to HLSL
+    let hlsl = hlsl::Compiler::new()
+        .compile(&parsed_vertex_module, &hlsl::CompilerOptions::new())
         .unwrap();
+
     println!("{}", hlsl);
 }
