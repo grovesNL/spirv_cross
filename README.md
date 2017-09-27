@@ -6,14 +6,7 @@
 </div>
 <br />
 <div align="center">
-  <a href="https://travis-ci.org/grovesNL/spirv_cross">
-    <img src="https://travis-ci.org/grovesNL/spirv_cross.svg?branch=master"
-      alt="Travis Build Status" />
-  </a>
-  <a href="https://ci.appveyor.com/project/grovesNL/spirv-cross/branch/master">
-    <img src="https://ci.appveyor.com/api/projects/status/ja22j0ueje51sd76/branch/master?svg=true"
-      alt="Appveyor Build Status" />
-  </a>
+  <a href="https://travis-ci.org/grovesNL/spirv_cross"><img src="https://travis-ci.org/grovesNL/spirv_cross.svg?branch=master" alt="Travis Build Status" /></a> <a href="https://ci.appveyor.com/project/grovesNL/spirv-cross/branch/master"><img src="https://ci.appveyor.com/api/projects/status/ja22j0ueje51sd76/branch/master?svg=true" alt="Appveyor Build Status" /></a>
 </div>
 
 ## Example
