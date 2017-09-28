@@ -1,5 +1,4 @@
-use super::{CompileTarget, ErrorCode};
-use hlsl;
+use super::ErrorCode;
 use bindings::root::*;
 use std::ptr;
 use std::os::raw::c_void;
@@ -33,56 +32,13 @@ impl<'a> Module<'a> {
 }
 
 pub struct ParsedModule {
-    // TODO: Temporarily keep reference to compiler to share between parse/compile steps
-    pub(crate) internal_compiler: *mut c_void,
-    pub(crate) internal_delete_compiler: fn(*mut c_void),
-    pub(crate) compile_target: CompileTarget,
+    pub entry_points: Vec<EntryPoint>,
+    pub(crate) ir: Vec<u32>,
 }
 
 impl ParsedModule {
-    pub fn get_entry_points(&self) -> Result<Vec<EntryPoint>, ErrorCode> {
-        unsafe {
-            let mut entry_points = ptr::null_mut();
-            let mut entry_points_length = 0 as usize;
-
-            check!(sc_internal_compiler_base_get_entry_points(
-                self.internal_compiler,
-                &mut entry_points,
-                &mut entry_points_length,
-            ));
-
-            (0..entry_points_length)
-                .map(|offset| {
-                    let ep_ptr = entry_points.offset(offset as isize);
-                    let ep = *ep_ptr;
-                    let name = match CStr::from_ptr(ep.name).to_owned().into_string() {
-                        Ok(n) => n,
-                        _ => return Err(ErrorCode::Unhandled),
-                    };
-
-                    let entry_point = EntryPoint {
-                        name,
-                        execution_model: ep.execution_model,
-                        workgroup_size: WorkgroupSize {
-                            x: ep.workgroup_size_x,
-                            y: ep.workgroup_size_y,
-                            z: ep.workgroup_size_z,
-                        },
-                    };
-
-                    check!(sc_internal_free_pointer(ep.name as *mut c_void));
-                    check!(sc_internal_free_pointer(ep_ptr as *mut c_void));
-
-                    Ok(entry_point)
-                })
-                .collect::<Result<Vec<_>, _>>()
-        }
-    }
-}
-
-impl Drop for ParsedModule {
-    fn drop(&mut self) {
-        (self.internal_delete_compiler)(self.internal_compiler);
+    fn new(ir: Vec<u32>, entry_points: Vec<EntryPoint>) -> ParsedModule {
+        ParsedModule { entry_points, ir }
     }
 }
 
@@ -97,13 +53,14 @@ impl ParserOptions {
 
 #[derive(Debug, Clone)]
 pub struct Parser {
-    compile_target: CompileTarget,
+    _unconstructable: (),
 }
 
 impl Parser {
-    // TODO: Remove `compile_target`, see https://github.com/KhronosGroup/SPIRV-Cross/issues/287
-    pub fn new(compile_target: CompileTarget) -> Parser {
-        Parser { compile_target }
+    pub fn new() -> Parser {
+        Parser {
+            _unconstructable: (),
+        }
     }
 
     pub fn parse(
@@ -111,22 +68,58 @@ impl Parser {
         module: &Module,
         _options: &ParserOptions,
     ) -> Result<ParsedModule, ErrorCode> {
-        let ptr = module.ir.as_ptr() as *const u32;
-        let mut compiler = ptr::null_mut();
-        match self.compile_target {
-            CompileTarget::Hlsl => unsafe {
-                check!(sc_internal_compiler_hlsl_new(
-                    &mut compiler,
-                    ptr,
-                    module.ir.len() as usize,
-                ));
+        unsafe {
+            let mut entry_points_raw = ptr::null_mut();
+            let mut entry_points_raw_length = 0 as usize;
 
-                Ok(ParsedModule {
-                    internal_compiler: compiler,
-                    internal_delete_compiler: hlsl::internal_delete_compiler_hlsl,
-                    compile_target: self.compile_target.clone(),
+            let mut ir = vec![0; module.ir.len()];
+            ir.copy_from_slice(module.ir);
+
+            check!(sc_internal_compiler_base_parse(
+                ir.as_ptr() as *const u32,
+                ir.len() as usize,
+                &mut entry_points_raw,
+                &mut entry_points_raw_length,
+            ));
+
+            let entry_points = (0..entry_points_raw_length)
+                .map(|offset| {
+                    let entry_point_raw_ptr = entry_points_raw.offset(offset as isize);
+                    let entry_point_raw = *entry_point_raw_ptr;
+                    let name = match CStr::from_ptr(entry_point_raw.name)
+                        .to_owned()
+                        .into_string()
+                    {
+                        Ok(n) => n,
+                        _ => return Err(ErrorCode::Unhandled),
+                    };
+
+                    let entry_point = EntryPoint {
+                        name,
+                        execution_model: entry_point_raw.execution_model,
+                        workgroup_size: WorkgroupSize {
+                            x: entry_point_raw.workgroup_size_x,
+                            y: entry_point_raw.workgroup_size_y,
+                            z: entry_point_raw.workgroup_size_z,
+                        },
+                    };
+
+                    check!(sc_internal_free_pointer(
+                        entry_point_raw.name as *mut c_void,
+                    ));
+                    check!(sc_internal_free_pointer(entry_point_raw_ptr as *mut c_void));
+
+                    Ok(entry_point)
                 })
-            },
+                .collect::<Result<Vec<_>, _>>();
+
+            Ok(ParsedModule::new(
+                ir,
+                match entry_points {
+                    Ok(e) => e,
+                    Err(e) => return Err(e),
+                },
+            ))
         }
     }
 }
