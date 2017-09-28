@@ -21,9 +21,17 @@ typedef struct ScEntryPoint
     uint32_t workgroup_size_z;
 } ScEntryPoint;
 
+typedef struct ScHlslCompilerOptions
+{
+    int32_t shader_model;
+    bool vertex_transform_clip_space;
+    bool vertex_invert_y;
+
+} ScHlslCompilerOptions;
+
 ScInternalResult sc_internal_compiler_base_parse(const uint32_t *ir, size_t size, ScEntryPoint **entry_points, size_t *entry_points_size);
 
-ScInternalResult sc_internal_compiler_hlsl_compile(const uint32_t *ir, size_t size, char **hlsl);
+ScInternalResult sc_internal_compiler_hlsl_compile(const uint32_t *ir, size_t size, char **hlsl, const ScHlslCompilerOptions *options);
 
 ScInternalResult sc_internal_free_pointer(void *pointer);
 }
