@@ -24,8 +24,3 @@ mod bindings {
 pub enum ErrorCode {
     Unhandled = 1,
 }
-
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
-pub enum CompileTarget {
-    Hlsl,
-}

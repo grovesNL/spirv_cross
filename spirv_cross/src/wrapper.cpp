@@ -20,9 +20,11 @@
     return ScInternalResult::Unhandled;
 
 extern "C" {
-ScInternalResult sc_internal_compiler_base_get_entry_points(const ScInternalCompilerBase *compiler, ScEntryPoint **entry_points, size_t *size)
+ScInternalResult sc_internal_compiler_base_parse(const uint32_t *ir, size_t size, ScEntryPoint **entry_points, size_t *entry_points_size)
 {
     INTERNAL_RESULT(
+        auto const &compiler = new spirv_cross::Compiler(ir, size);
+
         auto const &entry_point_names = ((spirv_cross::Compiler *)compiler)->get_entry_points();
         auto const &len = entry_point_names.size();
         ScEntryPoint *eps = (ScEntryPoint *)malloc(len * sizeof(ScEntryPoint));
@@ -37,23 +39,20 @@ ScInternalResult sc_internal_compiler_base_get_entry_points(const ScInternalComp
             eps[i].workgroup_size_z = entry_point.workgroup_size.z;
             i++;
         }
-            *size = len;
-        *entry_points = eps;)
+            *entry_points = eps;
+        *entry_points_size = len;
+
+        delete (spirv_cross::Compiler *)compiler;)
 }
-ScInternalResult sc_internal_compiler_hlsl_new(ScInternalCompilerHlsl **compiler, const uint32_t *ir, size_t size)
+
+ScInternalResult sc_internal_compiler_hlsl_compile(const uint32_t *ir, size_t size, char **hlsl)
 {
     INTERNAL_RESULT(
-            *compiler = new spirv_cross::CompilerHLSL(ir, size);)
-}
-ScInternalResult sc_internal_compiler_hlsl_delete(ScInternalCompilerHlsl *compiler)
-{
-    INTERNAL_RESULT(
+        auto const &compiler = new spirv_cross::CompilerHLSL(ir, size);
+        *hlsl = strdup(((spirv_cross::CompilerHLSL *)compiler)->compile().c_str());
         delete (spirv_cross::CompilerHLSL *)compiler;)
 }
-ScInternalResult sc_internal_compiler_hlsl_compile(const ScInternalCompilerHlsl *compiler, char **hlsl)
-{
-    INTERNAL_RESULT(*hlsl = strdup(((spirv_cross::CompilerHLSL *)compiler)->compile().c_str());)
-}
+
 ScInternalResult sc_internal_free_pointer(void *pointer)
 {
     INTERNAL_RESULT(free(pointer);)

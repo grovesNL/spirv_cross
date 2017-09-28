@@ -21,9 +21,9 @@ typedef struct ScEntryPoint
     uint32_t workgroup_size_z;
 } ScEntryPoint;
 
-ScInternalResult sc_internal_compiler_base_get_entry_points(const ScInternalCompilerBase *compiler, ScEntryPoint **entry_points, size_t *size);
-ScInternalResult sc_internal_compiler_hlsl_new(ScInternalCompilerHlsl **compiler, const uint32_t *ir, size_t size);
-ScInternalResult sc_internal_compiler_hlsl_delete(ScInternalCompilerHlsl *compiler);
-ScInternalResult sc_internal_compiler_hlsl_compile(const ScInternalCompilerHlsl *compiler, char **hlsl);
+ScInternalResult sc_internal_compiler_base_parse(const uint32_t *ir, size_t size, ScEntryPoint **entry_points, size_t *entry_points_size);
+
+ScInternalResult sc_internal_compiler_hlsl_compile(const uint32_t *ir, size_t size, char **hlsl);
+
 ScInternalResult sc_internal_free_pointer(void *pointer);
 }

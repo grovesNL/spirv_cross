@@ -1383,8 +1383,6 @@ pub mod root {
             fn clone(&self) -> Self { *self }
         }
     }
-    pub type ScInternalCompilerBase = ::std::os::raw::c_void;
-    pub type ScInternalCompilerHlsl = ::std::os::raw::c_void;
     #[repr(i32)]
     #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
     pub enum ScInternalResult { Success = 0, Unhandled = 1, }
@@ -1433,27 +1431,14 @@ pub mod root {
         fn clone(&self) -> Self { *self }
     }
     extern "C" {
-        pub fn sc_internal_compiler_base_get_entry_points(compiler:
-                                                              *const root::ScInternalCompilerBase,
-                                                          entry_points:
-                                                              *mut *mut root::ScEntryPoint,
-                                                          size: *mut usize)
+        pub fn sc_internal_compiler_base_parse(ir: *const u32, size: usize,
+                                               entry_points:
+                                                   *mut *mut root::ScEntryPoint,
+                                               entry_points_size: *mut usize)
          -> root::ScInternalResult;
     }
     extern "C" {
-        pub fn sc_internal_compiler_hlsl_new(compiler:
-                                                 *mut *mut root::ScInternalCompilerHlsl,
-                                             ir: *const u32, size: usize)
-         -> root::ScInternalResult;
-    }
-    extern "C" {
-        pub fn sc_internal_compiler_hlsl_delete(compiler:
-                                                    *mut root::ScInternalCompilerHlsl)
-         -> root::ScInternalResult;
-    }
-    extern "C" {
-        pub fn sc_internal_compiler_hlsl_compile(compiler:
-                                                     *const root::ScInternalCompilerHlsl,
+        pub fn sc_internal_compiler_hlsl_compile(ir: *const u32, size: usize,
                                                  hlsl:
                                                      *mut *mut ::std::os::raw::c_char)
          -> root::ScInternalResult;

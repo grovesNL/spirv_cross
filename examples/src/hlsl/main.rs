@@ -1,7 +1,6 @@
 extern crate spirv_cross;
 use spirv_cross::spirv;
 use spirv_cross::hlsl;
-use spirv_cross::CompileTarget;
 
 fn ir_words_from_bytes(buf: &[u8]) -> &[u32] {
     unsafe {
@@ -16,12 +15,12 @@ fn main() {
     let vertex_module = spirv::Module::new(ir_words_from_bytes(include_bytes!("vertex.spv")));
 
     // Parse a SPIR-V module
-    let parsed_vertex_module = spirv::Parser::new(CompileTarget::Hlsl)
+    let parsed_vertex_module = spirv::Parser::new()
         .parse(&vertex_module, &spirv::ParserOptions::new())
         .unwrap();
 
     // List all entry points
-    for entry_point in parsed_vertex_module.get_entry_points().unwrap() {
+    for entry_point in &parsed_vertex_module.entry_points {
         println!("{:?}", entry_point);
     }
 
