@@ -21,7 +21,7 @@ use spirv_cross::CompileTarget;
 
 fn generate_hlsl(module: spirv::Module) {
     // Parse a SPIR-V module
-    let parsed_module = spirv::Parser::new(CompileTarget::Hlsl)
+    let parsed_module = spirv::Parser::new()
         .parse(&module, &spirv::ParserOptions::new())
         .unwrap();
 
