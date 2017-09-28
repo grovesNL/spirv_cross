@@ -16,7 +16,7 @@ fn main() {
 
     // Parse a SPIR-V module
     let parsed_vertex_module = spirv::Parser::new()
-        .parse(&vertex_module, &spirv::ParserOptions::new())
+        .parse(&vertex_module, &spirv::ParserOptions::default())
         .unwrap();
 
     // List all entry points
@@ -26,7 +26,7 @@ fn main() {
 
     // Compile to HLSL
     let hlsl = hlsl::Compiler::new()
-        .compile(&parsed_vertex_module, &hlsl::CompilerOptions::new())
+        .compile(&parsed_vertex_module, &hlsl::CompilerOptions::default())
         .unwrap();
 
     println!("{}", hlsl);

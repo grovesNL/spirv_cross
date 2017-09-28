@@ -1430,6 +1430,46 @@ pub mod root {
     impl Clone for ScEntryPoint {
         fn clone(&self) -> Self { *self }
     }
+    #[repr(C)]
+    #[derive(Debug, Copy)]
+    pub struct ScHlslCompilerOptions {
+        pub shader_model: i32,
+        pub vertex_transform_clip_space: bool,
+        pub vertex_invert_y: bool,
+    }
+    #[test]
+    fn bindgen_test_layout_ScHlslCompilerOptions() {
+        assert_eq!(::std::mem::size_of::<ScHlslCompilerOptions>() , 8usize ,
+                   concat ! (
+                   "Size of: " , stringify ! ( ScHlslCompilerOptions ) ));
+        assert_eq! (::std::mem::align_of::<ScHlslCompilerOptions>() , 4usize ,
+                    concat ! (
+                    "Alignment of " , stringify ! ( ScHlslCompilerOptions )
+                    ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScHlslCompilerOptions ) ) .
+                    shader_model as * const _ as usize } , 0usize , concat ! (
+                    "Alignment of field: " , stringify ! (
+                    ScHlslCompilerOptions ) , "::" , stringify ! (
+                    shader_model ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScHlslCompilerOptions ) ) .
+                    vertex_transform_clip_space as * const _ as usize } ,
+                    4usize , concat ! (
+                    "Alignment of field: " , stringify ! (
+                    ScHlslCompilerOptions ) , "::" , stringify ! (
+                    vertex_transform_clip_space ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScHlslCompilerOptions ) ) .
+                    vertex_invert_y as * const _ as usize } , 5usize , concat
+                    ! (
+                    "Alignment of field: " , stringify ! (
+                    ScHlslCompilerOptions ) , "::" , stringify ! (
+                    vertex_invert_y ) ));
+    }
+    impl Clone for ScHlslCompilerOptions {
+        fn clone(&self) -> Self { *self }
+    }
     extern "C" {
         pub fn sc_internal_compiler_base_parse(ir: *const u32, size: usize,
                                                entry_points:
@@ -1440,7 +1480,9 @@ pub mod root {
     extern "C" {
         pub fn sc_internal_compiler_hlsl_compile(ir: *const u32, size: usize,
                                                  hlsl:
-                                                     *mut *mut ::std::os::raw::c_char)
+                                                     *mut *mut ::std::os::raw::c_char,
+                                                 options:
+                                                     *const root::ScHlslCompilerOptions)
          -> root::ScInternalResult;
     }
     extern "C" {
