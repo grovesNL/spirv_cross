@@ -17,17 +17,16 @@
 extern crate spirv_cross;
 use spirv_cross::spirv;
 use spirv_cross::hlsl;
-use spirv_cross::CompileTarget;
 
 fn generate_hlsl(module: spirv::Module) {
     // Parse a SPIR-V module
     let parsed_module = spirv::Parser::new()
-        .parse(&module, &spirv::ParserOptions::new())
+        .parse(&module, &spirv::ParserOptions::default())
         .unwrap();
 
     // Compile to HLSL
     let hlsl = hlsl::Compiler::new()
-        .compile(&parsed_module, &hlsl::CompilerOptions::new())
+        .compile(&parsed_module, &hlsl::CompilerOptions::default())
         .unwrap();
 
     println!("{}", hlsl);
