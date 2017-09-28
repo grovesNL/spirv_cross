@@ -4,7 +4,35 @@ use std::ptr;
 use std::os::raw::c_void;
 use std::ffi::CStr;
 
-pub use bindings::root::spv::ExecutionModel;
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+pub enum ExecutionModel {
+    Vertex = 0,
+    TessellationControl = 1,
+    TessellationEvaluation = 2,
+    Geometry = 3,
+    Fragment = 4,
+    GlCompute = 5,
+    Kernel = 6,
+}
+
+impl ExecutionModel {
+    fn from_raw(raw: spv::ExecutionModel) -> Result<ExecutionModel, ErrorCode> {
+        match raw {
+            spv::ExecutionModel::ExecutionModelVertex => Ok(ExecutionModel::Vertex),
+            spv::ExecutionModel::ExecutionModelTessellationControl => {
+                Ok(ExecutionModel::TessellationControl)
+            }
+            spv::ExecutionModel::ExecutionModelTessellationEvaluation => {
+                Ok(ExecutionModel::TessellationEvaluation)
+            }
+            spv::ExecutionModel::ExecutionModelGeometry => Ok(ExecutionModel::Geometry),
+            spv::ExecutionModel::ExecutionModelFragment => Ok(ExecutionModel::Fragment),
+            spv::ExecutionModel::ExecutionModelGLCompute => Ok(ExecutionModel::GlCompute),
+            spv::ExecutionModel::ExecutionModelKernel => Ok(ExecutionModel::Kernel),
+            _ => Err(ErrorCode::Unhandled),
+        }
+    }
+}
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 pub struct WorkgroupSize {
@@ -96,7 +124,9 @@ impl Parser {
 
                     let entry_point = EntryPoint {
                         name,
-                        execution_model: entry_point_raw.execution_model,
+                        execution_model: try!(
+                            ExecutionModel::from_raw(entry_point_raw.execution_model,)
+                        ),
                         workgroup_size: WorkgroupSize {
                             x: entry_point_raw.workgroup_size_x,
                             y: entry_point_raw.workgroup_size_y,
@@ -113,13 +143,7 @@ impl Parser {
                 })
                 .collect::<Result<Vec<_>, _>>();
 
-            Ok(ParsedModule::new(
-                ir,
-                match entry_points {
-                    Ok(e) => e,
-                    Err(e) => return Err(e),
-                },
-            ))
+            Ok(ParsedModule::new(ir, try!(entry_points)))
         }
     }
 }
