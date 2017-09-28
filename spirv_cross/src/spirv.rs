@@ -57,7 +57,6 @@ pub struct Parser {
 }
 
 impl Parser {
-    // TODO: Remove `compile_target`, see https://github.com/KhronosGroup/SPIRV-Cross/issues/287
     pub fn new() -> Parser {
         Parser {
             _unconstructable: (),
