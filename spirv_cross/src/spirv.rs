@@ -73,8 +73,8 @@ impl ParsedModule {
 #[derive(Debug, Clone)]
 pub struct ParserOptions;
 
-impl ParserOptions {
-    pub fn new() -> ParserOptions {
+impl Default for ParserOptions {
+    fn default() -> ParserOptions {
         ParserOptions
     }
 }
