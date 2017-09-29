@@ -36,9 +36,7 @@ impl CompilerOptions {
 
 impl Default for CompilerOptions {
     fn default() -> CompilerOptions {
-        CompilerOptions {
-            vertex: CompilerVertexOptions::default(),
-        }
+        CompilerOptions { vertex: CompilerVertexOptions::default() }
     }
 }
 
@@ -49,9 +47,7 @@ pub struct Compiler {
 
 impl Compiler {
     pub fn new() -> Compiler {
-        Compiler {
-            _unconstructable: (),
-        }
+        Compiler { _unconstructable: () }
     }
 
     pub fn compile(
@@ -60,12 +56,12 @@ impl Compiler {
         options: &CompilerOptions,
     ) -> Result<String, ErrorCode> {
         unsafe {
-            let mut msl_ptr = ptr::null_mut();
+            let mut msl_ptr = ptr::null();
             check!(sc_internal_compiler_msl_compile(
                 parsed_module.ir.as_ptr() as *const u32,
                 parsed_module.ir.len() as usize,
                 &mut msl_ptr,
-                &options.as_raw()
+                &options.as_raw(),
             ));
             let msl = match CStr::from_ptr(msl_ptr).to_owned().into_string() {
                 Err(_) => return Err(ErrorCode::Unhandled),

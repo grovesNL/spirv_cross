@@ -8,8 +8,9 @@ extern "C" {
 
 enum ScInternalResult
 {
-    Success = 0,
-    Unhandled = 1
+    Success,
+    Unhandled,
+    CompilationError,
 };
 
 typedef struct ScEntryPoint
@@ -34,11 +35,13 @@ typedef struct ScMslCompilerOptions
     bool vertex_invert_y;
 } ScMslCompilerOptions;
 
+ScInternalResult sc_internal_get_latest_exception_message(const char **message);
+
 ScInternalResult sc_internal_compiler_base_parse(const uint32_t *ir, size_t size, ScEntryPoint **entry_points, size_t *entry_points_size);
 
-ScInternalResult sc_internal_compiler_hlsl_compile(const uint32_t *ir, size_t size, char **hlsl, const ScHlslCompilerOptions *options);
+ScInternalResult sc_internal_compiler_hlsl_compile(const uint32_t *ir, size_t size, const char **hlsl, const ScHlslCompilerOptions *options);
 
-ScInternalResult sc_internal_compiler_msl_compile(const uint32_t *ir, size_t size, char **msl, const ScMslCompilerOptions *options);
+ScInternalResult sc_internal_compiler_msl_compile(const uint32_t *ir, size_t size, const char **msl, const ScMslCompilerOptions *options);
 
 ScInternalResult sc_internal_free_pointer(void *pointer);
 }

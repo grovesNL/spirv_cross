@@ -86,9 +86,7 @@ pub struct Parser {
 
 impl Parser {
     pub fn new() -> Parser {
-        Parser {
-            _unconstructable: (),
-        }
+        Parser { _unconstructable: () }
     }
 
     pub fn parse(
@@ -116,8 +114,7 @@ impl Parser {
                     let entry_point_raw = *entry_point_raw_ptr;
                     let name = match CStr::from_ptr(entry_point_raw.name)
                         .to_owned()
-                        .into_string()
-                    {
+                        .into_string() {
                         Ok(n) => n,
                         _ => return Err(ErrorCode::Unhandled),
                     };
@@ -125,7 +122,7 @@ impl Parser {
                     let entry_point = EntryPoint {
                         name,
                         execution_model: try!(
-                            ExecutionModel::from_raw(entry_point_raw.execution_model,)
+                            ExecutionModel::from_raw(entry_point_raw.execution_model)
                         ),
                         workgroup_size: WorkgroupSize {
                             x: entry_point_raw.workgroup_size_x,

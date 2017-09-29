@@ -1385,7 +1385,11 @@ pub mod root {
     }
     #[repr(i32)]
     #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-    pub enum ScInternalResult { Success = 0, Unhandled = 1, }
+    pub enum ScInternalResult {
+        Success = 0,
+        Unhandled = 1,
+        CompilationError = 2,
+    }
     #[repr(C)]
     #[derive(Debug, Copy)]
     pub struct ScEntryPoint {
@@ -1503,6 +1507,11 @@ pub mod root {
         fn clone(&self) -> Self { *self }
     }
     extern "C" {
+        pub fn sc_internal_get_latest_exception_message(message:
+                                                            *mut *const ::std::os::raw::c_char)
+         -> root::ScInternalResult;
+    }
+    extern "C" {
         pub fn sc_internal_compiler_base_parse(ir: *const u32, size: usize,
                                                entry_points:
                                                    *mut *mut root::ScEntryPoint,
@@ -1512,7 +1521,7 @@ pub mod root {
     extern "C" {
         pub fn sc_internal_compiler_hlsl_compile(ir: *const u32, size: usize,
                                                  hlsl:
-                                                     *mut *mut ::std::os::raw::c_char,
+                                                     *mut *const ::std::os::raw::c_char,
                                                  options:
                                                      *const root::ScHlslCompilerOptions)
          -> root::ScInternalResult;
@@ -1520,7 +1529,7 @@ pub mod root {
     extern "C" {
         pub fn sc_internal_compiler_msl_compile(ir: *const u32, size: usize,
                                                 msl:
-                                                    *mut *mut ::std::os::raw::c_char,
+                                                    *mut *const ::std::os::raw::c_char,
                                                 options:
                                                     *const root::ScMslCompilerOptions)
          -> root::ScInternalResult;
