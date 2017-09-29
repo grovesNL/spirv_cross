@@ -1470,6 +1470,38 @@ pub mod root {
     impl Clone for ScHlslCompilerOptions {
         fn clone(&self) -> Self { *self }
     }
+    #[repr(C)]
+    #[derive(Debug, Copy)]
+    pub struct ScMslCompilerOptions {
+        pub vertex_transform_clip_space: bool,
+        pub vertex_invert_y: bool,
+    }
+    #[test]
+    fn bindgen_test_layout_ScMslCompilerOptions() {
+        assert_eq!(::std::mem::size_of::<ScMslCompilerOptions>() , 2usize ,
+                   concat ! (
+                   "Size of: " , stringify ! ( ScMslCompilerOptions ) ));
+        assert_eq! (::std::mem::align_of::<ScMslCompilerOptions>() , 1usize ,
+                    concat ! (
+                    "Alignment of " , stringify ! ( ScMslCompilerOptions ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScMslCompilerOptions ) ) .
+                    vertex_transform_clip_space as * const _ as usize } ,
+                    0usize , concat ! (
+                    "Alignment of field: " , stringify ! (
+                    ScMslCompilerOptions ) , "::" , stringify ! (
+                    vertex_transform_clip_space ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScMslCompilerOptions ) ) .
+                    vertex_invert_y as * const _ as usize } , 1usize , concat
+                    ! (
+                    "Alignment of field: " , stringify ! (
+                    ScMslCompilerOptions ) , "::" , stringify ! (
+                    vertex_invert_y ) ));
+    }
+    impl Clone for ScMslCompilerOptions {
+        fn clone(&self) -> Self { *self }
+    }
     extern "C" {
         pub fn sc_internal_compiler_base_parse(ir: *const u32, size: usize,
                                                entry_points:
@@ -1483,6 +1515,14 @@ pub mod root {
                                                      *mut *mut ::std::os::raw::c_char,
                                                  options:
                                                      *const root::ScHlslCompilerOptions)
+         -> root::ScInternalResult;
+    }
+    extern "C" {
+        pub fn sc_internal_compiler_msl_compile(ir: *const u32, size: usize,
+                                                msl:
+                                                    *mut *mut ::std::os::raw::c_char,
+                                                options:
+                                                    *const root::ScMslCompilerOptions)
          -> root::ScInternalResult;
     }
     extern "C" {

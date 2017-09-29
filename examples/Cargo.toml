@@ -9,3 +9,7 @@ spirv_cross = { path = "../spirv_cross" }
 [[bin]]
 name = "hlsl"
 path = "src/hlsl/main.rs"
+
+[[bin]]
+name = "msl"
+path = "src/msl/main.rs"
