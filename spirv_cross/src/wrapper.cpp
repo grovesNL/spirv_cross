@@ -2,25 +2,38 @@
 #include "vendor/SPIRV-Cross/spirv_msl.hpp"
 #include "wrapper.hpp"
 
-#define INTERNAL_RESULT(block)              \
-    try                                     \
-    {                                       \
-        {                                   \
-            block                           \
-        }                                   \
-        return ScInternalResult::Success;   \
-    }                                       \
-    catch (const std::exception &ex)        \
-    {                                       \
-        return ScInternalResult::Unhandled; \
-    }                                       \
-    catch (...)                             \
-    {                                       \
-        return ScInternalResult::Unhandled; \
-    }                                       \
+static const char *latest_exception_message;
+
+#define INTERNAL_RESULT(block)                     \
+    try                                            \
+    {                                              \
+        {                                          \
+            block                                  \
+        }                                          \
+        return ScInternalResult::Success;          \
+    }                                              \
+    catch (const spirv_cross::CompilerError &ex)   \
+    {                                              \
+        latest_exception_message = ex.what();      \
+        return ScInternalResult::CompilationError; \
+    }                                              \
+    catch (const std::exception &ex)               \
+    {                                              \
+        return ScInternalResult::Unhandled;        \
+    }                                              \
+    catch (...)                                    \
+    {                                              \
+        return ScInternalResult::Unhandled;        \
+    }                                              \
     return ScInternalResult::Unhandled;
 
 extern "C" {
+ScInternalResult sc_internal_get_latest_exception_message(const char **message)
+{
+    INTERNAL_RESULT(
+            *message = strdup(latest_exception_message);)
+}
+
 ScInternalResult sc_internal_compiler_base_parse(const uint32_t *ir, size_t size, ScEntryPoint **entry_points, size_t *entry_points_size)
 {
     INTERNAL_RESULT(
@@ -44,7 +57,7 @@ ScInternalResult sc_internal_compiler_base_parse(const uint32_t *ir, size_t size
         delete compiler;)
 }
 
-ScInternalResult sc_internal_compiler_hlsl_compile(const uint32_t *ir, size_t size, char **hlsl, const ScHlslCompilerOptions *options)
+ScInternalResult sc_internal_compiler_hlsl_compile(const uint32_t *ir, size_t size, const char **hlsl, const ScHlslCompilerOptions *options)
 {
     INTERNAL_RESULT(
         auto const &compiler = new spirv_cross::CompilerHLSL(ir, size);
@@ -62,7 +75,7 @@ ScInternalResult sc_internal_compiler_hlsl_compile(const uint32_t *ir, size_t si
         delete compiler;)
 }
 
-ScInternalResult sc_internal_compiler_msl_compile(const uint32_t *ir, size_t size, char **msl, const ScMslCompilerOptions *options)
+ScInternalResult sc_internal_compiler_msl_compile(const uint32_t *ir, size_t size, const char **msl, const ScMslCompilerOptions *options)
 {
     INTERNAL_RESULT(
         auto const &compiler = new spirv_cross::CompilerMSL(ir, size);
