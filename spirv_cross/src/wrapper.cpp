@@ -1,4 +1,5 @@
 #include "vendor/SPIRV-Cross/spirv_hlsl.hpp"
+#include "vendor/SPIRV-Cross/spirv_msl.hpp"
 #include "wrapper.hpp"
 
 #define INTERNAL_RESULT(block)              \
@@ -58,6 +59,20 @@ ScInternalResult sc_internal_compiler_hlsl_compile(const uint32_t *ir, size_t si
         compiler->set_options(hlsl_options);
 
         *hlsl = strdup(compiler->compile().c_str());
+        delete compiler;)
+}
+
+ScInternalResult sc_internal_compiler_msl_compile(const uint32_t *ir, size_t size, char **msl, const ScMslCompilerOptions *options)
+{
+    INTERNAL_RESULT(
+        auto const &compiler = new spirv_cross::CompilerMSL(ir, size);
+
+        auto glsl_options = compiler->spirv_cross::CompilerGLSL::get_options();
+        glsl_options.vertex.fixup_clipspace = options->vertex_transform_clip_space;
+        glsl_options.vertex.flip_vert_y = options->vertex_invert_y;
+        compiler->spirv_cross::CompilerGLSL::set_options(glsl_options);
+
+        *msl = strdup(compiler->compile().c_str());
         delete compiler;)
 }
 

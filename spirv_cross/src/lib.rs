@@ -11,6 +11,7 @@ macro_rules! check {
 
 pub mod spirv;
 pub mod hlsl;
+pub mod msl;
 
 mod bindings {
     #![allow(dead_code)]
