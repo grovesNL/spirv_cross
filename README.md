@@ -17,6 +17,7 @@
 extern crate spirv_cross;
 use spirv_cross::spirv;
 use spirv_cross::hlsl;
+use spirv_cross::msl;
 
 fn generate_hlsl(module: spirv::Module) {
     // Parse a SPIR-V module
