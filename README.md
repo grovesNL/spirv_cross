@@ -19,7 +19,7 @@ use spirv_cross::spirv;
 use spirv_cross::hlsl;
 use spirv_cross::msl;
 
-fn generate_hlsl(module: spirv::Module) {
+fn example(module: spirv::Module) {
     // Parse a SPIR-V module
     let parsed_module = spirv::Parser::new()
         .parse(&module, &spirv::ParserOptions::default())
