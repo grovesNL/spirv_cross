@@ -11,7 +11,7 @@
 
 ## Example
 
-`spirv_cross` provides a safe wrapper around [SPIRV-Cross](https://github.com/KhronosGroup/SPIRV-Cross) for use with Rust. For example, here is a simple function to parse a SPIR-V module and compile it to HLSL:
+`spirv_cross` provides a safe wrapper around [SPIRV-Cross](https://github.com/KhronosGroup/SPIRV-Cross) for use with Rust. For example, here is a simple function to parse a SPIR-V module and compile it to HLSL and MSL:
 
 ```rust
 extern crate spirv_cross;
@@ -30,5 +30,12 @@ fn generate_hlsl(module: spirv::Module) {
         .unwrap();
 
     println!("{}", hlsl);
+
+    // Compile to MSL
+    let msl = msl::Compiler::new()
+        .compile(&parsed_module, &msl::CompilerOptions::default())
+        .unwrap();
+
+    println!("{}", msl);
 }
 ```
