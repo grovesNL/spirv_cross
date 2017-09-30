@@ -1,6 +1,5 @@
 extern crate spirv_cross;
-use spirv_cross::spirv;
-use spirv_cross::msl;
+use spirv_cross::{spirv, msl};
 
 fn ir_words_from_bytes(buf: &[u8]) -> &[u32] {
     unsafe {
