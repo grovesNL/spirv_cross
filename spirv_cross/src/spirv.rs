@@ -86,7 +86,9 @@ pub struct Parser {
 
 impl Parser {
     pub fn new() -> Parser {
-        Parser { _unconstructable: () }
+        Parser {
+            _unconstructable: (),
+        }
     }
 
     pub fn parse(
@@ -94,13 +96,13 @@ impl Parser {
         module: &Module,
         _options: &ParserOptions,
     ) -> Result<ParsedModule, ErrorCode> {
+        let mut entry_points_raw = ptr::null_mut();
+        let mut entry_points_raw_length = 0 as usize;
+
+        let mut ir = vec![0; module.ir.len()];
+        ir.copy_from_slice(module.ir);
+
         unsafe {
-            let mut entry_points_raw = ptr::null_mut();
-            let mut entry_points_raw_length = 0 as usize;
-
-            let mut ir = vec![0; module.ir.len()];
-            ir.copy_from_slice(module.ir);
-
             check!(sc_internal_compiler_base_parse(
                 ir.as_ptr() as *const u32,
                 ir.len() as usize,
@@ -114,7 +116,8 @@ impl Parser {
                     let entry_point_raw = *entry_point_raw_ptr;
                     let name = match CStr::from_ptr(entry_point_raw.name)
                         .to_owned()
-                        .into_string() {
+                        .into_string()
+                    {
                         Ok(n) => n,
                         _ => return Err(ErrorCode::Unhandled),
                     };
