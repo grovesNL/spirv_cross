@@ -50,7 +50,7 @@ pub struct EntryPoint {
 
 #[derive(Debug, Clone)]
 pub struct Module<'a> {
-    ir: &'a [u32],
+    pub(crate) ir: &'a [u32],
 }
 
 impl<'a> Module<'a> {
@@ -59,53 +59,65 @@ impl<'a> Module<'a> {
     }
 }
 
-pub struct ParsedModule {
-    pub entry_points: Vec<EntryPoint>,
-    pub(crate) ir: Vec<u32>,
-}
-
-impl ParsedModule {
-    fn new(ir: Vec<u32>, entry_points: Vec<EntryPoint>) -> ParsedModule {
-        ParsedModule { entry_points, ir }
-    }
-}
-
 #[derive(Debug, Clone)]
-pub struct ParserOptions;
-
-impl Default for ParserOptions {
-    fn default() -> ParserOptions {
-        ParserOptions
-    }
+pub(crate) struct Compiler {
+    pub sc_compiler: *mut ScInternalCompilerBase,
 }
 
-#[derive(Debug, Clone)]
-pub struct Parser {
-    _unconstructable: (),
-}
-
-impl Parser {
-    pub fn new() -> Parser {
-        Parser {
-            _unconstructable: (),
+impl Compiler {
+    pub fn compile(&self) -> Result<String, ErrorCode> {
+        unsafe {
+            let mut shader_ptr = ptr::null();
+            check!(sc_internal_compiler_compile(
+                self.sc_compiler,
+                &mut shader_ptr,
+            ));
+            let shader = match CStr::from_ptr(shader_ptr).to_owned().into_string() {
+                Err(_) => return Err(ErrorCode::Unhandled),
+                Ok(v) => v,
+            };
+            check!(sc_internal_free_pointer(shader_ptr as *mut c_void));
+            Ok(shader)
         }
     }
 
-    pub fn parse(
-        &self,
-        module: &Module,
-        _options: &ParserOptions,
-    ) -> Result<ParsedModule, ErrorCode> {
+    pub fn get_decoration(&self, id: u32, decoration: spv::Decoration) -> Result<Option<u32>, ErrorCode> {
+        let mut result = 0;
+        unsafe {
+            check!(sc_internal_compiler_get_decoration(
+                self.sc_compiler,
+                &mut result,
+                id,
+                decoration,
+            ));
+        }
+
+        Ok(match result {
+            0 => None,
+            _ => Some(result),
+        })
+    }
+
+    pub fn set_decoration(&self, id: u32, decoration: spv::Decoration, argument: u32) -> Result<(), ErrorCode> {
+        unsafe {
+            check!(sc_internal_compiler_set_decoration(
+                self.sc_compiler,
+                id,
+                decoration,
+                argument,
+            ));
+        }
+
+        Ok(())
+    }
+
+    pub fn get_entry_points(&self) -> Result<Vec<EntryPoint>, ErrorCode> {
         let mut entry_points_raw = ptr::null_mut();
         let mut entry_points_raw_length = 0 as usize;
 
-        let mut ir = vec![0; module.ir.len()];
-        ir.copy_from_slice(module.ir);
-
         unsafe {
-            check!(sc_internal_compiler_base_parse(
-                ir.as_ptr() as *const u32,
-                ir.len() as usize,
+            check!(sc_internal_compiler_get_entry_points(
+                self.sc_compiler,
                 &mut entry_points_raw,
                 &mut entry_points_raw_length,
             ));
@@ -143,7 +155,13 @@ impl Parser {
                 })
                 .collect::<Result<Vec<_>, _>>();
 
-            Ok(ParsedModule::new(ir, try!(entry_points)))
+            Ok(try!(entry_points))
         }
+    }
+}
+
+impl Drop for Compiler {
+    fn drop(&mut self) {
+        unsafe { sc_internal_compiler_delete(self.sc_compiler); }
     }
 }

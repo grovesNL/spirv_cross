@@ -42,33 +42,56 @@ impl Default for CompilerOptions {
 
 #[derive(Debug, Clone)]
 pub struct Compiler {
-    _unconstructable: (),
+    base: spirv::Compiler,
 }
 
 impl Compiler {
-    pub fn new() -> Compiler {
-        Compiler { _unconstructable: () }
+    pub fn from_module(module: &spirv::Module) -> Result<Self, ErrorCode> {
+        let base = unsafe {
+            let mut compiler = ptr::null_mut();
+            check!(sc_internal_compiler_msl_new(
+                &mut compiler,
+                module.ir.as_ptr() as *const u32,
+                module.ir.len() as usize,
+            ));
+
+            spirv::Compiler {
+                sc_compiler: compiler,
+            }
+        };
+
+        Ok(Compiler { base })
+    }
+
+    pub fn get_decoration(&self, id: u32, decoration: spv::Decoration) -> Result<Option<u32>, ErrorCode> {
+        self.base.get_decoration(id, decoration)
+    }
+
+    pub fn set_decoration(&self, id: u32, decoration: spv::Decoration, argument: u32) -> Result<(), ErrorCode> {
+        self.base.set_decoration(id, decoration, argument)
+    }
+
+    pub fn get_entry_points(&self) -> Result<Vec<spirv::EntryPoint>, ErrorCode> {
+        self.base.get_entry_points()
+    }
+
+    fn set_options(&self, options: &CompilerOptions) -> Result<(), ErrorCode> {
+        let raw_options = options.as_raw();
+        unsafe {
+            check!(sc_internal_compiler_msl_set_options(
+                self.base.sc_compiler,
+                &raw_options,
+            ));
+        }
+
+        Ok(())
     }
 
     pub fn compile(
         &self,
-        parsed_module: &spirv::ParsedModule,
         options: &CompilerOptions,
     ) -> Result<String, ErrorCode> {
-        unsafe {
-            let mut msl_ptr = ptr::null();
-            check!(sc_internal_compiler_msl_compile(
-                parsed_module.ir.as_ptr() as *const u32,
-                parsed_module.ir.len() as usize,
-                &mut msl_ptr,
-                &options.as_raw(),
-            ));
-            let msl = match CStr::from_ptr(msl_ptr).to_owned().into_string() {
-                Err(_) => return Err(ErrorCode::Unhandled),
-                Ok(v) => v,
-            };
-            check!(sc_internal_free_pointer(msl_ptr as *mut c_void));
-            Ok(msl)
-        }
+        self.set_options(options)?;
+        self.base.compile()
     }
 }
