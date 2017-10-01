@@ -1,9 +1,6 @@
-use super::ErrorCode;
-use spirv;
+use {compiler, spirv, ErrorCode};
 use bindings::root::*;
 use std::ptr;
-use std::ffi::CStr;
-use std::os::raw::c_void;
 
 #[allow(non_snake_case, non_camel_case_types)]
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
@@ -78,40 +75,20 @@ impl Default for CompilerOptions {
 }
 
 #[derive(Debug, Clone)]
-pub struct Compiler {
-    base: spirv::Compiler,
+pub struct Compiler<'a> {
+    base: &'a compiler::Compiler,
 }
 
-impl Compiler {
-    pub fn from_module(module: &spirv::Module) -> Result<Self, ErrorCode> {
-        let base = unsafe {
-            let mut compiler = ptr::null_mut();
-            check!(sc_internal_compiler_hlsl_new(
-                &mut compiler,
-                module.ir.as_ptr() as *const u32,
-                module.ir.len() as usize,
-            ));
-
-            spirv::Compiler {
-                sc_compiler: compiler,
-            }
-        };
-
-        Ok(Compiler { base })
+impl<'a> Compiler<'a> {
+    /// Create a new HLSL compiler from AST.
+    pub fn from_ast(ast: &'a spirv::Ast) -> Self {
+        assert_eq!(ast.target, spirv::Target::Hlsl);
+        Compiler {
+            base: &ast.compiler,
+        }
     }
 
-    pub fn get_decoration(&self, id: u32, decoration: spv::Decoration) -> Result<Option<u32>, ErrorCode> {
-        self.base.get_decoration(id, decoration)
-    }
-
-    pub fn set_decoration(&self, id: u32, decoration: spv::Decoration, argument: u32) -> Result<(), ErrorCode> {
-        self.base.set_decoration(id, decoration, argument)
-    }
-
-    pub fn get_entry_points(&self) -> Result<Vec<spirv::EntryPoint>, ErrorCode> {
-        self.base.get_entry_points()
-    }
-
+    /// Set HLSL compiler specific compilation settings.
     fn set_options(&self, options: &CompilerOptions) -> Result<(), ErrorCode> {
         let raw_options = options.as_raw();
         unsafe {
@@ -124,6 +101,7 @@ impl Compiler {
         Ok(())
     }
 
+    /// Generate HLSL shader from the AST.
     pub fn compile(
         &self,
         options: &CompilerOptions,

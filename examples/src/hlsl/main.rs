@@ -14,15 +14,15 @@ fn main() {
     let vertex_module = spirv::Module::new(ir_words_from_bytes(include_bytes!("vertex.spv")));
 
     // Parse a SPIR-V module
-    let compiler = hlsl::Compiler::from_module(&vertex_module).unwrap();
+    let ast = spirv::Ast::parse(&vertex_module, spirv::Target::Hlsl).unwrap();
 
     // List all entry points
-    for entry_point in &compiler.get_entry_points().unwrap() {
+    for entry_point in &ast.get_entry_points().unwrap() {
         println!("{:?}", entry_point);
     }
 
     // Compile to HLSL
-    let hlsl = compiler
+    let hlsl = hlsl::Compiler::from_ast(&ast)
         .compile(&hlsl::CompilerOptions::default())
         .unwrap();
 
