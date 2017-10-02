@@ -1,6 +1,10 @@
 use {compiler, spirv, ErrorCode};
 use bindings::root::*;
 use std::ptr;
+use std::marker::PhantomData;
+
+#[derive(Debug, Clone)]
+pub struct Target;
 
 #[allow(non_snake_case, non_camel_case_types)]
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
@@ -74,26 +78,39 @@ impl Default for CompilerOptions {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct Compiler<'a> {
-    base: &'a compiler::Compiler,
+impl spirv::Parse<Target> for spirv::Ast<Target> {
+    fn parse(module: &spirv::Module) -> Result<Self, ErrorCode> {
+        let compiler = {
+            let mut compiler = ptr::null_mut();
+            unsafe {
+                check!(sc_internal_compiler_hlsl_new(
+                    &mut compiler,
+                    module.ir.as_ptr() as *const u32,
+                    module.ir.len() as usize,
+                ));
+            }
+
+            compiler::Compiler {
+                sc_compiler: compiler,
+            }
+        };
+
+        Ok(spirv::Ast {
+            compiler,
+            target_type: PhantomData,
+        })
+    }
 }
 
-impl<'a> Compiler<'a> {
-    /// Create a new HLSL compiler from AST.
-    pub fn from_ast(ast: &'a spirv::Ast) -> Self {
-        assert_eq!(ast.target, spirv::Target::Hlsl);
-        Compiler {
-            base: &ast.compiler,
-        }
-    }
+impl spirv::Compile<Target> for spirv::Ast<Target> {
+    type CompilerOptions = CompilerOptions;
 
     /// Set HLSL compiler specific compilation settings.
-    fn set_options(&self, options: &CompilerOptions) -> Result<(), ErrorCode> {
+    fn set_compile_options(&mut self, options: &CompilerOptions) -> Result<(), ErrorCode> {
         let raw_options = options.as_raw();
         unsafe {
             check!(sc_internal_compiler_hlsl_set_options(
-                self.base.sc_compiler,
+                self.compiler.sc_compiler,
                 &raw_options,
             ));
         }
@@ -102,11 +119,7 @@ impl<'a> Compiler<'a> {
     }
 
     /// Generate HLSL shader from the AST.
-    pub fn compile(
-        &self,
-        options: &CompilerOptions,
-    ) -> Result<String, ErrorCode> {
-        self.set_options(options)?;
-        self.base.compile()
+    fn compile(&self) -> Result<String, ErrorCode> {
+        self.compiler.compile()
     }
 }
