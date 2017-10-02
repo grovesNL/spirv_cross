@@ -1,9 +1,6 @@
-use super::ErrorCode;
-use spirv;
+use {compiler, spirv, ErrorCode};
 use bindings::root::*;
 use std::ptr;
-use std::ffi::CStr;
-use std::os::raw::c_void;
 
 #[allow(non_snake_case, non_camel_case_types)]
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
@@ -78,34 +75,38 @@ impl Default for CompilerOptions {
 }
 
 #[derive(Debug, Clone)]
-pub struct Compiler {
-    _unconstructable: (),
+pub struct Compiler<'a> {
+    base: &'a compiler::Compiler,
 }
 
-impl Compiler {
-    pub fn new() -> Compiler {
-        Compiler { _unconstructable: () }
+impl<'a> Compiler<'a> {
+    /// Create a new HLSL compiler from AST.
+    pub fn from_ast(ast: &'a spirv::Ast) -> Self {
+        assert_eq!(ast.target, spirv::Target::Hlsl);
+        Compiler {
+            base: &ast.compiler,
+        }
     }
 
+    /// Set HLSL compiler specific compilation settings.
+    fn set_options(&self, options: &CompilerOptions) -> Result<(), ErrorCode> {
+        let raw_options = options.as_raw();
+        unsafe {
+            check!(sc_internal_compiler_hlsl_set_options(
+                self.base.sc_compiler,
+                &raw_options,
+            ));
+        }
+
+        Ok(())
+    }
+
+    /// Generate HLSL shader from the AST.
     pub fn compile(
         &self,
-        parsed_module: &spirv::ParsedModule,
         options: &CompilerOptions,
     ) -> Result<String, ErrorCode> {
-        unsafe {
-            let mut hlsl_ptr = ptr::null();
-            check!(sc_internal_compiler_hlsl_compile(
-                parsed_module.ir.as_ptr() as *const u32,
-                parsed_module.ir.len() as usize,
-                &mut hlsl_ptr,
-                &options.as_raw(),
-            ));
-            let hlsl = match CStr::from_ptr(hlsl_ptr).to_owned().into_string() {
-                Err(_) => return Err(ErrorCode::Unhandled),
-                Ok(v) => v,
-            };
-            check!(sc_internal_free_pointer(hlsl_ptr as *mut c_void));
-            Ok(hlsl)
-        }
+        self.set_options(options)?;
+        self.base.compile()
     }
 }

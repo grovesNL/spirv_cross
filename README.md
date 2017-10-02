@@ -15,26 +15,23 @@
 
 ```rust
 extern crate spirv_cross;
-use spirv_cross::{spirv, hlsl, msl};
+use spirv_cross::{spirv, hlsl, msl, ErrorCode};
 
-fn example(module: spirv::Module) {
-    // Parse a SPIR-V module
-    let parsed_module = spirv::Parser::new()
-        .parse(&module, &spirv::ParserOptions::default())
-        .unwrap();
-
+fn example(module: spirv::Module) -> Result<(), ErrorCode> {
     // Compile to HLSL
-    let hlsl = hlsl::Compiler::new()
-        .compile(&parsed_module, &hlsl::CompilerOptions::default())
-        .unwrap();
+    let ast = spirv::Ast::parse(&module, spirv::Target::Hlsl)?;
+    let hlsl = hlsl::Compiler::from_ast(&ast)
+        .compile(&hlsl::CompilerOptions::default())?;
 
     println!("{}", hlsl);
 
     // Compile to MSL
-    let msl = msl::Compiler::new()
-        .compile(&parsed_module, &msl::CompilerOptions::default())
-        .unwrap();
+    let ast = spirv::Ast::parse(&module, spirv::Target::Msl)?;
+    let msl = msl::Compiler::from_ast(&ast)
+        .compile(&msl::CompilerOptions::default())?;
 
     println!("{}", msl);
+
+    Ok(())
 }
 ```

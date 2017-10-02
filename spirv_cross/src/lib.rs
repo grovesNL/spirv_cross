@@ -1,5 +1,8 @@
 macro_rules! check {
     ($check:expr) => {{
+        use std::ffi::CStr;
+        use std::os::raw::c_void;
+
         let result = $check;
         if ScInternalResult::Success != result {
             if ScInternalResult::CompilationError == result {
@@ -30,6 +33,8 @@ macro_rules! check {
         }
     }
 }}
+
+mod compiler;
 
 pub mod spirv;
 pub mod hlsl;
