@@ -12,12 +12,8 @@ impl spirv::ExecutionModel {
         use spirv::ExecutionModel::*;
         match raw {
             spv::ExecutionModel::ExecutionModelVertex => Ok(Vertex),
-            spv::ExecutionModel::ExecutionModelTessellationControl => {
-                Ok(TessellationControl)
-            }
-            spv::ExecutionModel::ExecutionModelTessellationEvaluation => {
-                Ok(TessellationEvaluation)
-            }
+            spv::ExecutionModel::ExecutionModelTessellationControl => Ok(TessellationControl),
+            spv::ExecutionModel::ExecutionModelTessellationEvaluation => Ok(TessellationEvaluation),
             spv::ExecutionModel::ExecutionModelGeometry => Ok(Geometry),
             spv::ExecutionModel::ExecutionModelFragment => Ok(Fragment),
             spv::ExecutionModel::ExecutionModelGLCompute => Ok(GlCompute),
@@ -49,7 +45,11 @@ impl Compiler {
         }
     }
 
-    pub fn get_decoration(&self, id: u32, decoration: spv::Decoration) -> Result<Option<u32>, ErrorCode> {
+    pub fn get_decoration(
+        &self,
+        id: u32,
+        decoration: spv::Decoration,
+    ) -> Result<Option<u32>, ErrorCode> {
         let mut result = 0;
         unsafe {
             check!(sc_internal_compiler_get_decoration(
@@ -66,7 +66,12 @@ impl Compiler {
         })
     }
 
-    pub fn set_decoration(&self, id: u32, decoration: spv::Decoration, argument: u32) -> Result<(), ErrorCode> {
+    pub fn set_decoration(
+        &mut self,
+        id: u32,
+        decoration: spv::Decoration,
+        argument: u32,
+    ) -> Result<(), ErrorCode> {
         unsafe {
             check!(sc_internal_compiler_set_decoration(
                 self.sc_compiler,
@@ -104,9 +109,9 @@ impl Compiler {
 
                     let entry_point = spirv::EntryPoint {
                         name,
-                        execution_model: try!(
-                            spirv::ExecutionModel::from_raw(entry_point_raw.execution_model)
-                        ),
+                        execution_model: try!(spirv::ExecutionModel::from_raw(
+                            entry_point_raw.execution_model
+                        )),
                         workgroup_size: spirv::WorkgroupSize {
                             x: entry_point_raw.workgroup_size_x,
                             y: entry_point_raw.workgroup_size_y,
@@ -130,6 +135,8 @@ impl Compiler {
 
 impl Drop for Compiler {
     fn drop(&mut self) {
-        unsafe { sc_internal_compiler_delete(self.sc_compiler); }
+        unsafe {
+            sc_internal_compiler_delete(self.sc_compiler);
+        }
     }
 }

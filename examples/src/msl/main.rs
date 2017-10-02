@@ -14,7 +14,7 @@ fn main() {
     let vertex_module = spirv::Module::new(ir_words_from_bytes(include_bytes!("vertex.spv")));
 
     // Parse a SPIR-V module
-    let ast = spirv::Ast::parse(&vertex_module, spirv::Target::Msl).unwrap();
+    let ast = spirv::Ast::<msl::Target>::parse(&vertex_module).unwrap();
 
     // List all entry points
     for entry_point in &ast.get_entry_points().unwrap() {
@@ -22,9 +22,6 @@ fn main() {
     }
 
     // Compile to MSL
-    let msl = msl::Compiler::from_ast(&ast)
-        .compile(&msl::CompilerOptions::default())
-        .unwrap();
-
-    println!("{}", msl);
+    let shader = ast.compile().unwrap();
+    println!("{}", shader);
 }

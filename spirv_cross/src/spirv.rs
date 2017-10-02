@@ -1,7 +1,7 @@
 use ErrorCode;
 use bindings::root::*;
 use compiler;
-use std::ptr;
+use std::marker::PhantomData;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 pub enum ExecutionModel {
@@ -39,56 +39,63 @@ impl<'a> Module<'a> {
     }
 }
 
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
-pub enum Target {
-    Hlsl,
-    Msl,
+pub(crate) trait RawCompilerOptions<T> {
+    fn as_raw(&self) -> T;
 }
 
-pub struct Ast {
-    pub(crate) target: Target,
+pub struct Ast<TTarget> {
     pub(crate) compiler: compiler::Compiler,
+    pub(crate) target_type: PhantomData<TTarget>,
 }
 
-impl Ast {
-    pub fn parse(module: &Module, target: Target) -> Result<Self, ErrorCode> {
-        let compiler = {
-            let mut compiler = ptr::null_mut();
-            match target {
-                Target::Hlsl => unsafe {
-                    check!(sc_internal_compiler_hlsl_new(
-                        &mut compiler,
-                        module.ir.as_ptr() as *const u32,
-                        module.ir.len() as usize,
-                    ));
-                },
-                Target::Msl => unsafe {
-                    check!(sc_internal_compiler_msl_new(
-                        &mut compiler,
-                        module.ir.as_ptr() as *const u32,
-                        module.ir.len() as usize,
-                    ));
-                },
-            }
+pub trait Parse<TTarget>: Sized {
+    fn parse(module: &Module) -> Result<Self, ErrorCode>;
+}
 
-            compiler::Compiler { sc_compiler: compiler }
-        };
+pub trait Compile<TTarget> {
+    type CompilerOptions;
 
-        Ok(Ast {
-            compiler,
-            target,
-        })
-    }
+    fn set_compile_options(&mut self, options: &Self::CompilerOptions) -> Result<(), ErrorCode>;
+    fn compile(&self) -> Result<String, ErrorCode>;
+}
 
-    pub fn get_decoration(&self, id: u32, decoration: spv::Decoration) -> Result<Option<u32>, ErrorCode> {
+impl<TTarget> Ast<TTarget>
+where
+    Ast<TTarget>: Parse<TTarget> + Compile<TTarget>,
+{
+    pub fn get_decoration(
+        &self,
+        id: u32,
+        decoration: spv::Decoration,
+    ) -> Result<Option<u32>, ErrorCode> {
         self.compiler.get_decoration(id, decoration)
     }
 
-    pub fn set_decoration(&self, id: u32, decoration: spv::Decoration, argument: u32) -> Result<(), ErrorCode> {
+    pub fn set_decoration(
+        &mut self,
+        id: u32,
+        decoration: spv::Decoration,
+        argument: u32,
+    ) -> Result<(), ErrorCode> {
         self.compiler.set_decoration(id, decoration, argument)
     }
 
     pub fn get_entry_points(&self) -> Result<Vec<EntryPoint>, ErrorCode> {
         self.compiler.get_entry_points()
+    }
+
+    pub fn parse(module: &Module) -> Result<Self, ErrorCode> {
+        Parse::<TTarget>::parse(&module)
+    }
+
+    pub fn set_compile_options(
+        &mut self,
+        options: <Ast<TTarget> as Compile<TTarget>>::CompilerOptions,
+    ) -> Result<(), ErrorCode> {
+        Compile::<TTarget>::set_compile_options(self, &options)
+    }
+
+    pub fn compile(&self) -> Result<String, ErrorCode> {
+        Compile::<TTarget>::compile(self)
     }
 }

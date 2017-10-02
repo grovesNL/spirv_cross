@@ -19,18 +19,12 @@ use spirv_cross::{spirv, hlsl, msl, ErrorCode};
 
 fn example(module: spirv::Module) -> Result<(), ErrorCode> {
     // Compile to HLSL
-    let ast = spirv::Ast::parse(&module, spirv::Target::Hlsl)?;
-    let hlsl = hlsl::Compiler::from_ast(&ast)
-        .compile(&hlsl::CompilerOptions::default())?;
-
-    println!("{}", hlsl);
+    let ast = spirv::Ast::<hlsl::Target>::parse(&module)?;
+    println!("{}", ast.compile()?);
 
     // Compile to MSL
-    let ast = spirv::Ast::parse(&module, spirv::Target::Msl)?;
-    let msl = msl::Compiler::from_ast(&ast)
-        .compile(&msl::CompilerOptions::default())?;
-
-    println!("{}", msl);
+    let ast = spirv::Ast::<msl::Target>::parse(&module)?;
+    println!("{}", ast.compile()?);
 
     Ok(())
 }

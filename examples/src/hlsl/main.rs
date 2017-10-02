@@ -1,5 +1,5 @@
 extern crate spirv_cross;
-use spirv_cross::{spirv, hlsl};
+use spirv_cross::{hlsl, spirv};
 
 fn ir_words_from_bytes(buf: &[u8]) -> &[u32] {
     unsafe {
@@ -14,7 +14,7 @@ fn main() {
     let vertex_module = spirv::Module::new(ir_words_from_bytes(include_bytes!("vertex.spv")));
 
     // Parse a SPIR-V module
-    let ast = spirv::Ast::parse(&vertex_module, spirv::Target::Hlsl).unwrap();
+    let ast = spirv::Ast::<hlsl::Target>::parse(&vertex_module).unwrap();
 
     // List all entry points
     for entry_point in &ast.get_entry_points().unwrap() {
@@ -22,9 +22,6 @@ fn main() {
     }
 
     // Compile to HLSL
-    let hlsl = hlsl::Compiler::from_ast(&ast)
-        .compile(&hlsl::CompilerOptions::default())
-        .unwrap();
-
-    println!("{}", hlsl);
+    let shader = ast.compile().unwrap();
+    println!("{}", shader);
 }
