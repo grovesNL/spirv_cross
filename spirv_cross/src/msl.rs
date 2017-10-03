@@ -51,8 +51,8 @@ impl spirv::Parse<Target> for spirv::Ast<Target> {
             unsafe {
                 check!(sc_internal_compiler_msl_new(
                     &mut compiler,
-                    module.ir.as_ptr() as *const u32,
-                    module.ir.len() as usize,
+                    module.words.as_ptr() as *const u32,
+                    module.words.len() as usize,
                 ));
             }
 
