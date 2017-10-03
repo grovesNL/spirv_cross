@@ -3,9 +3,11 @@ use bindings::root::*;
 use std::ptr;
 use std::marker::PhantomData;
 
+/// A HLSL target.
 #[derive(Debug, Clone)]
 pub struct Target;
 
+/// A HLSL shader model version.
 #[allow(non_snake_case, non_camel_case_types)]
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 pub enum ShaderModel {
@@ -52,7 +54,7 @@ impl Default for CompilerVertexOptions {
     }
 }
 
-
+/// HLSL compiler options.
 #[derive(Debug, Clone)]
 pub struct CompilerOptions {
     pub shader_model: ShaderModel,
