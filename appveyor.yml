@@ -1,34 +1,33 @@
+os: Visual Studio 2015
+
 environment:
   global:
-    RUST_VERSION: stable
+    CHANNEL: stable
     CRATE_NAME: spirv_cross
   matrix:
     - TARGET: x86_64-pc-windows-gnu
     - TARGET: x86_64-pc-windows-msvc
 
+cache:
+  - 'C:\Users\appveyor\.cargo'
+
 install:
-  - ps: >-
-      If ($Env:TARGET -eq 'x86_64-pc-windows-gnu') {
-        $Env:PATH += ';C:\msys64\mingw64\bin'
-      }
-  - git submodule update --init --recursive
-  - curl -sSf -o rustup-init.exe https://win.rustup.rs/
-  - rustup-init.exe -y --default-host %TARGET% --default-toolchain %RUST_VERSION%
-  - set PATH=%PATH%;C:\Users\appveyor\.cargo\bin
+  - curl -sSf -o rustup-init.exe https://win.rustup.rs
+  - rustup-init.exe --default-host %TARGET% --default-toolchain %CHANNEL% -y
+  - set PATH=%PATH%;C:\msys64\mingw64\bin;C:\Users\appveyor\.cargo\bin
   - rustc -Vv
   - cargo -V
+  - git submodule update --init --recursive
+
+build_script:
+  - cargo build --verbose --all --target %TARGET%
+  - cargo build --verbose --all --target %TARGET% --release
 
 test_script:
-  - if [%APPVEYOR_REPO_TAG%]==[false] (
-      cargo build --all --target %TARGET% &&
-      cargo build --all --target %TARGET% --release &&
-      cargo test --all --target %TARGET% &&
-      cargo test --all --target %TARGET% --release
-    )
+  - cargo test --verbose --all --target %TARGET% 
+  - cargo test --verbose --all --target %TARGET% --release
 
 branches:
   only:
     - /^v\d+\.\d+\.\d+.*$/
     - master
-
-build: false
