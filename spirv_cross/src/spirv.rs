@@ -30,12 +30,12 @@ pub struct EntryPoint {
 
 #[derive(Debug, Clone)]
 pub struct Module<'a> {
-    pub(crate) ir: &'a [u32],
+    pub(crate) words: &'a [u32],
 }
 
 impl<'a> Module<'a> {
-    pub fn new(ir: &[u32]) -> Module {
-        Module { ir }
+    pub fn from_words(words: &[u32]) -> Module {
+        Module { words }
     }
 }
 

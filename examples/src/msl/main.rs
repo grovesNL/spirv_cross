@@ -1,20 +1,13 @@
 extern crate spirv_cross;
-use spirv_cross::{spirv, msl};
-
-fn ir_words_from_bytes(buf: &[u8]) -> &[u32] {
-    unsafe {
-        std::slice::from_raw_parts(
-            buf.as_ptr() as *const u32,
-            buf.len() / std::mem::size_of::<u32>(),
-        )
-    }
-}
+extern crate examples;
+use spirv_cross::{msl, spirv};
+use examples::words_from_bytes;
 
 fn main() {
-    let vertex_module = spirv::Module::new(ir_words_from_bytes(include_bytes!("vertex.spv")));
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("../vertex.spv")));
 
     // Parse a SPIR-V module
-    let ast = spirv::Ast::<msl::Target>::parse(&vertex_module).unwrap();
+    let ast = spirv::Ast::<msl::Target>::parse(&module).unwrap();
 
     // List all entry points
     for entry_point in &ast.get_entry_points().unwrap() {
