@@ -3,6 +3,7 @@ use bindings::root::*;
 use std::ptr;
 use std::marker::PhantomData;
 
+/// A MSL target.
 #[derive(Debug, Clone)]
 pub struct Target;
 
@@ -21,6 +22,7 @@ impl Default for CompilerVertexOptions {
     }
 }
 
+/// MSL compiler options.
 #[derive(Debug, Clone)]
 pub struct CompilerOptions {
     pub vertex: CompilerVertexOptions,
