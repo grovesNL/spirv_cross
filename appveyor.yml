@@ -34,7 +34,7 @@ branches:
 
 notifications:
   - provider: Webhook
-    url: https://webhooks.gitter.im/e/50fad19d7ee8c21023ef
+    url: https://webhooks.gitter.im/e/8748eda7974203c7a542
     on_build_success: false
     on_build_failure: true
     on_build_status_changed: true
