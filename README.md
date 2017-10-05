@@ -11,6 +11,8 @@
 
 ## Example
 
+[![Join the chat at https://gitter.im/spirv_cross/Lobby](https://badges.gitter.im/spirv_cross/Lobby.svg)](https://gitter.im/spirv_cross/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 `spirv_cross` provides a safe wrapper around [SPIRV-Cross](https://github.com/KhronosGroup/SPIRV-Cross) for use with Rust. For example, here is a simple function to parse a SPIR-V module and compile it to HLSL and MSL:
 
 ```rust
