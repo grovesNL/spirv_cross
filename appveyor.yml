@@ -31,3 +31,10 @@ branches:
   only:
     - /^v\d+\.\d+\.\d+.*$/
     - master
+
+notifications:
+  - provider: Webhook
+    url: https://webhooks.gitter.im/e/50fad19d7ee8c21023ef
+    on_build_success: false
+    on_build_failure: true
+    on_build_status_changed: true
