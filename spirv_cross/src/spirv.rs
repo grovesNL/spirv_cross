@@ -1,5 +1,4 @@
 use ErrorCode;
-use bindings::root::*;
 use compiler;
 use std::marker::PhantomData;
 
@@ -17,6 +16,11 @@ pub enum ExecutionModel {
 
 /// A work group size.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+pub enum Decoration {
+    DescriptorSet,
+}
+
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 pub struct WorkgroupSize {
     pub x: u32,
     pub y: u32,
@@ -32,6 +36,29 @@ pub struct EntryPoint {
 }
 
 /// A SPIR-V shader module.
+#[derive(Debug, Clone)]
+pub struct Resource {
+    pub id: u32,
+    pub type_id: u32,
+    pub base_type_id: u32,
+    pub name: String,
+}
+
+#[derive(Debug, Clone)]
+pub struct ShaderResources {
+    pub uniform_buffers: Vec<Resource>,
+    pub storage_buffers: Vec<Resource>,
+    pub stage_inputs: Vec<Resource>,
+    pub stage_outputs: Vec<Resource>,
+    pub subpass_inputs: Vec<Resource>,
+    pub storage_images: Vec<Resource>,
+    pub sampled_images: Vec<Resource>,
+    pub atomic_counters: Vec<Resource>,
+    pub push_constant_buffers: Vec<Resource>,
+    pub separate_images: Vec<Resource>,
+    pub separate_samplers: Vec<Resource>,
+}
+
 #[derive(Debug, Clone)]
 pub struct Module<'a> {
     pub(crate) words: &'a [u32],
@@ -70,8 +97,8 @@ where
     pub fn get_decoration(
         &self,
         id: u32,
-        decoration: spv::Decoration,
-    ) -> Result<Option<u32>, ErrorCode> {
+        decoration: Decoration,
+    ) -> Result<u32, ErrorCode> {
         self.compiler.get_decoration(id, decoration)
     }
 
@@ -79,7 +106,7 @@ where
     pub fn set_decoration(
         &mut self,
         id: u32,
-        decoration: spv::Decoration,
+        decoration: Decoration,
         argument: u32,
     ) -> Result<(), ErrorCode> {
         self.compiler.set_decoration(id, decoration, argument)
@@ -88,6 +115,10 @@ where
     /// Gets entry points.
     pub fn get_entry_points(&self) -> Result<Vec<EntryPoint>, ErrorCode> {
         self.compiler.get_entry_points()
+    }
+
+    pub fn get_shader_resources(&self) -> Result<ShaderResources, ErrorCode> {
+        self.compiler.get_shader_resources()
     }
 
     /// Parses a module into `Ast`.

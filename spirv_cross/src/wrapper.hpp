@@ -36,6 +36,35 @@ typedef struct ScMslCompilerOptions
     bool vertex_invert_y;
 } ScMslCompilerOptions;
 
+typedef struct ScResource
+{
+    uint32_t id;
+    uint32_t type_id;
+    uint32_t base_type_id;
+    char *name;
+} ScResource;
+
+typedef struct ScResourceArray
+{
+    ScResource *data;
+    size_t num;
+} ScResourceArray;
+
+typedef struct ScShaderResources
+{
+    ScResourceArray uniform_buffers;
+    ScResourceArray storage_buffers;
+    ScResourceArray stage_inputs;
+    ScResourceArray stage_outputs;
+    ScResourceArray subpass_inputs;
+    ScResourceArray storage_images;
+    ScResourceArray sampled_images;
+    ScResourceArray atomic_counters;
+    ScResourceArray push_constant_buffers;
+    ScResourceArray separate_images;
+    ScResourceArray separate_samplers;
+} ScShaderResources;
+
 ScInternalResult sc_internal_get_latest_exception_message(const char **message);
 
 ScInternalResult sc_internal_compiler_hlsl_new(ScInternalCompilerHlsl **compiler, const uint32_t *ir, size_t size);
@@ -47,6 +76,7 @@ ScInternalResult sc_internal_compiler_msl_set_options(const ScInternalCompilerHl
 ScInternalResult sc_internal_compiler_get_decoration(const ScInternalCompilerBase *compiler, uint32_t *result, uint32_t id, spv::Decoration decoration);
 ScInternalResult sc_internal_compiler_set_decoration(const ScInternalCompilerBase *compiler, uint32_t id, spv::Decoration decoration, uint32_t argument);
 ScInternalResult sc_internal_compiler_get_entry_points(const ScInternalCompilerBase *compiler, ScEntryPoint **entry_points, size_t *size);
+ScInternalResult sc_internal_compiler_get_shader_resources(const ScInternalCompilerBase *compiler, ScShaderResources *shader_resources);
 ScInternalResult sc_internal_compiler_compile(const ScInternalCompilerBase *compiler, const char **shader);
 ScInternalResult sc_internal_compiler_delete(ScInternalCompilerBase *compiler);
 

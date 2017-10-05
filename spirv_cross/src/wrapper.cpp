@@ -118,6 +118,50 @@ ScInternalResult sc_internal_compiler_get_entry_points(const ScInternalCompilerB
         } while (0);)
 }
 
+void fill_resource_array(ScResourceArray *resources, const std::vector<spirv_cross::Resource>& sc_resources)
+{
+    auto const sc_size = sc_resources.size();
+
+    if(sc_size == 0)
+    {
+        resources->num = 0;
+        resources->data = 0x0;
+        return;
+    }
+
+    resources->num = sc_size;
+    resources->data = (ScResource *)malloc(sc_size * sizeof(ScResource));
+    for (uint32_t i = 0; i < sc_size; i++)
+    {
+        auto const& resource = sc_resources[i];
+        resources->data[i].id = resource.id;
+        resources->data[i].type_id = resource.type_id;
+        resources->data[i].base_type_id = resource.base_type_id;
+        resources->data[i].name = strdup(resource.name.c_str());
+    }
+}
+
+ScInternalResult sc_internal_compiler_get_shader_resources(const ScInternalCompilerBase *compiler, ScShaderResources *shader_resources)
+{
+    INTERNAL_RESULT(
+        do {
+            // Unsafe
+            auto const sc_resources = ((const spirv_cross::Compiler *)compiler)->get_shader_resources();
+
+            fill_resource_array(&shader_resources->uniform_buffers, sc_resources.uniform_buffers);
+            fill_resource_array(&shader_resources->storage_buffers, sc_resources.storage_buffers);
+            fill_resource_array(&shader_resources->stage_inputs, sc_resources.stage_inputs);
+            fill_resource_array(&shader_resources->stage_outputs, sc_resources.stage_outputs);
+            fill_resource_array(&shader_resources->subpass_inputs, sc_resources.subpass_inputs);
+            fill_resource_array(&shader_resources->storage_images, sc_resources.storage_images);
+            fill_resource_array(&shader_resources->sampled_images, sc_resources.sampled_images);
+            fill_resource_array(&shader_resources->atomic_counters, sc_resources.atomic_counters);
+            fill_resource_array(&shader_resources->push_constant_buffers, sc_resources.push_constant_buffers);
+            fill_resource_array(&shader_resources->separate_images, sc_resources.separate_images);
+            fill_resource_array(&shader_resources->separate_samplers, sc_resources.separate_samplers);
+        } while (0);)
+}
+
 ScInternalResult sc_internal_compiler_compile(const ScInternalCompilerBase *compiler, const char **shader)
 {
     INTERNAL_RESULT(

@@ -1509,6 +1509,162 @@ pub mod root {
     impl Clone for ScMslCompilerOptions {
         fn clone(&self) -> Self { *self }
     }
+    #[repr(C)]
+    #[derive(Debug, Copy)]
+    pub struct ScResource {
+        pub id: u32,
+        pub type_id: u32,
+        pub base_type_id: u32,
+        pub name: *mut ::std::os::raw::c_char,
+    }
+    #[test]
+    fn bindgen_test_layout_ScResource() {
+        assert_eq!(::std::mem::size_of::<ScResource>() , 24usize , concat ! (
+                   "Size of: " , stringify ! ( ScResource ) ));
+        assert_eq! (::std::mem::align_of::<ScResource>() , 8usize , concat ! (
+                    "Alignment of " , stringify ! ( ScResource ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScResource ) ) . id as * const _ as
+                    usize } , 0usize , concat ! (
+                    "Alignment of field: " , stringify ! ( ScResource ) , "::"
+                    , stringify ! ( id ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScResource ) ) . type_id as * const _
+                    as usize } , 4usize , concat ! (
+                    "Alignment of field: " , stringify ! ( ScResource ) , "::"
+                    , stringify ! ( type_id ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScResource ) ) . base_type_id as *
+                    const _ as usize } , 8usize , concat ! (
+                    "Alignment of field: " , stringify ! ( ScResource ) , "::"
+                    , stringify ! ( base_type_id ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScResource ) ) . name as * const _ as
+                    usize } , 16usize , concat ! (
+                    "Alignment of field: " , stringify ! ( ScResource ) , "::"
+                    , stringify ! ( name ) ));
+    }
+    impl Clone for ScResource {
+        fn clone(&self) -> Self { *self }
+    }
+    #[repr(C)]
+    #[derive(Debug, Copy)]
+    pub struct ScResourceArray {
+        pub data: *mut root::ScResource,
+        pub num: usize,
+    }
+    #[test]
+    fn bindgen_test_layout_ScResourceArray() {
+        assert_eq!(::std::mem::size_of::<ScResourceArray>() , 16usize , concat
+                   ! ( "Size of: " , stringify ! ( ScResourceArray ) ));
+        assert_eq! (::std::mem::align_of::<ScResourceArray>() , 8usize ,
+                    concat ! (
+                    "Alignment of " , stringify ! ( ScResourceArray ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScResourceArray ) ) . data as * const
+                    _ as usize } , 0usize , concat ! (
+                    "Alignment of field: " , stringify ! ( ScResourceArray ) ,
+                    "::" , stringify ! ( data ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScResourceArray ) ) . num as * const
+                    _ as usize } , 8usize , concat ! (
+                    "Alignment of field: " , stringify ! ( ScResourceArray ) ,
+                    "::" , stringify ! ( num ) ));
+    }
+    impl Clone for ScResourceArray {
+        fn clone(&self) -> Self { *self }
+    }
+    #[repr(C)]
+    #[derive(Debug, Copy)]
+    pub struct ScShaderResources {
+        pub uniform_buffers: root::ScResourceArray,
+        pub storage_buffers: root::ScResourceArray,
+        pub stage_inputs: root::ScResourceArray,
+        pub stage_outputs: root::ScResourceArray,
+        pub subpass_inputs: root::ScResourceArray,
+        pub storage_images: root::ScResourceArray,
+        pub sampled_images: root::ScResourceArray,
+        pub atomic_counters: root::ScResourceArray,
+        pub push_constant_buffers: root::ScResourceArray,
+        pub separate_images: root::ScResourceArray,
+        pub separate_samplers: root::ScResourceArray,
+    }
+    #[test]
+    fn bindgen_test_layout_ScShaderResources() {
+        assert_eq!(::std::mem::size_of::<ScShaderResources>() , 176usize ,
+                   concat ! ( "Size of: " , stringify ! ( ScShaderResources )
+                   ));
+        assert_eq! (::std::mem::align_of::<ScShaderResources>() , 8usize ,
+                    concat ! (
+                    "Alignment of " , stringify ! ( ScShaderResources ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScShaderResources ) ) .
+                    uniform_buffers as * const _ as usize } , 0usize , concat
+                    ! (
+                    "Alignment of field: " , stringify ! ( ScShaderResources )
+                    , "::" , stringify ! ( uniform_buffers ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScShaderResources ) ) .
+                    storage_buffers as * const _ as usize } , 16usize , concat
+                    ! (
+                    "Alignment of field: " , stringify ! ( ScShaderResources )
+                    , "::" , stringify ! ( storage_buffers ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScShaderResources ) ) . stage_inputs
+                    as * const _ as usize } , 32usize , concat ! (
+                    "Alignment of field: " , stringify ! ( ScShaderResources )
+                    , "::" , stringify ! ( stage_inputs ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScShaderResources ) ) . stage_outputs
+                    as * const _ as usize } , 48usize , concat ! (
+                    "Alignment of field: " , stringify ! ( ScShaderResources )
+                    , "::" , stringify ! ( stage_outputs ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScShaderResources ) ) .
+                    subpass_inputs as * const _ as usize } , 64usize , concat
+                    ! (
+                    "Alignment of field: " , stringify ! ( ScShaderResources )
+                    , "::" , stringify ! ( subpass_inputs ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScShaderResources ) ) .
+                    storage_images as * const _ as usize } , 80usize , concat
+                    ! (
+                    "Alignment of field: " , stringify ! ( ScShaderResources )
+                    , "::" , stringify ! ( storage_images ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScShaderResources ) ) .
+                    sampled_images as * const _ as usize } , 96usize , concat
+                    ! (
+                    "Alignment of field: " , stringify ! ( ScShaderResources )
+                    , "::" , stringify ! ( sampled_images ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScShaderResources ) ) .
+                    atomic_counters as * const _ as usize } , 112usize ,
+                    concat ! (
+                    "Alignment of field: " , stringify ! ( ScShaderResources )
+                    , "::" , stringify ! ( atomic_counters ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScShaderResources ) ) .
+                    push_constant_buffers as * const _ as usize } , 128usize ,
+                    concat ! (
+                    "Alignment of field: " , stringify ! ( ScShaderResources )
+                    , "::" , stringify ! ( push_constant_buffers ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScShaderResources ) ) .
+                    separate_images as * const _ as usize } , 144usize ,
+                    concat ! (
+                    "Alignment of field: " , stringify ! ( ScShaderResources )
+                    , "::" , stringify ! ( separate_images ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScShaderResources ) ) .
+                    separate_samplers as * const _ as usize } , 160usize ,
+                    concat ! (
+                    "Alignment of field: " , stringify ! ( ScShaderResources )
+                    , "::" , stringify ! ( separate_samplers ) ));
+    }
+    impl Clone for ScShaderResources {
+        fn clone(&self) -> Self { *self }
+    }
     extern "C" {
         pub fn sc_internal_get_latest_exception_message(message:
                                                             *mut *const ::std::os::raw::c_char)
@@ -1563,6 +1719,13 @@ pub mod root {
                                                      entry_points:
                                                          *mut *mut root::ScEntryPoint,
                                                      size: *mut usize)
+         -> root::ScInternalResult;
+    }
+    extern "C" {
+        pub fn sc_internal_compiler_get_shader_resources(compiler:
+                                                             *const root::ScInternalCompilerBase,
+                                                         shader_resources:
+                                                             *mut root::ScShaderResources)
          -> root::ScInternalResult;
     }
     extern "C" {

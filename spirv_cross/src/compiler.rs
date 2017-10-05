@@ -4,7 +4,7 @@
 use bindings::root::*;
 use ErrorCode;
 use spirv;
-use std::ptr;
+use std::{mem, ptr, slice};
 use std::ffi::CStr;
 
 impl spirv::ExecutionModel {
@@ -19,6 +19,14 @@ impl spirv::ExecutionModel {
             spv::ExecutionModel::ExecutionModelGLCompute => Ok(GlCompute),
             spv::ExecutionModel::ExecutionModelKernel => Ok(Kernel),
             _ => Err(ErrorCode::Unhandled),
+        }
+    }
+}
+
+impl spirv::Decoration {
+    fn as_raw(&self) -> spv::Decoration {
+        match *self {
+            spirv::Decoration::DescriptorSet => spv::Decoration::DecorationDescriptorSet,
         }
     }
 }
@@ -48,35 +56,31 @@ impl Compiler {
     pub fn get_decoration(
         &self,
         id: u32,
-        decoration: spv::Decoration,
-    ) -> Result<Option<u32>, ErrorCode> {
+        decoration: spirv::Decoration,
+    ) -> Result<u32, ErrorCode> {
         let mut result = 0;
         unsafe {
             check!(sc_internal_compiler_get_decoration(
                 self.sc_compiler,
                 &mut result,
                 id,
-                decoration,
+                decoration.as_raw(),
             ));
         }
-
-        Ok(match result {
-            0 => None,
-            _ => Some(result),
-        })
+        Ok(result)
     }
 
     pub fn set_decoration(
         &mut self,
         id: u32,
-        decoration: spv::Decoration,
+        decoration: spirv::Decoration,
         argument: u32,
     ) -> Result<(), ErrorCode> {
         unsafe {
             check!(sc_internal_compiler_set_decoration(
                 self.sc_compiler,
                 id,
-                decoration,
+                decoration.as_raw(),
                 argument,
             ));
         }
@@ -129,6 +133,72 @@ impl Compiler {
                 .collect::<Result<Vec<_>, _>>();
 
             Ok(try!(entry_points))
+        }
+    }
+
+    pub fn get_shader_resources(&self) -> Result<spirv::ShaderResources, ErrorCode> {
+        unsafe {
+            let mut shader_resources_raw = mem::zeroed();
+            check!(sc_internal_compiler_get_shader_resources(
+                self.sc_compiler,
+                &mut shader_resources_raw,
+            ));
+
+            let fill_resources = |array_raw: &ScResourceArray| {
+                let resources_raw = slice::from_raw_parts(array_raw.data, array_raw.num);
+                let resources = resources_raw.iter().map(|resource_raw| {
+                    let name = match CStr::from_ptr(resource_raw.name)
+                            .to_owned()
+                            .into_string()
+                        {
+                            Ok(n) => n,
+                            _ => return Err(ErrorCode::Unhandled),
+                        };
+
+                    check!(sc_internal_free_pointer(
+                        resource_raw.name as *mut c_void,
+                    ));
+
+                    Ok(spirv::Resource {
+                        id: resource_raw.id,
+                        type_id: resource_raw.type_id,
+                        base_type_id: resource_raw.base_type_id,
+                        name,
+                    })
+                }).collect::<Result<Vec<_>, ErrorCode>>();
+
+                check!(sc_internal_free_pointer(
+                    array_raw.data as *mut c_void,
+                ));
+
+                resources
+            };
+
+            let uniform_buffers = fill_resources(&shader_resources_raw.uniform_buffers)?;
+            let storage_buffers = fill_resources(&shader_resources_raw.storage_buffers)?;
+            let stage_inputs = fill_resources(&shader_resources_raw.stage_inputs)?;
+            let stage_outputs = fill_resources(&shader_resources_raw.stage_outputs)?;
+            let subpass_inputs = fill_resources(&shader_resources_raw.subpass_inputs)?;
+            let storage_images = fill_resources(&shader_resources_raw.storage_images)?;
+            let sampled_images = fill_resources(&shader_resources_raw.sampled_images)?;
+            let atomic_counters = fill_resources(&shader_resources_raw.atomic_counters)?;
+            let push_constant_buffers = fill_resources(&shader_resources_raw.push_constant_buffers)?;
+            let separate_images = fill_resources(&shader_resources_raw.separate_images)?;
+            let separate_samplers = fill_resources(&shader_resources_raw.separate_samplers)?;
+
+            Ok(spirv::ShaderResources {
+                uniform_buffers,
+                storage_buffers,
+                stage_inputs,
+                stage_outputs,
+                subpass_inputs,
+                storage_images,
+                sampled_images,
+                atomic_counters,
+                push_constant_buffers,
+                separate_images,
+                separate_samplers,
+            })
         }
     }
 }
