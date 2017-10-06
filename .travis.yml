@@ -57,6 +57,6 @@ after_success: |
   make install DESTDIR=../../kcov-build &&
   cd ../.. &&
   rm -rf kcov-master &&
-  for file in target/debug/*[^\.d]; do mkdir -p "target/cov/$(basename $file)"; ./kcov-build/usr/local/bin/kcov --include-path=spirv_cross/src --exclude-pattern=/.cargo,/usr/lib,.cpp,.hpp,vendor,tests --verify "target/cov/$(basename $file)" "$file"; done &&
+  for file in target/debug/*[^\.d]; do mkdir -p "target/cov/$(basename $file)"; ./kcov-build/usr/local/bin/kcov --include-path=spirv_cross/src --exclude-pattern=/.cargo,/usr/lib,.cpp,.hpp,vendor,tests,bindings.rs --verify "target/cov/$(basename $file)" "$file"; done &&
   bash <(curl -s https://codecov.io/bash) &&
   echo "Uploaded code coverage"
