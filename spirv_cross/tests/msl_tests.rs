@@ -5,6 +5,13 @@ mod common;
 use common::words_from_bytes;
 
 #[test]
+fn msl_compiler_options_has_default() {
+    let compiler_options = msl::CompilerOptions::default();
+    assert_eq!(compiler_options.vertex.invert_y, false);
+    assert_eq!(compiler_options.vertex.transform_clip_space, false);
+}
+
+#[test]
 fn ast_compiles_to_msl() {
     let mut ast = spirv::Ast::<msl::Target>::parse(&spirv::Module::from_words(
         words_from_bytes(include_bytes!("shaders/simple.spv")),

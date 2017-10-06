@@ -4,6 +4,7 @@
 use bindings::root::*;
 use ErrorCode;
 use spirv;
+use spirv::Decoration;
 use std::{mem, ptr, slice};
 use std::ffi::CStr;
 
@@ -26,7 +27,55 @@ impl spirv::ExecutionModel {
 impl spirv::Decoration {
     fn as_raw(&self) -> spv::Decoration {
         match *self {
-            spirv::Decoration::DescriptorSet => spv::Decoration::DecorationDescriptorSet,
+            Decoration::RelaxedPrecision => spv::Decoration::DecorationRelaxedPrecision,
+            Decoration::SpecId => spv::Decoration::DecorationSpecId,
+            Decoration::Block => spv::Decoration::DecorationBlock,
+            Decoration::BufferBlock => spv::Decoration::DecorationBufferBlock,
+            Decoration::RowMajor => spv::Decoration::DecorationRowMajor,
+            Decoration::ColMajor => spv::Decoration::DecorationColMajor,
+            Decoration::ArrayStride => spv::Decoration::DecorationArrayStride,
+            Decoration::MatrixStride => spv::Decoration::DecorationMatrixStride,
+            Decoration::GlslShared => spv::Decoration::DecorationGLSLShared,
+            Decoration::GlslPacked => spv::Decoration::DecorationGLSLPacked,
+            Decoration::CPacked => spv::Decoration::DecorationCPacked,
+            Decoration::BuiltIn => spv::Decoration::DecorationBuiltIn,
+            Decoration::NoPerspective => spv::Decoration::DecorationNoPerspective,
+            Decoration::Flat => spv::Decoration::DecorationFlat,
+            Decoration::Patch => spv::Decoration::DecorationPatch,
+            Decoration::Centroid => spv::Decoration::DecorationCentroid,
+            Decoration::Sample => spv::Decoration::DecorationSample,
+            Decoration::Invariant => spv::Decoration::DecorationInvariant,
+            Decoration::Restrict => spv::Decoration::DecorationRestrict,
+            Decoration::Aliased => spv::Decoration::DecorationAliased,
+            Decoration::Volatile => spv::Decoration::DecorationVolatile,
+            Decoration::Constant => spv::Decoration::DecorationConstant,
+            Decoration::Coherent => spv::Decoration::DecorationCoherent,
+            Decoration::NonWritable => spv::Decoration::DecorationNonWritable,
+            Decoration::NonReadable => spv::Decoration::DecorationNonReadable,
+            Decoration::Uniform => spv::Decoration::DecorationUniform,
+            Decoration::SaturatedConversion => spv::Decoration::DecorationSaturatedConversion,
+            Decoration::Stream => spv::Decoration::DecorationStream,
+            Decoration::Location => spv::Decoration::DecorationLocation,
+            Decoration::Component => spv::Decoration::DecorationComponent,
+            Decoration::Index => spv::Decoration::DecorationIndex,
+            Decoration::Binding => spv::Decoration::DecorationBinding,
+            Decoration::DescriptorSet => spv::Decoration::DecorationDescriptorSet,
+            Decoration::Offset => spv::Decoration::DecorationOffset,
+            Decoration::XfbBuffer => spv::Decoration::DecorationXfbBuffer,
+            Decoration::XfbStride => spv::Decoration::DecorationXfbStride,
+            Decoration::FuncParamAttr => spv::Decoration::DecorationFuncParamAttr,
+            Decoration::FpRoundingMode => spv::Decoration::DecorationFPRoundingMode,
+            Decoration::FpFastMathMode => spv::Decoration::DecorationFPFastMathMode,
+            Decoration::LinkageAttributes => spv::Decoration::DecorationLinkageAttributes,
+            Decoration::NoContraction => spv::Decoration::DecorationNoContraction,
+            Decoration::InputAttachmentIndex => spv::Decoration::DecorationInputAttachmentIndex,
+            Decoration::Alignment => spv::Decoration::DecorationAlignment,
+            Decoration::OverrideCoverageNv => spv::Decoration::DecorationOverrideCoverageNV,
+            Decoration::PassthroughNv => spv::Decoration::DecorationPassthroughNV,
+            Decoration::ViewportRelativeNv => spv::Decoration::DecorationViewportRelativeNV,
+            Decoration::SecondaryViewportRelativeNv => {
+                spv::Decoration::DecorationSecondaryViewportRelativeNV
+            }
         }
     }
 }
@@ -53,11 +102,7 @@ impl Compiler {
         }
     }
 
-    pub fn get_decoration(
-        &self,
-        id: u32,
-        decoration: spirv::Decoration,
-    ) -> Result<u32, ErrorCode> {
+    pub fn get_decoration(&self, id: u32, decoration: spirv::Decoration) -> Result<u32, ErrorCode> {
         let mut result = 0;
         unsafe {
             check!(sc_internal_compiler_get_decoration(
@@ -116,10 +161,10 @@ impl Compiler {
                         execution_model: try!(spirv::ExecutionModel::from_raw(
                             entry_point_raw.execution_model
                         )),
-                        workgroup_size: spirv::WorkgroupSize {
-                            x: entry_point_raw.workgroup_size_x,
-                            y: entry_point_raw.workgroup_size_y,
-                            z: entry_point_raw.workgroup_size_z,
+                        work_group_size: spirv::WorkGroupSize {
+                            x: entry_point_raw.work_group_size_x,
+                            y: entry_point_raw.work_group_size_y,
+                            z: entry_point_raw.work_group_size_z,
                         },
                     };
 
@@ -146,30 +191,27 @@ impl Compiler {
 
             let fill_resources = |array_raw: &ScResourceArray| {
                 let resources_raw = slice::from_raw_parts(array_raw.data, array_raw.num);
-                let resources = resources_raw.iter().map(|resource_raw| {
-                    let name = match CStr::from_ptr(resource_raw.name)
-                            .to_owned()
-                            .into_string()
+                let resources = resources_raw
+                    .iter()
+                    .map(|resource_raw| {
+                        let name = match CStr::from_ptr(resource_raw.name).to_owned().into_string()
                         {
                             Ok(n) => n,
                             _ => return Err(ErrorCode::Unhandled),
                         };
 
-                    check!(sc_internal_free_pointer(
-                        resource_raw.name as *mut c_void,
-                    ));
+                        check!(sc_internal_free_pointer(resource_raw.name as *mut c_void,));
 
-                    Ok(spirv::Resource {
-                        id: resource_raw.id,
-                        type_id: resource_raw.type_id,
-                        base_type_id: resource_raw.base_type_id,
-                        name,
+                        Ok(spirv::Resource {
+                            id: resource_raw.id,
+                            type_id: resource_raw.type_id,
+                            base_type_id: resource_raw.base_type_id,
+                            name,
+                        })
                     })
-                }).collect::<Result<Vec<_>, ErrorCode>>();
+                    .collect::<Result<Vec<_>, ErrorCode>>();
 
-                check!(sc_internal_free_pointer(
-                    array_raw.data as *mut c_void,
-                ));
+                check!(sc_internal_free_pointer(array_raw.data as *mut c_void,));
 
                 resources
             };
@@ -182,7 +224,8 @@ impl Compiler {
             let storage_images = fill_resources(&shader_resources_raw.storage_images)?;
             let sampled_images = fill_resources(&shader_resources_raw.sampled_images)?;
             let atomic_counters = fill_resources(&shader_resources_raw.atomic_counters)?;
-            let push_constant_buffers = fill_resources(&shader_resources_raw.push_constant_buffers)?;
+            let push_constant_buffers =
+                fill_resources(&shader_resources_raw.push_constant_buffers)?;
             let separate_images = fill_resources(&shader_resources_raw.separate_images)?;
             let separate_samplers = fill_resources(&shader_resources_raw.separate_samplers)?;
 

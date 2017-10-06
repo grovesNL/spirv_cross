@@ -57,7 +57,7 @@ ScInternalResult sc_internal_compiler_hlsl_set_options(const ScInternalCompilerH
             auto hlsl_options = compiler_hlsl->get_options();
             hlsl_options.shader_model = options->shader_model;
             compiler_hlsl->set_options(hlsl_options);
-    } while (0);)
+        } while (0);)
 }
 
 ScInternalResult sc_internal_compiler_msl_new(ScInternalCompilerMsl **compiler, const uint32_t *ir, size_t size)
@@ -75,7 +75,7 @@ ScInternalResult sc_internal_compiler_msl_set_options(const ScInternalCompilerMs
             glsl_options.vertex.fixup_clipspace = options->vertex_transform_clip_space;
             glsl_options.vertex.flip_vert_y = options->vertex_invert_y;
             compiler_glsl->spirv_cross::CompilerGLSL::set_options(glsl_options);
-    } while (0);)
+        } while (0);)
 }
 
 ScInternalResult sc_internal_compiler_get_decoration(const ScInternalCompilerBase *compiler, uint32_t *result, uint32_t id, spv::Decoration decoration)
@@ -110,19 +110,19 @@ ScInternalResult sc_internal_compiler_get_entry_points(const ScInternalCompilerB
                 auto const &sc_entry_point = sc_entry_points[i];
                 entry_points[i]->name = strdup(sc_entry_point.name.c_str());
                 entry_points[i]->execution_model = sc_entry_point.model;
-                entry_points[i]->workgroup_size_x = sc_entry_point.workgroup_size.x;
-                entry_points[i]->workgroup_size_y = sc_entry_point.workgroup_size.y;
-                entry_points[i]->workgroup_size_z = sc_entry_point.workgroup_size.z;
+                entry_points[i]->work_group_size_x = sc_entry_point.workgroup_size.x;
+                entry_points[i]->work_group_size_y = sc_entry_point.workgroup_size.y;
+                entry_points[i]->work_group_size_z = sc_entry_point.workgroup_size.z;
                 i++;
             }
         } while (0);)
 }
 
-void fill_resource_array(ScResourceArray *resources, const std::vector<spirv_cross::Resource>& sc_resources)
+void fill_resource_array(ScResourceArray *resources, const std::vector<spirv_cross::Resource> &sc_resources)
 {
     auto const sc_size = sc_resources.size();
 
-    if(sc_size == 0)
+    if (sc_size == 0)
     {
         resources->num = 0;
         resources->data = 0x0;
@@ -133,7 +133,7 @@ void fill_resource_array(ScResourceArray *resources, const std::vector<spirv_cro
     resources->data = (ScResource *)malloc(sc_size * sizeof(ScResource));
     for (uint32_t i = 0; i < sc_size; i++)
     {
-        auto const& resource = sc_resources[i];
+        auto const &resource = sc_resources[i];
         resources->data[i].id = resource.id;
         resources->data[i].type_id = resource.type_id;
         resources->data[i].base_type_id = resource.base_type_id;

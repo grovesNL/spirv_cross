@@ -59,3 +59,33 @@ fn ast_gets_shader_resources() {
     assert_eq!(shader_resources.separate_images.len(), 0);
     assert_eq!(shader_resources.separate_samplers.len(), 0);
 }
+
+#[test]
+fn ast_gets_decoration() {
+    let ast = spirv::Ast::<hlsl::Target>::parse(&spirv::Module::from_words(
+        words_from_bytes(include_bytes!("shaders/simple.spv")),
+    )).unwrap();
+    let stage_inputs = ast.get_shader_resources().unwrap().stage_inputs;
+    let decoration = ast.get_decoration(stage_inputs[0].id, spirv::Decoration::DescriptorSet)
+        .unwrap();
+    assert_eq!(decoration, 0);
+}
+
+#[test]
+fn ast_sets_decoration() {
+    let mut ast = spirv::Ast::<hlsl::Target>::parse(&spirv::Module::from_words(
+        words_from_bytes(include_bytes!("shaders/simple.spv")),
+    )).unwrap();
+    let stage_inputs = ast.get_shader_resources().unwrap().stage_inputs;
+    let updated_value = 3;
+    ast.set_decoration(
+        stage_inputs[0].id,
+        spirv::Decoration::DescriptorSet,
+        updated_value,
+    ).unwrap();
+    assert_eq!(
+        ast.get_decoration(stage_inputs[0].id, spirv::Decoration::DescriptorSet)
+            .unwrap(),
+        updated_value
+    );
+}

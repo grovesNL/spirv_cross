@@ -18,9 +18,9 @@ typedef struct ScEntryPoint
 {
     char *name;
     spv::ExecutionModel execution_model;
-    uint32_t workgroup_size_x;
-    uint32_t workgroup_size_y;
-    uint32_t workgroup_size_z;
+    uint32_t work_group_size_x;
+    uint32_t work_group_size_y;
+    uint32_t work_group_size_z;
 } ScEntryPoint;
 
 typedef struct ScHlslCompilerOptions
