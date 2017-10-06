@@ -5,23 +5,70 @@ use std::marker::PhantomData;
 /// A stage or compute kernel.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 pub enum ExecutionModel {
-    Vertex = 0,
-    TessellationControl = 1,
-    TessellationEvaluation = 2,
-    Geometry = 3,
-    Fragment = 4,
-    GlCompute = 5,
-    Kernel = 6,
+    Vertex,
+    TessellationControl,
+    TessellationEvaluation,
+    Geometry,
+    Fragment,
+    GlCompute,
+    Kernel,
+}
+
+/// A decoration.
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+pub enum Decoration {
+    RelaxedPrecision,
+    SpecId,
+    Block,
+    BufferBlock,
+    RowMajor,
+    ColMajor,
+    ArrayStride,
+    MatrixStride,
+    GlslShared,
+    GlslPacked,
+    CPacked,
+    BuiltIn,
+    NoPerspective,
+    Flat,
+    Patch,
+    Centroid,
+    Sample,
+    Invariant,
+    Restrict,
+    Aliased,
+    Volatile,
+    Constant,
+    Coherent,
+    NonWritable,
+    NonReadable,
+    Uniform,
+    SaturatedConversion,
+    Stream,
+    Location,
+    Component,
+    Index,
+    Binding,
+    DescriptorSet,
+    Offset,
+    XfbBuffer,
+    XfbStride,
+    FuncParamAttr,
+    FpRoundingMode,
+    FpFastMathMode,
+    LinkageAttributes,
+    NoContraction,
+    InputAttachmentIndex,
+    Alignment,
+    OverrideCoverageNv,
+    PassthroughNv,
+    ViewportRelativeNv,
+    SecondaryViewportRelativeNv,
 }
 
 /// A work group size.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
-pub enum Decoration {
-    DescriptorSet,
-}
-
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
-pub struct WorkgroupSize {
+pub struct WorkGroupSize {
     pub x: u32,
     pub y: u32,
     pub z: u32,
@@ -32,10 +79,10 @@ pub struct WorkgroupSize {
 pub struct EntryPoint {
     pub name: String,
     pub execution_model: ExecutionModel,
-    pub workgroup_size: WorkgroupSize,
+    pub work_group_size: WorkGroupSize,
 }
 
-/// A SPIR-V shader module.
+/// A resource.
 #[derive(Debug, Clone)]
 pub struct Resource {
     pub id: u32,
@@ -44,6 +91,7 @@ pub struct Resource {
     pub name: String,
 }
 
+/// Shader resources.
 #[derive(Debug, Clone)]
 pub struct ShaderResources {
     pub uniform_buffers: Vec<Resource>,
@@ -59,6 +107,7 @@ pub struct ShaderResources {
     pub separate_samplers: Vec<Resource>,
 }
 
+/// A SPIR-V shader module.
 #[derive(Debug, Clone)]
 pub struct Module<'a> {
     pub(crate) words: &'a [u32],
@@ -94,11 +143,7 @@ where
     Ast<TTarget>: Parse<TTarget> + Compile<TTarget>,
 {
     /// Gets a decoration.
-    pub fn get_decoration(
-        &self,
-        id: u32,
-        decoration: Decoration,
-    ) -> Result<u32, ErrorCode> {
+    pub fn get_decoration(&self, id: u32, decoration: Decoration) -> Result<u32, ErrorCode> {
         self.compiler.get_decoration(id, decoration)
     }
 
