@@ -29,13 +29,14 @@ matrix:
             - gcc
             - binutils-dev
             - libiberty-dev
-          sources: &sources
+          sources:
             - llvm-toolchain-precise-3.8
             - ubuntu-toolchain-r-test
 
 script:
-  - cargo build --verbose --all
-  - cargo test --verbose --all
+  - |
+      cargo build --verbose --all &&
+      cargo test --verbose --all
 
 notifications:
   webhooks:
@@ -56,6 +57,6 @@ after_success: |
   make install DESTDIR=../../kcov-build &&
   cd ../.. &&
   rm -rf kcov-master &&
-  for file in target/debug/spirv_cross-*[^\.d]; do mkdir -p "target/cov/$(basename $file)"; ./kcov-build/usr/local/bin/kcov --exclude-pattern=/.cargo,/usr/lib --verify "target/cov/$(basename $file)" "$file"; done &&
+  for file in target/debug/*[^\.d]; do mkdir -p "target/cov/$(basename $file)"; ./kcov-build/usr/local/bin/kcov --include-path=spirv_cross/src --exclude-pattern=/.cargo,/usr/lib,.cpp,.hpp,vendor,tests --verify "target/cov/$(basename $file)" "$file"; done &&
   bash <(curl -s https://codecov.io/bash) &&
   echo "Uploaded code coverage"
