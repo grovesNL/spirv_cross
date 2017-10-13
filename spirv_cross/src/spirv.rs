@@ -66,6 +66,12 @@ pub enum Decoration {
     SecondaryViewportRelativeNv,
 }
 
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+pub enum VertexAttributeStep {
+    Vertex,
+    Instance,
+}
+
 /// A work group size.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 pub struct WorkGroupSize {
@@ -127,20 +133,21 @@ pub struct Ast<TTarget> {
 }
 
 pub trait Parse<TTarget>: Sized {
-    fn parse(module: &Module) -> Result<Self, ErrorCode>;
+    type ParserOptions;
+
+    fn parse(module: &Module, &Self::ParserOptions) -> Result<Self, ErrorCode>;
 }
 
 pub trait Compile<TTarget> {
     type CompilerOptions;
 
-    fn set_compile_options(&mut self, options: &Self::CompilerOptions) -> Result<(), ErrorCode>;
-
+    fn set_compile_options(&mut self, &Self::CompilerOptions) -> Result<(), ErrorCode>;
     fn compile(&self) -> Result<String, ErrorCode>;
 }
 
 impl<TTarget> Ast<TTarget>
 where
-    Ast<TTarget>: Parse<TTarget> + Compile<TTarget>,
+    Self: Parse<TTarget> + Compile<TTarget>,
 {
     /// Gets a decoration.
     pub fn get_decoration(&self, id: u32, decoration: Decoration) -> Result<u32, ErrorCode> {
@@ -167,16 +174,19 @@ where
     }
 
     /// Parses a module into `Ast`.
-    pub fn parse(module: &Module) -> Result<Self, ErrorCode> {
-        Parse::<TTarget>::parse(&module)
+    pub fn parse(
+        module: &Module,
+        options: &<Self as Parse<TTarget>>::ParserOptions,
+    ) -> Result<Self, ErrorCode> {
+        Parse::<TTarget>::parse(&module, options)
     }
 
     /// Sets compile options.
     pub fn set_compile_options(
         &mut self,
-        options: <Ast<TTarget> as Compile<TTarget>>::CompilerOptions,
+        options: &<Self as Compile<TTarget>>::CompilerOptions,
     ) -> Result<(), ErrorCode> {
-        Compile::<TTarget>::set_compile_options(self, &options)
+        Compile::<TTarget>::set_compile_options(self, options)
     }
 
     /// Compiles an abstract syntax tree to a `String` in the specified `TTarget` language.

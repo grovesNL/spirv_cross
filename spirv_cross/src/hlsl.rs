@@ -5,7 +5,10 @@ use std::marker::PhantomData;
 
 /// A HLSL target.
 #[derive(Debug, Clone)]
-pub struct Target;
+pub enum Target {}
+
+#[derive(Debug, Clone, Default)]
+pub struct ParserOptions;
 
 /// A HLSL shader model version.
 #[allow(non_snake_case, non_camel_case_types)]
@@ -81,7 +84,9 @@ impl Default for CompilerOptions {
 }
 
 impl spirv::Parse<Target> for spirv::Ast<Target> {
-    fn parse(module: &spirv::Module) -> Result<Self, ErrorCode> {
+    type ParserOptions = ParserOptions;
+
+    fn parse(module: &spirv::Module, _options: &ParserOptions) -> Result<Self, ErrorCode> {
         let compiler = {
             let mut compiler = ptr::null_mut();
             unsafe {

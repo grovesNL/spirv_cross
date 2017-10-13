@@ -9,17 +9,32 @@ use std::{mem, ptr, slice};
 use std::ffi::CStr;
 
 impl spirv::ExecutionModel {
-    fn from_raw(raw: spv::ExecutionModel) -> Result<spirv::ExecutionModel, ErrorCode> {
+    fn from_raw(raw: spv::ExecutionModel) -> Result<Self, ErrorCode> {
         use spirv::ExecutionModel::*;
+        use self::spv::ExecutionModel as Em;
         match raw {
-            spv::ExecutionModel::ExecutionModelVertex => Ok(Vertex),
-            spv::ExecutionModel::ExecutionModelTessellationControl => Ok(TessellationControl),
-            spv::ExecutionModel::ExecutionModelTessellationEvaluation => Ok(TessellationEvaluation),
-            spv::ExecutionModel::ExecutionModelGeometry => Ok(Geometry),
-            spv::ExecutionModel::ExecutionModelFragment => Ok(Fragment),
-            spv::ExecutionModel::ExecutionModelGLCompute => Ok(GlCompute),
-            spv::ExecutionModel::ExecutionModelKernel => Ok(Kernel),
+            Em::ExecutionModelVertex => Ok(Vertex),
+            Em::ExecutionModelTessellationControl => Ok(TessellationControl),
+            Em::ExecutionModelTessellationEvaluation => Ok(TessellationEvaluation),
+            Em::ExecutionModelGeometry => Ok(Geometry),
+            Em::ExecutionModelFragment => Ok(Fragment),
+            Em::ExecutionModelGLCompute => Ok(GlCompute),
+            Em::ExecutionModelKernel => Ok(Kernel),
             _ => Err(ErrorCode::Unhandled),
+        }
+    }
+
+    pub(crate) fn as_raw(&self) -> spv::ExecutionModel {
+        use spirv::ExecutionModel::*;
+        use self::spv::ExecutionModel as Em;
+        match *self {
+            Vertex => Em::ExecutionModelVertex,
+            TessellationControl => Em::ExecutionModelTessellationControl,
+            TessellationEvaluation => Em::ExecutionModelTessellationEvaluation,
+            Geometry => Em::ExecutionModelGeometry,
+            Fragment => Em::ExecutionModelFragment,
+            GlCompute => Em::ExecutionModelGLCompute,
+            Kernel => Em::ExecutionModelKernel,
         }
     }
 }
