@@ -8,7 +8,7 @@ pub mod root {
         #[allow(unused_imports)]
         use self::super::super::root;
         pub type Id = ::std::os::raw::c_uint;
-        #[repr(i32)]
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum SourceLanguage {
             SourceLanguageUnknown = 0,
@@ -19,7 +19,7 @@ pub mod root {
             SourceLanguageHLSL = 5,
             SourceLanguageMax = 2147483647,
         }
-        #[repr(i32)]
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum ExecutionModel {
             ExecutionModelVertex = 0,
@@ -31,7 +31,7 @@ pub mod root {
             ExecutionModelKernel = 6,
             ExecutionModelMax = 2147483647,
         }
-        #[repr(i32)]
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum AddressingModel {
             AddressingModelLogical = 0,
@@ -39,7 +39,7 @@ pub mod root {
             AddressingModelPhysical64 = 2,
             AddressingModelMax = 2147483647,
         }
-        #[repr(i32)]
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum MemoryModel {
             MemoryModelSimple = 0,
@@ -47,7 +47,7 @@ pub mod root {
             MemoryModelOpenCL = 2,
             MemoryModelMax = 2147483647,
         }
-        #[repr(i32)]
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum ExecutionMode {
             ExecutionModeInvocations = 0,
@@ -83,7 +83,7 @@ pub mod root {
             ExecutionModeContractionOff = 31,
             ExecutionModeMax = 2147483647,
         }
-        #[repr(i32)]
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum StorageClass {
             StorageClassUniformConstant = 0,
@@ -101,7 +101,7 @@ pub mod root {
             StorageClassStorageBuffer = 12,
             StorageClassMax = 2147483647,
         }
-        #[repr(i32)]
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum Dim {
             Dim1D = 0,
@@ -113,7 +113,7 @@ pub mod root {
             DimSubpassData = 6,
             DimMax = 2147483647,
         }
-        #[repr(i32)]
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum SamplerAddressingMode {
             SamplerAddressingModeNone = 0,
@@ -123,14 +123,14 @@ pub mod root {
             SamplerAddressingModeRepeatMirrored = 4,
             SamplerAddressingModeMax = 2147483647,
         }
-        #[repr(i32)]
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum SamplerFilterMode {
             SamplerFilterModeNearest = 0,
             SamplerFilterModeLinear = 1,
             SamplerFilterModeMax = 2147483647,
         }
-        #[repr(i32)]
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum ImageFormat {
             ImageFormatUnknown = 0,
@@ -175,7 +175,7 @@ pub mod root {
             ImageFormatR8ui = 39,
             ImageFormatMax = 2147483647,
         }
-        #[repr(i32)]
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum ImageChannelOrder {
             ImageChannelOrderR = 0,
@@ -200,7 +200,7 @@ pub mod root {
             ImageChannelOrderABGR = 19,
             ImageChannelOrderMax = 2147483647,
         }
-        #[repr(i32)]
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum ImageChannelDataType {
             ImageChannelDataTypeSnormInt8 = 0,
@@ -222,7 +222,7 @@ pub mod root {
             ImageChannelDataTypeUnormInt101010_2 = 16,
             ImageChannelDataTypeMax = 2147483647,
         }
-        #[repr(i32)]
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum ImageOperandsShift {
             ImageOperandsBiasShift = 0,
@@ -298,8 +298,8 @@ pub mod root {
         }
         #[repr(C)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-        pub struct ImageOperandsMask(pub ::std::os::raw::c_int);
-        #[repr(i32)]
+        pub struct ImageOperandsMask(pub ::std::os::raw::c_uint);
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum FPFastMathModeShift {
             FPFastMathModeNotNaNShift = 0,
@@ -363,8 +363,8 @@ pub mod root {
         }
         #[repr(C)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-        pub struct FPFastMathModeMask(pub ::std::os::raw::c_int);
-        #[repr(i32)]
+        pub struct FPFastMathModeMask(pub ::std::os::raw::c_uint);
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum FPRoundingMode {
             FPRoundingModeRTE = 0,
@@ -373,14 +373,14 @@ pub mod root {
             FPRoundingModeRTN = 3,
             FPRoundingModeMax = 2147483647,
         }
-        #[repr(i32)]
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum LinkageType {
             LinkageTypeExport = 0,
             LinkageTypeImport = 1,
             LinkageTypeMax = 2147483647,
         }
-        #[repr(i32)]
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum AccessQualifier {
             AccessQualifierReadOnly = 0,
@@ -388,7 +388,7 @@ pub mod root {
             AccessQualifierReadWrite = 2,
             AccessQualifierMax = 2147483647,
         }
-        #[repr(i32)]
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum FunctionParameterAttribute {
             FunctionParameterAttributeZext = 0,
@@ -401,7 +401,7 @@ pub mod root {
             FunctionParameterAttributeNoReadWrite = 7,
             FunctionParameterAttributeMax = 2147483647,
         }
-        #[repr(i32)]
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum Decoration {
             DecorationRelaxedPrecision = 0,
@@ -453,7 +453,7 @@ pub mod root {
             DecorationSecondaryViewportRelativeNV = 5256,
             DecorationMax = 2147483647,
         }
-        #[repr(i32)]
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum BuiltIn {
             BuiltInPosition = 0,
@@ -514,7 +514,7 @@ pub mod root {
             BuiltInViewportMaskPerViewNV = 5262,
             BuiltInMax = 2147483647,
         }
-        #[repr(i32)]
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum SelectionControlShift {
             SelectionControlFlattenShift = 0,
@@ -567,8 +567,8 @@ pub mod root {
         }
         #[repr(C)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-        pub struct SelectionControlMask(pub ::std::os::raw::c_int);
-        #[repr(i32)]
+        pub struct SelectionControlMask(pub ::std::os::raw::c_uint);
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum LoopControlShift {
             LoopControlUnrollShift = 0,
@@ -620,8 +620,8 @@ pub mod root {
         }
         #[repr(C)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-        pub struct LoopControlMask(pub ::std::os::raw::c_int);
-        #[repr(i32)]
+        pub struct LoopControlMask(pub ::std::os::raw::c_uint);
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum FunctionControlShift {
             FunctionControlInlineShift = 0,
@@ -681,8 +681,8 @@ pub mod root {
         }
         #[repr(C)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-        pub struct FunctionControlMask(pub ::std::os::raw::c_int);
-        #[repr(i32)]
+        pub struct FunctionControlMask(pub ::std::os::raw::c_uint);
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum MemorySemanticsShift {
             MemorySemanticsAcquireShift = 1,
@@ -766,8 +766,8 @@ pub mod root {
         }
         #[repr(C)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-        pub struct MemorySemanticsMask(pub ::std::os::raw::c_int);
-        #[repr(i32)]
+        pub struct MemorySemanticsMask(pub ::std::os::raw::c_uint);
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum MemoryAccessShift {
             MemoryAccessVolatileShift = 0,
@@ -823,8 +823,8 @@ pub mod root {
         }
         #[repr(C)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-        pub struct MemoryAccessMask(pub ::std::os::raw::c_int);
-        #[repr(i32)]
+        pub struct MemoryAccessMask(pub ::std::os::raw::c_uint);
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum Scope {
             ScopeCrossDevice = 0,
@@ -834,7 +834,7 @@ pub mod root {
             ScopeInvocation = 4,
             ScopeMax = 2147483647,
         }
-        #[repr(i32)]
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum GroupOperation {
             GroupOperationReduce = 0,
@@ -890,8 +890,8 @@ pub mod root {
         }
         #[repr(C)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-        pub struct KernelEnqueueFlags(pub ::std::os::raw::c_int);
-        #[repr(i32)]
+        pub struct KernelEnqueueFlags(pub ::std::os::raw::c_uint);
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum KernelProfilingInfoShift {
             KernelProfilingInfoCmdExecTimeShift = 0,
@@ -941,14 +941,14 @@ pub mod root {
         }
         #[repr(C)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-        pub struct KernelProfilingInfoMask(pub ::std::os::raw::c_int);
+        pub struct KernelProfilingInfoMask(pub ::std::os::raw::c_uint);
         pub const Capability_CapabilityStorageUniformBufferBlock16:
                   root::spv::Capability =
             Capability::CapabilityStorageBuffer16BitAccess;
         pub const Capability_CapabilityUniformAndStorageBuffer16BitAccess:
                   root::spv::Capability =
             Capability::CapabilityStorageUniform16;
-        #[repr(i32)]
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum Capability {
             CapabilityMatrix = 0,
@@ -1026,7 +1026,7 @@ pub mod root {
             CapabilityPerViewAttributesNV = 5260,
             CapabilityMax = 2147483647,
         }
-        #[repr(i32)]
+        #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum Op {
             OpNop = 0,
@@ -1335,12 +1335,9 @@ pub mod root {
     pub mod std {
         #[allow(unused_imports)]
         use self::super::super::root;
-        pub mod tr1 {
-            #[allow(unused_imports)]
-            use self::super::super::super::root;
-        }
-        pub type string = [u64; 4usize];
+        pub type string = [u64; 3usize];
     }
+    pub type __darwin_size_t = ::std::os::raw::c_ulong;
     pub mod spirv_cross {
         #[allow(unused_imports)]
         use self::super::super::root;
@@ -1354,7 +1351,7 @@ pub mod root {
         }
         #[test]
         fn bindgen_test_layout_Resource() {
-            assert_eq!(::std::mem::size_of::<Resource>() , 48usize , concat !
+            assert_eq!(::std::mem::size_of::<Resource>() , 40usize , concat !
                        ( "Size of: " , stringify ! ( Resource ) ));
             assert_eq! (::std::mem::align_of::<Resource>() , 8usize , concat !
                         ( "Alignment of " , stringify ! ( Resource ) ));
@@ -1382,11 +1379,134 @@ pub mod root {
         impl Clone for Resource {
             fn clone(&self) -> Self { *self }
         }
+        #[repr(C)]
+        #[derive(Debug, Copy)]
+        pub struct MSLVertexAttr {
+            pub location: u32,
+            pub msl_buffer: u32,
+            pub msl_offset: u32,
+            pub msl_stride: u32,
+            pub per_instance: bool,
+            pub used_by_shader: bool,
+        }
+        #[test]
+        fn bindgen_test_layout_MSLVertexAttr() {
+            assert_eq!(::std::mem::size_of::<MSLVertexAttr>() , 20usize ,
+                       concat ! ( "Size of: " , stringify ! ( MSLVertexAttr )
+                       ));
+            assert_eq! (::std::mem::align_of::<MSLVertexAttr>() , 4usize ,
+                        concat ! (
+                        "Alignment of " , stringify ! ( MSLVertexAttr ) ));
+            assert_eq! (unsafe {
+                        & ( * ( 0 as * const MSLVertexAttr ) ) . location as *
+                        const _ as usize } , 0usize , concat ! (
+                        "Alignment of field: " , stringify ! ( MSLVertexAttr )
+                        , "::" , stringify ! ( location ) ));
+            assert_eq! (unsafe {
+                        & ( * ( 0 as * const MSLVertexAttr ) ) . msl_buffer as
+                        * const _ as usize } , 4usize , concat ! (
+                        "Alignment of field: " , stringify ! ( MSLVertexAttr )
+                        , "::" , stringify ! ( msl_buffer ) ));
+            assert_eq! (unsafe {
+                        & ( * ( 0 as * const MSLVertexAttr ) ) . msl_offset as
+                        * const _ as usize } , 8usize , concat ! (
+                        "Alignment of field: " , stringify ! ( MSLVertexAttr )
+                        , "::" , stringify ! ( msl_offset ) ));
+            assert_eq! (unsafe {
+                        & ( * ( 0 as * const MSLVertexAttr ) ) . msl_stride as
+                        * const _ as usize } , 12usize , concat ! (
+                        "Alignment of field: " , stringify ! ( MSLVertexAttr )
+                        , "::" , stringify ! ( msl_stride ) ));
+            assert_eq! (unsafe {
+                        & ( * ( 0 as * const MSLVertexAttr ) ) . per_instance
+                        as * const _ as usize } , 16usize , concat ! (
+                        "Alignment of field: " , stringify ! ( MSLVertexAttr )
+                        , "::" , stringify ! ( per_instance ) ));
+            assert_eq! (unsafe {
+                        & ( * ( 0 as * const MSLVertexAttr ) ) .
+                        used_by_shader as * const _ as usize } , 17usize ,
+                        concat ! (
+                        "Alignment of field: " , stringify ! ( MSLVertexAttr )
+                        , "::" , stringify ! ( used_by_shader ) ));
+        }
+        impl Clone for MSLVertexAttr {
+            fn clone(&self) -> Self { *self }
+        }
+        #[repr(C)]
+        #[derive(Debug, Copy)]
+        pub struct MSLResourceBinding {
+            pub stage: root::spv::ExecutionModel,
+            pub desc_set: u32,
+            pub binding: u32,
+            pub msl_buffer: u32,
+            pub msl_texture: u32,
+            pub msl_sampler: u32,
+            pub used_by_shader: bool,
+        }
+        #[test]
+        fn bindgen_test_layout_MSLResourceBinding() {
+            assert_eq!(::std::mem::size_of::<MSLResourceBinding>() , 28usize ,
+                       concat ! (
+                       "Size of: " , stringify ! ( MSLResourceBinding ) ));
+            assert_eq! (::std::mem::align_of::<MSLResourceBinding>() , 4usize
+                        , concat ! (
+                        "Alignment of " , stringify ! ( MSLResourceBinding )
+                        ));
+            assert_eq! (unsafe {
+                        & ( * ( 0 as * const MSLResourceBinding ) ) . stage as
+                        * const _ as usize } , 0usize , concat ! (
+                        "Alignment of field: " , stringify ! (
+                        MSLResourceBinding ) , "::" , stringify ! ( stage )
+                        ));
+            assert_eq! (unsafe {
+                        & ( * ( 0 as * const MSLResourceBinding ) ) . desc_set
+                        as * const _ as usize } , 4usize , concat ! (
+                        "Alignment of field: " , stringify ! (
+                        MSLResourceBinding ) , "::" , stringify ! ( desc_set )
+                        ));
+            assert_eq! (unsafe {
+                        & ( * ( 0 as * const MSLResourceBinding ) ) . binding
+                        as * const _ as usize } , 8usize , concat ! (
+                        "Alignment of field: " , stringify ! (
+                        MSLResourceBinding ) , "::" , stringify ! ( binding )
+                        ));
+            assert_eq! (unsafe {
+                        & ( * ( 0 as * const MSLResourceBinding ) ) .
+                        msl_buffer as * const _ as usize } , 12usize , concat
+                        ! (
+                        "Alignment of field: " , stringify ! (
+                        MSLResourceBinding ) , "::" , stringify ! ( msl_buffer
+                        ) ));
+            assert_eq! (unsafe {
+                        & ( * ( 0 as * const MSLResourceBinding ) ) .
+                        msl_texture as * const _ as usize } , 16usize , concat
+                        ! (
+                        "Alignment of field: " , stringify ! (
+                        MSLResourceBinding ) , "::" , stringify ! (
+                        msl_texture ) ));
+            assert_eq! (unsafe {
+                        & ( * ( 0 as * const MSLResourceBinding ) ) .
+                        msl_sampler as * const _ as usize } , 20usize , concat
+                        ! (
+                        "Alignment of field: " , stringify ! (
+                        MSLResourceBinding ) , "::" , stringify ! (
+                        msl_sampler ) ));
+            assert_eq! (unsafe {
+                        & ( * ( 0 as * const MSLResourceBinding ) ) .
+                        used_by_shader as * const _ as usize } , 24usize ,
+                        concat ! (
+                        "Alignment of field: " , stringify ! (
+                        MSLResourceBinding ) , "::" , stringify ! (
+                        used_by_shader ) ));
+        }
+        impl Clone for MSLResourceBinding {
+            fn clone(&self) -> Self { *self }
+        }
     }
     pub type ScInternalCompilerBase = ::std::os::raw::c_void;
     pub type ScInternalCompilerHlsl = ::std::os::raw::c_void;
     pub type ScInternalCompilerMsl = ::std::os::raw::c_void;
-    #[repr(i32)]
+    #[repr(u32)]
     #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
     pub enum ScInternalResult {
         Success = 0,
@@ -1686,7 +1806,13 @@ pub mod root {
     extern "C" {
         pub fn sc_internal_compiler_msl_new(compiler:
                                                 *mut *mut root::ScInternalCompilerMsl,
-                                            ir: *const u32, size: usize)
+                                            ir: *const u32, size: usize,
+                                            p_vat_overrides:
+                                                *const root::spirv_cross::MSLVertexAttr,
+                                            vat_override_count: usize,
+                                            p_res_overrides:
+                                                *const root::spirv_cross::MSLResourceBinding,
+                                            res_override_count: usize)
          -> root::ScInternalResult;
     }
     extern "C" {

@@ -13,6 +13,8 @@ fn main() {
         .whitelisted_type("spv::.*")
         .bitfield_enum(".*(Mask|Flags)")
         .whitelisted_type("spirv_cross::Resource")
+        .whitelisted_type("spirv_cross::MSLVertexAttr")
+        .whitelisted_type("spirv_cross::MSLResourceBinding")
         .opaque_type("std::.*")
         .generate()
         .expect("Unable to generate bindings")

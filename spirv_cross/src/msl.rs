@@ -55,6 +55,10 @@ impl spirv::Parse<Target> for spirv::Ast<Target> {
                     &mut compiler,
                     module.words.as_ptr() as *const u32,
                     module.words.len() as usize,
+                    ptr::null(),
+                    0, //TODO
+                    ptr::null(),
+                    0, //TODO
                 ));
             }
 

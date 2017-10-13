@@ -60,9 +60,15 @@ ScInternalResult sc_internal_compiler_hlsl_set_options(const ScInternalCompilerH
         } while (0);)
 }
 
-ScInternalResult sc_internal_compiler_msl_new(ScInternalCompilerMsl **compiler, const uint32_t *ir, size_t size)
+ScInternalResult sc_internal_compiler_msl_new(ScInternalCompilerMsl **compiler, const uint32_t *ir, size_t size,
+                                              const spirv_cross::MSLVertexAttr *p_vat_overrides, size_t vat_override_count,
+                                              const spirv_cross::MSLResourceBinding *p_res_overrides, size_t res_override_count)
 {
-    INTERNAL_RESULT(*compiler = new spirv_cross::CompilerMSL(ir, size);)
+    INTERNAL_RESULT(do {
+            *compiler = new spirv_cross::CompilerMSL(ir, size,
+                                                     (spirv_cross::MSLVertexAttr *)p_vat_overrides, vat_override_count,
+                                                     (spirv_cross::MSLResourceBinding *)p_res_overrides, res_override_count);
+        } while (0);)
 }
 
 ScInternalResult sc_internal_compiler_msl_set_options(const ScInternalCompilerMsl *compiler, const ScMslCompilerOptions *options)
@@ -113,7 +119,6 @@ ScInternalResult sc_internal_compiler_get_entry_points(const ScInternalCompilerB
                 entry_points[i]->work_group_size_x = sc_entry_point.workgroup_size.x;
                 entry_points[i]->work_group_size_y = sc_entry_point.workgroup_size.y;
                 entry_points[i]->work_group_size_z = sc_entry_point.workgroup_size.z;
-                i++;
             }
         } while (0);)
 }
