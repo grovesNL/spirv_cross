@@ -7,8 +7,8 @@ fn main() {
     let module = spirv::Module::from_words(words_from_bytes(include_bytes!("../vertex.spv")));
 
     // Parse a SPIR-V module
-    let mut ast = spirv::Ast::<hlsl::Target>::parse(&module).unwrap();
-    ast.set_compile_options(hlsl::CompilerOptions {
+    let mut ast = spirv::Ast::<hlsl::Target>::parse(&module, &hlsl::ParserOptions::default()).unwrap();
+    ast.set_compile_options(&hlsl::CompilerOptions {
         shader_model: hlsl::ShaderModel::V5_1,
         vertex: hlsl::CompilerVertexOptions::default(),
     }).unwrap();
