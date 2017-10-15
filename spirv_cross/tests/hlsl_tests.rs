@@ -14,10 +14,9 @@ fn hlsl_compiler_options_has_default() {
 
 #[test]
 fn ast_compiles_to_hlsl() {
-    let mut ast = spirv::Ast::<hlsl::Target>::parse(&spirv::Module::from_words(
-        words_from_bytes(include_bytes!("shaders/simple.spv")),
-    )).unwrap();
-    ast.set_compile_options(hlsl::CompilerOptions {
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.spv")));
+    let mut ast = spirv::Ast::<hlsl::Target>::parse(&module).unwrap();
+    ast.set_compiler_options(&hlsl::CompilerOptions {
         shader_model: hlsl::ShaderModel::V6_0,
         vertex: hlsl::CompilerVertexOptions::default(),
     }).unwrap();
@@ -71,9 +70,9 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
 
 #[test]
 fn ast_compiles_all_shader_models_to_hlsl() {
-    let mut ast = spirv::Ast::<hlsl::Target>::parse(&spirv::Module::from_words(
-        words_from_bytes(include_bytes!("shaders/simple.spv")),
-    )).unwrap();
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.spv")));
+    let mut ast = spirv::Ast::<hlsl::Target>::parse(&module).unwrap();
+
     let shader_models = [
         hlsl::ShaderModel::V3_0,
         hlsl::ShaderModel::V4_0,
@@ -85,9 +84,9 @@ fn ast_compiles_all_shader_models_to_hlsl() {
         hlsl::ShaderModel::V5_1,
         hlsl::ShaderModel::V6_0,
     ];
-    for shader_model in shader_models.iter() {
-        match ast.set_compile_options(hlsl::CompilerOptions {
-            shader_model: *shader_model,
+    for &shader_model in shader_models.iter() {
+        match ast.set_compiler_options(&hlsl::CompilerOptions {
+            shader_model,
             vertex: hlsl::CompilerVertexOptions::default(),
         }) {
             Err(_) => panic!("Did not compile"),

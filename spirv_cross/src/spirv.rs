@@ -66,6 +66,12 @@ pub enum Decoration {
     SecondaryViewportRelativeNv,
 }
 
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+pub enum VertexAttributeStep {
+    Vertex,
+    Instance,
+}
+
 /// A work group size.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 pub struct WorkGroupSize {
@@ -120,9 +126,16 @@ impl<'a> Module<'a> {
     }
 }
 
+pub trait Target {
+    type Data;
+}
+
 /// An abstract syntax tree that corresponds to a SPIR-V module.
-pub struct Ast<TTarget> {
-    pub(crate) compiler: compiler::Compiler,
+pub struct Ast<TTarget>
+where
+    TTarget: Target,
+{
+    pub(crate) compiler: compiler::Compiler<TTarget::Data>,
     pub(crate) target_type: PhantomData<TTarget>,
 }
 
@@ -133,14 +146,14 @@ pub trait Parse<TTarget>: Sized {
 pub trait Compile<TTarget> {
     type CompilerOptions;
 
-    fn set_compile_options(&mut self, options: &Self::CompilerOptions) -> Result<(), ErrorCode>;
-
+    fn set_compiler_options(&mut self, &Self::CompilerOptions) -> Result<(), ErrorCode>;
     fn compile(&self) -> Result<String, ErrorCode>;
 }
 
 impl<TTarget> Ast<TTarget>
 where
-    Ast<TTarget>: Parse<TTarget> + Compile<TTarget>,
+    Self: Parse<TTarget> + Compile<TTarget>,
+    TTarget: Target,
 {
     /// Gets a decoration.
     pub fn get_decoration(&self, id: u32, decoration: Decoration) -> Result<u32, ErrorCode> {
@@ -172,11 +185,11 @@ where
     }
 
     /// Sets compile options.
-    pub fn set_compile_options(
+    pub fn set_compiler_options(
         &mut self,
-        options: <Ast<TTarget> as Compile<TTarget>>::CompilerOptions,
+        options: &<Self as Compile<TTarget>>::CompilerOptions,
     ) -> Result<(), ErrorCode> {
-        Compile::<TTarget>::set_compile_options(self, &options)
+        Compile::<TTarget>::set_compiler_options(self, options)
     }
 
     /// Compiles an abstract syntax tree to a `String` in the specified `TTarget` language.

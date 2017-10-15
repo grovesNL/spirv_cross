@@ -1,4 +1,3 @@
-
 //! Raw compiler bindings for SPIRV-Cross.
 
 use bindings::root::*;
@@ -9,17 +8,32 @@ use std::{mem, ptr, slice};
 use std::ffi::CStr;
 
 impl spirv::ExecutionModel {
-    fn from_raw(raw: spv::ExecutionModel) -> Result<spirv::ExecutionModel, ErrorCode> {
+    fn from_raw(raw: spv::ExecutionModel) -> Result<Self, ErrorCode> {
         use spirv::ExecutionModel::*;
+        use self::spv::ExecutionModel as Em;
         match raw {
-            spv::ExecutionModel::ExecutionModelVertex => Ok(Vertex),
-            spv::ExecutionModel::ExecutionModelTessellationControl => Ok(TessellationControl),
-            spv::ExecutionModel::ExecutionModelTessellationEvaluation => Ok(TessellationEvaluation),
-            spv::ExecutionModel::ExecutionModelGeometry => Ok(Geometry),
-            spv::ExecutionModel::ExecutionModelFragment => Ok(Fragment),
-            spv::ExecutionModel::ExecutionModelGLCompute => Ok(GlCompute),
-            spv::ExecutionModel::ExecutionModelKernel => Ok(Kernel),
+            Em::ExecutionModelVertex => Ok(Vertex),
+            Em::ExecutionModelTessellationControl => Ok(TessellationControl),
+            Em::ExecutionModelTessellationEvaluation => Ok(TessellationEvaluation),
+            Em::ExecutionModelGeometry => Ok(Geometry),
+            Em::ExecutionModelFragment => Ok(Fragment),
+            Em::ExecutionModelGLCompute => Ok(GlCompute),
+            Em::ExecutionModelKernel => Ok(Kernel),
             _ => Err(ErrorCode::Unhandled),
+        }
+    }
+
+    pub(crate) fn as_raw(&self) -> spv::ExecutionModel {
+        use spirv::ExecutionModel::*;
+        use self::spv::ExecutionModel as Em;
+        match *self {
+            Vertex => Em::ExecutionModelVertex,
+            TessellationControl => Em::ExecutionModelTessellationControl,
+            TessellationEvaluation => Em::ExecutionModelTessellationEvaluation,
+            Geometry => Em::ExecutionModelGeometry,
+            Fragment => Em::ExecutionModelFragment,
+            GlCompute => Em::ExecutionModelGLCompute,
+            Kernel => Em::ExecutionModelKernel,
         }
     }
 }
@@ -81,11 +95,12 @@ impl spirv::Decoration {
 }
 
 #[derive(Debug, Clone)]
-pub struct Compiler {
-    pub sc_compiler: *mut ScInternalCompilerBase,
+pub struct Compiler<TTargetData> {
+    pub(crate) sc_compiler: *mut ScInternalCompilerBase,
+    pub(crate) target_data: TTargetData,
 }
 
-impl Compiler {
+impl<TTargetData> Compiler<TTargetData> {
     pub fn compile(&self) -> Result<String, ErrorCode> {
         unsafe {
             let mut shader_ptr = ptr::null();
@@ -246,7 +261,7 @@ impl Compiler {
     }
 }
 
-impl Drop for Compiler {
+impl<TTargetData> Drop for Compiler<TTargetData> {
     fn drop(&mut self) {
         unsafe {
             sc_internal_compiler_delete(self.sc_compiler);

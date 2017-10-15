@@ -1382,6 +1382,129 @@ pub mod root {
         impl Clone for Resource {
             fn clone(&self) -> Self { *self }
         }
+        #[repr(C)]
+        #[derive(Debug, Copy)]
+        pub struct MSLVertexAttr {
+            pub location: u32,
+            pub msl_buffer: u32,
+            pub msl_offset: u32,
+            pub msl_stride: u32,
+            pub per_instance: bool,
+            pub used_by_shader: bool,
+        }
+        #[test]
+        fn bindgen_test_layout_MSLVertexAttr() {
+            assert_eq!(::std::mem::size_of::<MSLVertexAttr>() , 20usize ,
+                       concat ! ( "Size of: " , stringify ! ( MSLVertexAttr )
+                       ));
+            assert_eq! (::std::mem::align_of::<MSLVertexAttr>() , 4usize ,
+                        concat ! (
+                        "Alignment of " , stringify ! ( MSLVertexAttr ) ));
+            assert_eq! (unsafe {
+                        & ( * ( 0 as * const MSLVertexAttr ) ) . location as *
+                        const _ as usize } , 0usize , concat ! (
+                        "Alignment of field: " , stringify ! ( MSLVertexAttr )
+                        , "::" , stringify ! ( location ) ));
+            assert_eq! (unsafe {
+                        & ( * ( 0 as * const MSLVertexAttr ) ) . msl_buffer as
+                        * const _ as usize } , 4usize , concat ! (
+                        "Alignment of field: " , stringify ! ( MSLVertexAttr )
+                        , "::" , stringify ! ( msl_buffer ) ));
+            assert_eq! (unsafe {
+                        & ( * ( 0 as * const MSLVertexAttr ) ) . msl_offset as
+                        * const _ as usize } , 8usize , concat ! (
+                        "Alignment of field: " , stringify ! ( MSLVertexAttr )
+                        , "::" , stringify ! ( msl_offset ) ));
+            assert_eq! (unsafe {
+                        & ( * ( 0 as * const MSLVertexAttr ) ) . msl_stride as
+                        * const _ as usize } , 12usize , concat ! (
+                        "Alignment of field: " , stringify ! ( MSLVertexAttr )
+                        , "::" , stringify ! ( msl_stride ) ));
+            assert_eq! (unsafe {
+                        & ( * ( 0 as * const MSLVertexAttr ) ) . per_instance
+                        as * const _ as usize } , 16usize , concat ! (
+                        "Alignment of field: " , stringify ! ( MSLVertexAttr )
+                        , "::" , stringify ! ( per_instance ) ));
+            assert_eq! (unsafe {
+                        & ( * ( 0 as * const MSLVertexAttr ) ) .
+                        used_by_shader as * const _ as usize } , 17usize ,
+                        concat ! (
+                        "Alignment of field: " , stringify ! ( MSLVertexAttr )
+                        , "::" , stringify ! ( used_by_shader ) ));
+        }
+        impl Clone for MSLVertexAttr {
+            fn clone(&self) -> Self { *self }
+        }
+        #[repr(C)]
+        #[derive(Debug, Copy)]
+        pub struct MSLResourceBinding {
+            pub stage: root::spv::ExecutionModel,
+            pub desc_set: u32,
+            pub binding: u32,
+            pub msl_buffer: u32,
+            pub msl_texture: u32,
+            pub msl_sampler: u32,
+            pub used_by_shader: bool,
+        }
+        #[test]
+        fn bindgen_test_layout_MSLResourceBinding() {
+            assert_eq!(::std::mem::size_of::<MSLResourceBinding>() , 28usize ,
+                       concat ! (
+                       "Size of: " , stringify ! ( MSLResourceBinding ) ));
+            assert_eq! (::std::mem::align_of::<MSLResourceBinding>() , 4usize
+                        , concat ! (
+                        "Alignment of " , stringify ! ( MSLResourceBinding )
+                        ));
+            assert_eq! (unsafe {
+                        & ( * ( 0 as * const MSLResourceBinding ) ) . stage as
+                        * const _ as usize } , 0usize , concat ! (
+                        "Alignment of field: " , stringify ! (
+                        MSLResourceBinding ) , "::" , stringify ! ( stage )
+                        ));
+            assert_eq! (unsafe {
+                        & ( * ( 0 as * const MSLResourceBinding ) ) . desc_set
+                        as * const _ as usize } , 4usize , concat ! (
+                        "Alignment of field: " , stringify ! (
+                        MSLResourceBinding ) , "::" , stringify ! ( desc_set )
+                        ));
+            assert_eq! (unsafe {
+                        & ( * ( 0 as * const MSLResourceBinding ) ) . binding
+                        as * const _ as usize } , 8usize , concat ! (
+                        "Alignment of field: " , stringify ! (
+                        MSLResourceBinding ) , "::" , stringify ! ( binding )
+                        ));
+            assert_eq! (unsafe {
+                        & ( * ( 0 as * const MSLResourceBinding ) ) .
+                        msl_buffer as * const _ as usize } , 12usize , concat
+                        ! (
+                        "Alignment of field: " , stringify ! (
+                        MSLResourceBinding ) , "::" , stringify ! ( msl_buffer
+                        ) ));
+            assert_eq! (unsafe {
+                        & ( * ( 0 as * const MSLResourceBinding ) ) .
+                        msl_texture as * const _ as usize } , 16usize , concat
+                        ! (
+                        "Alignment of field: " , stringify ! (
+                        MSLResourceBinding ) , "::" , stringify ! (
+                        msl_texture ) ));
+            assert_eq! (unsafe {
+                        & ( * ( 0 as * const MSLResourceBinding ) ) .
+                        msl_sampler as * const _ as usize } , 20usize , concat
+                        ! (
+                        "Alignment of field: " , stringify ! (
+                        MSLResourceBinding ) , "::" , stringify ! (
+                        msl_sampler ) ));
+            assert_eq! (unsafe {
+                        & ( * ( 0 as * const MSLResourceBinding ) ) .
+                        used_by_shader as * const _ as usize } , 24usize ,
+                        concat ! (
+                        "Alignment of field: " , stringify ! (
+                        MSLResourceBinding ) , "::" , stringify ! (
+                        used_by_shader ) ));
+        }
+        impl Clone for MSLResourceBinding {
+            fn clone(&self) -> Self { *self }
+        }
     }
     pub type ScInternalCompilerBase = ::std::os::raw::c_void;
     pub type ScInternalCompilerHlsl = ::std::os::raw::c_void;
@@ -1694,6 +1817,19 @@ pub mod root {
                                                         *const root::ScInternalCompilerHlsl,
                                                     options:
                                                         *const root::ScMslCompilerOptions)
+         -> root::ScInternalResult;
+    }
+    extern "C" {
+        pub fn sc_internal_compiler_msl_compile(compiler:
+                                                    *const root::ScInternalCompilerBase,
+                                                shader:
+                                                    *mut *const ::std::os::raw::c_char,
+                                                p_vat_overrides:
+                                                    *const root::spirv_cross::MSLVertexAttr,
+                                                vat_override_count: usize,
+                                                p_res_overrides:
+                                                    *const root::spirv_cross::MSLResourceBinding,
+                                                res_override_count: usize)
          -> root::ScInternalResult;
     }
     extern "C" {

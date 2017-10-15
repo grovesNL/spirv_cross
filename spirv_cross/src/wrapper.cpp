@@ -65,6 +65,28 @@ ScInternalResult sc_internal_compiler_msl_new(ScInternalCompilerMsl **compiler, 
     INTERNAL_RESULT(*compiler = new spirv_cross::CompilerMSL(ir, size);)
 }
 
+ScInternalResult sc_internal_compiler_msl_compile(const ScInternalCompilerBase *compiler, const char **shader,
+                                                  const spirv_cross::MSLVertexAttr *p_vat_overrides, size_t vat_override_count,
+                                                  const spirv_cross::MSLResourceBinding *p_res_overrides, size_t res_override_count)
+{
+    INTERNAL_RESULT(
+        do {
+            std::vector<spirv_cross::MSLVertexAttr> vat_overrides;
+            if (p_vat_overrides)
+            {
+                vat_overrides.insert(vat_overrides.end(), &p_vat_overrides[0], &p_vat_overrides[vat_override_count]);
+            }
+
+            std::vector<spirv_cross::MSLResourceBinding> res_overrides;
+            if (p_res_overrides)
+            {
+                res_overrides.insert(res_overrides.end(), &p_res_overrides[0], &p_res_overrides[res_override_count]);
+            }
+
+            *shader = strdup(strdup(((spirv_cross::CompilerMSL *)compiler)->compile(&vat_overrides, &res_overrides).c_str()));
+        } while (0);)
+}
+
 ScInternalResult sc_internal_compiler_msl_set_options(const ScInternalCompilerMsl *compiler, const ScMslCompilerOptions *options)
 {
     INTERNAL_RESULT(
@@ -113,7 +135,6 @@ ScInternalResult sc_internal_compiler_get_entry_points(const ScInternalCompilerB
                 entry_points[i]->work_group_size_x = sc_entry_point.workgroup_size.x;
                 entry_points[i]->work_group_size_y = sc_entry_point.workgroup_size.y;
                 entry_points[i]->work_group_size_z = sc_entry_point.workgroup_size.z;
-                i++;
             }
         } while (0);)
 }
@@ -164,12 +185,7 @@ ScInternalResult sc_internal_compiler_get_shader_resources(const ScInternalCompi
 
 ScInternalResult sc_internal_compiler_compile(const ScInternalCompilerBase *compiler, const char **shader)
 {
-    INTERNAL_RESULT(
-        do {
-            // Unsafe
-            // Release to FFI
-            *shader = strdup(strdup(((spirv_cross::Compiler *)compiler)->compile().c_str()));
-        } while (0);)
+    INTERNAL_RESULT(*shader = strdup(strdup(((spirv_cross::Compiler *)compiler)->compile().c_str()));)
 }
 
 ScInternalResult sc_internal_compiler_delete(ScInternalCompilerBase *compiler)

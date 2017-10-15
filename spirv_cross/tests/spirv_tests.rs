@@ -1,14 +1,14 @@
 extern crate spirv_cross;
-use spirv_cross::{hlsl, spirv};
+use spirv_cross::{hlsl as lang, spirv};
 
 mod common;
 use common::words_from_bytes;
 
 #[test]
 fn ast_gets_entry_points() {
-    let entry_points = spirv::Ast::<hlsl::Target>::parse(&spirv::Module::from_words(
-        words_from_bytes(include_bytes!("shaders/simple.spv")),
-    )).unwrap()
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.spv")));
+    let entry_points = spirv::Ast::<lang::Target>::parse(&module)
+        .unwrap()
         .get_entry_points()
         .unwrap();
 
@@ -18,9 +18,9 @@ fn ast_gets_entry_points() {
 
 #[test]
 fn ast_gets_shader_resources() {
-    let shader_resources = spirv::Ast::<hlsl::Target>::parse(&spirv::Module::from_words(
-        words_from_bytes(include_bytes!("shaders/simple.spv")),
-    )).unwrap()
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.spv")));
+    let shader_resources = spirv::Ast::<lang::Target>::parse(&module)
+        .unwrap()
         .get_shader_resources()
         .unwrap();
 
@@ -62,9 +62,9 @@ fn ast_gets_shader_resources() {
 
 #[test]
 fn ast_gets_decoration() {
-    let ast = spirv::Ast::<hlsl::Target>::parse(&spirv::Module::from_words(
-        words_from_bytes(include_bytes!("shaders/simple.spv")),
-    )).unwrap();
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.spv")));
+    let ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
+
     let stage_inputs = ast.get_shader_resources().unwrap().stage_inputs;
     let decoration = ast.get_decoration(stage_inputs[0].id, spirv::Decoration::DescriptorSet)
         .unwrap();
@@ -73,9 +73,9 @@ fn ast_gets_decoration() {
 
 #[test]
 fn ast_sets_decoration() {
-    let mut ast = spirv::Ast::<hlsl::Target>::parse(&spirv::Module::from_words(
-        words_from_bytes(include_bytes!("shaders/simple.spv")),
-    )).unwrap();
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.spv")));
+    let mut ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
+
     let stage_inputs = ast.get_shader_resources().unwrap().stage_inputs;
     let updated_value = 3;
     ast.set_decoration(

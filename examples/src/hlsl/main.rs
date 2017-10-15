@@ -8,7 +8,7 @@ fn main() {
 
     // Parse a SPIR-V module
     let mut ast = spirv::Ast::<hlsl::Target>::parse(&module).unwrap();
-    ast.set_compile_options(hlsl::CompilerOptions {
+    ast.set_compiler_options(&hlsl::CompilerOptions {
         shader_model: hlsl::ShaderModel::V5_1,
         vertex: hlsl::CompilerVertexOptions::default(),
     }).unwrap();
