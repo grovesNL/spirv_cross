@@ -1,4 +1,3 @@
-
 //! Raw compiler bindings for SPIRV-Cross.
 
 use bindings::root::*;
@@ -96,11 +95,12 @@ impl spirv::Decoration {
 }
 
 #[derive(Debug, Clone)]
-pub struct Compiler {
-    pub sc_compiler: *mut ScInternalCompilerBase,
+pub struct Compiler<TTargetData> {
+    pub(crate) sc_compiler: *mut ScInternalCompilerBase,
+    pub(crate) target_data: TTargetData,
 }
 
-impl Compiler {
+impl<TTargetData> Compiler<TTargetData> {
     pub fn compile(&self) -> Result<String, ErrorCode> {
         unsafe {
             let mut shader_ptr = ptr::null();
@@ -261,7 +261,7 @@ impl Compiler {
     }
 }
 
-impl Drop for Compiler {
+impl<TTargetData> Drop for Compiler<TTargetData> {
     fn drop(&mut self) {
         unsafe {
             sc_internal_compiler_delete(self.sc_compiler);

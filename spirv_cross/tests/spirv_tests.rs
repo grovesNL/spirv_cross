@@ -6,11 +6,8 @@ use common::words_from_bytes;
 
 #[test]
 fn ast_gets_entry_points() {
-    let parser_options = lang::ParserOptions::default();
-    let module = spirv::Module::from_words(
-        words_from_bytes(include_bytes!("shaders/simple.spv")),
-    );
-    let entry_points = spirv::Ast::<lang::Target>::parse(&module, &parser_options)
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.spv")));
+    let entry_points = spirv::Ast::<lang::Target>::parse(&module)
         .unwrap()
         .get_entry_points()
         .unwrap();
@@ -21,11 +18,8 @@ fn ast_gets_entry_points() {
 
 #[test]
 fn ast_gets_shader_resources() {
-    let parser_options = lang::ParserOptions::default();
-    let module = spirv::Module::from_words(
-        words_from_bytes(include_bytes!("shaders/simple.spv")),
-    );
-    let shader_resources = spirv::Ast::<lang::Target>::parse(&module, &parser_options)
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.spv")));
+    let shader_resources = spirv::Ast::<lang::Target>::parse(&module)
         .unwrap()
         .get_shader_resources()
         .unwrap();
@@ -68,11 +62,8 @@ fn ast_gets_shader_resources() {
 
 #[test]
 fn ast_gets_decoration() {
-    let parser_options = lang::ParserOptions::default();
-    let module = spirv::Module::from_words(
-        words_from_bytes(include_bytes!("shaders/simple.spv")),
-    );
-    let ast = spirv::Ast::<lang::Target>::parse(&module, &parser_options).unwrap();
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.spv")));
+    let ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
 
     let stage_inputs = ast.get_shader_resources().unwrap().stage_inputs;
     let decoration = ast.get_decoration(stage_inputs[0].id, spirv::Decoration::DescriptorSet)
@@ -82,11 +73,8 @@ fn ast_gets_decoration() {
 
 #[test]
 fn ast_sets_decoration() {
-    let parser_options = lang::ParserOptions::default();
-    let module = spirv::Module::from_words(
-        words_from_bytes(include_bytes!("shaders/simple.spv")),
-    );
-    let mut ast = spirv::Ast::<lang::Target>::parse(&module, &parser_options).unwrap();
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.spv")));
+    let mut ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
 
     let stage_inputs = ast.get_shader_resources().unwrap().stage_inputs;
     let updated_value = 3;

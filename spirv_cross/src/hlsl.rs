@@ -7,8 +7,9 @@ use std::marker::PhantomData;
 #[derive(Debug, Clone)]
 pub enum Target {}
 
-#[derive(Debug, Clone, Default)]
-pub struct ParserOptions;
+impl spirv::Target for Target {
+    type Data = ();
+}
 
 /// A HLSL shader model version.
 #[allow(non_snake_case, non_camel_case_types)]
@@ -84,9 +85,7 @@ impl Default for CompilerOptions {
 }
 
 impl spirv::Parse<Target> for spirv::Ast<Target> {
-    type ParserOptions = ParserOptions;
-
-    fn parse(module: &spirv::Module, _options: &ParserOptions) -> Result<Self, ErrorCode> {
+    fn parse(module: &spirv::Module) -> Result<Self, ErrorCode> {
         let compiler = {
             let mut compiler = ptr::null_mut();
             unsafe {
@@ -99,6 +98,7 @@ impl spirv::Parse<Target> for spirv::Ast<Target> {
 
             compiler::Compiler {
                 sc_compiler: compiler,
+                target_data: (),
             }
         };
 
@@ -113,7 +113,7 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
     type CompilerOptions = CompilerOptions;
 
     /// Set HLSL compiler specific compilation settings.
-    fn set_compile_options(&mut self, options: &CompilerOptions) -> Result<(), ErrorCode> {
+    fn set_compiler_options(&mut self, options: &CompilerOptions) -> Result<(), ErrorCode> {
         let raw_options = options.as_raw();
         unsafe {
             check!(sc_internal_compiler_hlsl_set_options(

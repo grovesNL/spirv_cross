@@ -126,28 +126,34 @@ impl<'a> Module<'a> {
     }
 }
 
+pub trait Target {
+    type Data;
+}
+
 /// An abstract syntax tree that corresponds to a SPIR-V module.
-pub struct Ast<TTarget> {
-    pub(crate) compiler: compiler::Compiler,
+pub struct Ast<TTarget>
+where
+    TTarget: Target,
+{
+    pub(crate) compiler: compiler::Compiler<TTarget::Data>,
     pub(crate) target_type: PhantomData<TTarget>,
 }
 
 pub trait Parse<TTarget>: Sized {
-    type ParserOptions;
-
-    fn parse(module: &Module, &Self::ParserOptions) -> Result<Self, ErrorCode>;
+    fn parse(module: &Module) -> Result<Self, ErrorCode>;
 }
 
 pub trait Compile<TTarget> {
     type CompilerOptions;
 
-    fn set_compile_options(&mut self, &Self::CompilerOptions) -> Result<(), ErrorCode>;
+    fn set_compiler_options(&mut self, &Self::CompilerOptions) -> Result<(), ErrorCode>;
     fn compile(&self) -> Result<String, ErrorCode>;
 }
 
 impl<TTarget> Ast<TTarget>
 where
     Self: Parse<TTarget> + Compile<TTarget>,
+    TTarget: Target,
 {
     /// Gets a decoration.
     pub fn get_decoration(&self, id: u32, decoration: Decoration) -> Result<u32, ErrorCode> {
@@ -174,19 +180,16 @@ where
     }
 
     /// Parses a module into `Ast`.
-    pub fn parse(
-        module: &Module,
-        options: &<Self as Parse<TTarget>>::ParserOptions,
-    ) -> Result<Self, ErrorCode> {
-        Parse::<TTarget>::parse(&module, options)
+    pub fn parse(module: &Module) -> Result<Self, ErrorCode> {
+        Parse::<TTarget>::parse(&module)
     }
 
     /// Sets compile options.
-    pub fn set_compile_options(
+    pub fn set_compiler_options(
         &mut self,
         options: &<Self as Compile<TTarget>>::CompilerOptions,
     ) -> Result<(), ErrorCode> {
-        Compile::<TTarget>::set_compile_options(self, options)
+        Compile::<TTarget>::set_compiler_options(self, options)
     }
 
     /// Compiles an abstract syntax tree to a `String` in the specified `TTarget` language.
