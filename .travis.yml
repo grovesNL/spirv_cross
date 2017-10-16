@@ -11,8 +11,8 @@ cache:
 os: osx
 
 branches:
-  except:
-    - staging.tmp
+  only:
+    - master
 
 env:
   global:
