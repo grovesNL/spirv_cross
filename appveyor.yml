@@ -28,8 +28,10 @@ test_script:
   - cargo test --verbose --all --target %TARGET% --release
 
 branches:
-  except:
-    - staging.tmp
+  only:
+    - staging
+    - trying
+    - master
 
 notifications:
   - provider: Webhook

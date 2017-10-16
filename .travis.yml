@@ -12,6 +12,8 @@ os: osx
 
 branches:
   only:
+    - staging
+    - trying
     - master
 
 env:
