@@ -32,6 +32,8 @@ branches:
     - staging
     - trying
     - master
+  except:
+    - staging.tmp
 
 notifications:
   - provider: Webhook
