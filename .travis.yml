@@ -40,6 +40,13 @@ matrix:
           sources:
             - llvm-toolchain-precise-3.8
             - ubuntu-toolchain-r-test
+    - os: osx
+      osx_image: xcode8
+      env:
+        - MATRIX_EVAL="brew update && brew install gcc5 && CC=gcc-5 && CXX=g++-5"
+
+before_install:
+    - eval "${MATRIX_EVAL}"
 
 script:
   - |
