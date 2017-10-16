@@ -8,9 +8,6 @@ environment:
     - TARGET: x86_64-pc-windows-gnu
     - TARGET: x86_64-pc-windows-msvc
 
-cache:
-  - 'C:\Users\appveyor\.cargo'
-
 install:
   - curl -sSf -o rustup-init.exe https://win.rustup.rs
   - rustup-init.exe --default-host %TARGET% --default-toolchain %CHANNEL% -y
@@ -39,3 +36,7 @@ notifications:
     on_build_success: false
     on_build_failure: true
     on_build_status_changed: true
+
+cache:
+  - target
+  - C:\Users\appveyor\.cargo\registry
