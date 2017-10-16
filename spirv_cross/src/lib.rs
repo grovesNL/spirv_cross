@@ -39,6 +39,7 @@ mod compiler;
 pub mod spirv;
 pub mod hlsl;
 pub mod msl;
+pub mod glsl;
 
 mod bindings {
     #![allow(dead_code)]

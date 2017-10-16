@@ -1509,6 +1509,7 @@ pub mod root {
     pub type ScInternalCompilerBase = ::std::os::raw::c_void;
     pub type ScInternalCompilerHlsl = ::std::os::raw::c_void;
     pub type ScInternalCompilerMsl = ::std::os::raw::c_void;
+    pub type ScInternalCompilerGlsl = ::std::os::raw::c_void;
     #[repr(i32)]
     #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
     pub enum ScInternalResult {
@@ -1630,6 +1631,52 @@ pub mod root {
                     vertex_invert_y ) ));
     }
     impl Clone for ScMslCompilerOptions {
+        fn clone(&self) -> Self { *self }
+    }
+    #[repr(C)]
+    #[derive(Debug, Copy)]
+    pub struct ScGlslCompilerOptions {
+        pub vertex_transform_clip_space: bool,
+        pub vertex_invert_y: bool,
+        pub version: u32,
+        pub es: bool,
+    }
+    #[test]
+    fn bindgen_test_layout_ScGlslCompilerOptions() {
+        assert_eq!(::std::mem::size_of::<ScGlslCompilerOptions>() , 12usize ,
+                   concat ! (
+                   "Size of: " , stringify ! ( ScGlslCompilerOptions ) ));
+        assert_eq! (::std::mem::align_of::<ScGlslCompilerOptions>() , 4usize ,
+                    concat ! (
+                    "Alignment of " , stringify ! ( ScGlslCompilerOptions )
+                    ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScGlslCompilerOptions ) ) .
+                    vertex_transform_clip_space as * const _ as usize } ,
+                    0usize , concat ! (
+                    "Alignment of field: " , stringify ! (
+                    ScGlslCompilerOptions ) , "::" , stringify ! (
+                    vertex_transform_clip_space ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScGlslCompilerOptions ) ) .
+                    vertex_invert_y as * const _ as usize } , 1usize , concat
+                    ! (
+                    "Alignment of field: " , stringify ! (
+                    ScGlslCompilerOptions ) , "::" , stringify ! (
+                    vertex_invert_y ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScGlslCompilerOptions ) ) . version
+                    as * const _ as usize } , 4usize , concat ! (
+                    "Alignment of field: " , stringify ! (
+                    ScGlslCompilerOptions ) , "::" , stringify ! ( version )
+                    ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScGlslCompilerOptions ) ) . es as *
+                    const _ as usize } , 8usize , concat ! (
+                    "Alignment of field: " , stringify ! (
+                    ScGlslCompilerOptions ) , "::" , stringify ! ( es ) ));
+    }
+    impl Clone for ScGlslCompilerOptions {
         fn clone(&self) -> Self { *self }
     }
     #[repr(C)]
@@ -1830,6 +1877,19 @@ pub mod root {
                                                 p_res_overrides:
                                                     *const root::spirv_cross::MSLResourceBinding,
                                                 res_override_count: usize)
+         -> root::ScInternalResult;
+    }
+    extern "C" {
+        pub fn sc_internal_compiler_glsl_new(compiler:
+                                                 *mut *mut root::ScInternalCompilerGlsl,
+                                             ir: *const u32, size: usize)
+         -> root::ScInternalResult;
+    }
+    extern "C" {
+        pub fn sc_internal_compiler_glsl_set_options(compiler:
+                                                         *const root::ScInternalCompilerHlsl,
+                                                     options:
+                                                         *const root::ScGlslCompilerOptions)
          -> root::ScInternalResult;
     }
     extern "C" {

@@ -13,3 +13,7 @@ path = "src/hlsl/main.rs"
 [[bin]]
 name = "msl"
 path = "src/msl/main.rs"
+
+[[bin]]
+name = "glsl"
+path = "src/glsl/main.rs"
