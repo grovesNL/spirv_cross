@@ -10,6 +10,10 @@ cache:
 
 os: osx
 
+branches:
+  except:
+    - staging.tmp
+
 env:
   global:
     - RUSTFLAGS="-C link-dead-code"

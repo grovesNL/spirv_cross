@@ -1,5 +1,9 @@
 os: Visual Studio 2015
 
+branches:
+  except:
+    - staging.tmp
+
 environment:
   global:
     CHANNEL: stable
