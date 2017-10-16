@@ -38,5 +38,4 @@ notifications:
     on_build_status_changed: true
 
 cache:
-  - target
-  - C:\Users\appveyor\.cargo\registry
+  - C:\Users\appveyor\.cargo
