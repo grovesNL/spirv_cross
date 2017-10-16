@@ -46,7 +46,6 @@ ScInternalResult sc_internal_compiler_hlsl_set_options(const ScInternalCompilerH
 {
     INTERNAL_RESULT(
         do {
-            // Unsafe
             auto compiler_glsl = (spirv_cross::CompilerGLSL *)compiler;
             auto glsl_options = compiler_glsl->spirv_cross::CompilerGLSL::get_options();
             glsl_options.vertex.fixup_clipspace = options->vertex_transform_clip_space;
@@ -91,9 +90,27 @@ ScInternalResult sc_internal_compiler_msl_set_options(const ScInternalCompilerMs
 {
     INTERNAL_RESULT(
         do {
-            // Unsafe
             auto compiler_glsl = (spirv_cross::CompilerGLSL *)compiler;
             auto glsl_options = compiler_glsl->spirv_cross::CompilerGLSL::get_options();
+            glsl_options.vertex.fixup_clipspace = options->vertex_transform_clip_space;
+            glsl_options.vertex.flip_vert_y = options->vertex_invert_y;
+            compiler_glsl->spirv_cross::CompilerGLSL::set_options(glsl_options);
+        } while (0);)
+}
+
+ScInternalResult sc_internal_compiler_glsl_new(ScInternalCompilerGlsl **compiler, const uint32_t *ir, size_t size)
+{
+    INTERNAL_RESULT(*compiler = new spirv_cross::CompilerGLSL(ir, size);)
+}
+
+ScInternalResult sc_internal_compiler_glsl_set_options(const ScInternalCompilerGlsl *compiler, const ScGlslCompilerOptions *options)
+{
+    INTERNAL_RESULT(
+        do {
+            auto compiler_glsl = (spirv_cross::CompilerGLSL *)compiler;
+            auto glsl_options = compiler_glsl->spirv_cross::CompilerGLSL::get_options();
+            glsl_options.version = options->version;
+            glsl_options.es = options->es;
             glsl_options.vertex.fixup_clipspace = options->vertex_transform_clip_space;
             glsl_options.vertex.flip_vert_y = options->vertex_invert_y;
             compiler_glsl->spirv_cross::CompilerGLSL::set_options(glsl_options);
@@ -114,7 +131,6 @@ ScInternalResult sc_internal_compiler_get_entry_points(const ScInternalCompilerB
 {
     INTERNAL_RESULT(
         do {
-            // Unsafe
             auto const &compiler = *((spirv_cross::Compiler *)comp);
             auto const &sc_entry_point_names = compiler.get_entry_points();
             auto const sc_size = sc_entry_point_names.size();
@@ -124,7 +140,6 @@ ScInternalResult sc_internal_compiler_get_entry_points(const ScInternalCompilerB
                 sc_entry_points[i] = compiler.get_entry_point(sc_entry_point_names[i]);
             }
 
-            // Release to FFI
             *entry_points = (ScEntryPoint *)malloc(sc_size * sizeof(ScEntryPoint));
             *size = sc_size;
             for (uint32_t i = 0; i < sc_size; i++)
@@ -166,7 +181,6 @@ ScInternalResult sc_internal_compiler_get_shader_resources(const ScInternalCompi
 {
     INTERNAL_RESULT(
         do {
-            // Unsafe
             auto const sc_resources = ((const spirv_cross::Compiler *)compiler)->get_shader_resources();
 
             fill_resource_array(&shader_resources->uniform_buffers, sc_resources.uniform_buffers);
