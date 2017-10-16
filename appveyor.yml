@@ -21,11 +21,9 @@ install:
 
 build_script:
   - cargo build --verbose --all --target %TARGET%
-  - cargo build --verbose --all --target %TARGET% --release
 
 test_script:
-  - cargo test --verbose --all --target %TARGET% 
-  - cargo test --verbose --all --target %TARGET% --release
+  - cargo test --verbose --all --target %TARGET%
 
 branches:
   only:
