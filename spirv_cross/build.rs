@@ -6,7 +6,7 @@ fn main() {
     build.cpp(true);
     let compiler = build.try_get_compiler();
     if compiler.is_ok() && compiler.unwrap().family == Clang {
-        build.flag("-std=c++11").cpp_set_stdlib("c++");
+        build.flag("-std=c++14").cpp_set_stdlib("c++");
     } else {
         build.flag_if_supported("-std=c++14");
     }
