@@ -1,6 +1,6 @@
 [package]
 name = "spirv_cross"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Joshua Groves <josh@joshgroves.com>"]
 description = "Safe wrapper around SPIRV-Cross"
 license = "Apache-2.0"
@@ -11,4 +11,4 @@ keywords = ["spirv", "cross"]
 build = "build.rs"
 
 [build-dependencies]
-cc = "1.0"
+cc = { git = "https://github.com/grovesNL/cc-rs", branch = "pub" }

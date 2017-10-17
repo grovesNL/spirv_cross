@@ -8,8 +8,6 @@ cache:
   directories:
    - $HOME/deps
 
-os: osx
-
 branches:
   only:
     - staging
@@ -41,9 +39,10 @@ matrix:
             - llvm-toolchain-precise-3.8
             - ubuntu-toolchain-r-test
     - os: osx
-      osx_image: xcode8
+      osx_image: xcode9
+      compiler: clang
       env:
-        - MATRIX_EVAL="brew update && brew install gcc5 && CC=gcc-5 && CXX=g++-5"
+        - MATRIX_EVAL="export CXX=clang++ && export CC=clang && export MACOSX_DEPLOYMENT_TARGET=10.7"
 
 before_install:
     - eval "${MATRIX_EVAL}"
