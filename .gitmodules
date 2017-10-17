@@ -1,3 +1,6 @@
 [submodule "spirv_cross/src/vendor/SPIRV-Cross"]
 	path = spirv_cross/src/vendor/SPIRV-Cross
 	url = https://github.com/grovesNL/SPIRV-Cross.git
+[submodule "spirv_cross/src/vendor/cc-rs"]
+	path = spirv_cross/src/vendor/cc-rs
+	url = https://github.com/grovesNL/cc-rs.git
