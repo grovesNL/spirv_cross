@@ -3,6 +3,7 @@ extern crate cc;
 fn main() {
     cc::Build::new()
         .cpp(true)
+        .cpp_set_stdlib("c++")
         .file("src/wrapper.cpp")
         .file("src/vendor/SPIRV-Cross/spirv_cfg.cpp")
         .file("src/vendor/SPIRV-Cross/spirv_cross.cpp")
