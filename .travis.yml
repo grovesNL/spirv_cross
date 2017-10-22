@@ -23,7 +23,20 @@ env:
 matrix:
   include:
     - os: linux
-      env: COMPILER_NAME=gcc CXX=g++-5 CC=gcc-5
+      compiler: clang
+      env:
+        - MATRIX_EVAL="export CXX=clang++ && export CC=clang"
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-precise
+            - ubuntu-toolchain-r-test
+          packages:
+            - clang-5.0
+    - os: linux
+      compiler: gcc
+      env: 
+        - MATRIX_EVAL="export CXX=g++-5 && CC=gcc-5"
       addons:
         apt:
           packages:
