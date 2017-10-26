@@ -11,4 +11,4 @@ keywords = ["spirv", "cross"]
 build = "build.rs"
 
 [build-dependencies]
-cc = { git = "https://github.com/grovesNL/cc-rs", branch = "master-1" }
+cc = "1.0.2"
