@@ -109,6 +109,7 @@ impl<'a> spirv::Parse<Target> for spirv::Ast<Target> {
                     resource_binding_overrides: Default::default(),
                     vertex_attribute_overrides: Default::default(),
                 },
+                has_been_compiled: false,
             }
         };
 
@@ -141,7 +142,7 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
     }
 
     /// Generate MSL shader from the AST.
-    fn compile(&self) -> Result<String, ErrorCode> {
+    fn compile(&mut self) -> Result<String, ErrorCode> {
         self.compile_internal()
     }
 }

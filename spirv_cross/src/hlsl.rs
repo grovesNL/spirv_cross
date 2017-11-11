@@ -100,6 +100,7 @@ impl spirv::Parse<Target> for spirv::Ast<Target> {
             compiler::Compiler {
                 sc_compiler: compiler,
                 target_data: (),
+                has_been_compiled: false,
             }
         };
 
@@ -127,7 +128,7 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
     }
 
     /// Generate HLSL shader from the AST.
-    fn compile(&self) -> Result<String, ErrorCode> {
+    fn compile(&mut self) -> Result<String, ErrorCode> {
         self.compiler.compile()
     }
 }
