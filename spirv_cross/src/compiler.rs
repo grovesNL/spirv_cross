@@ -5,7 +5,7 @@ use ErrorCode;
 use spirv;
 use spirv::Decoration;
 use std::{mem, ptr, slice};
-use std::ffi::CStr;
+use std::ffi::{CStr, CString};
 
 impl spirv::ExecutionModel {
     fn from_raw(raw: spv::ExecutionModel) -> Result<Self, ErrorCode> {
@@ -98,10 +98,11 @@ impl spirv::Decoration {
 pub struct Compiler<TTargetData> {
     pub(crate) sc_compiler: *mut ScInternalCompilerBase,
     pub(crate) target_data: TTargetData,
+    pub(crate) has_been_compiled: bool,
 }
 
 impl<TTargetData> Compiler<TTargetData> {
-    pub fn compile(&self) -> Result<String, ErrorCode> {
+    pub fn compile(&mut self) -> Result<String, ErrorCode> {
         unsafe {
             let mut shader_ptr = ptr::null();
             check!(sc_internal_compiler_compile(
@@ -193,6 +194,30 @@ impl<TTargetData> Compiler<TTargetData> {
                 .collect::<Result<Vec<_>, _>>();
 
             Ok(try!(entry_points))
+        }
+    }
+
+    pub fn get_cleansed_entry_point_name(
+        &self,
+        entry_point_name: &str,
+    ) -> Result<String, ErrorCode> {
+        let mut cleansed_ptr = ptr::null();
+        let entry_point = CString::new(entry_point_name);
+        match entry_point {
+            Ok(ep) => unsafe {
+                check!(sc_internal_compiler_get_cleansed_entry_point_name(
+                    self.sc_compiler,
+                    ep.as_ptr(),
+                    &mut cleansed_ptr
+                ));
+                let cleansed = match CStr::from_ptr(cleansed_ptr).to_owned().into_string() {
+                    Ok(c) => c,
+                    _ => return Err(ErrorCode::Unhandled),
+                };
+                check!(sc_internal_free_pointer(cleansed_ptr as *mut c_void));
+                Ok(cleansed)
+            },
+            _ => return Err(ErrorCode::Unhandled),
         }
     }
 

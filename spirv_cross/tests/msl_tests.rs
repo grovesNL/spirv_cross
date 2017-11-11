@@ -33,7 +33,6 @@ fn ast_compiles_to_msl() {
     );
 
     ast.set_compiler_options(&compiler_options).unwrap();
-
     assert_eq!(
         ast.compile().unwrap(),
         "\
@@ -69,4 +68,5 @@ vertex main0_out main0(main0_in in [[stage_in]], constant uniform_buffer_object&
 
 "
     );
+    assert_eq!(ast.get_cleansed_entry_point_name("main").unwrap(), "main0");
 }

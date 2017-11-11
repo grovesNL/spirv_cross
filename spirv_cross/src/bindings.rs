@@ -1887,7 +1887,7 @@ pub mod root {
     }
     extern "C" {
         pub fn sc_internal_compiler_glsl_set_options(compiler:
-                                                         *const root::ScInternalCompilerHlsl,
+                                                         *const root::ScInternalCompilerGlsl,
                                                      options:
                                                          *const root::ScGlslCompilerOptions)
          -> root::ScInternalResult;
@@ -1915,6 +1915,15 @@ pub mod root {
                                                      entry_points:
                                                          *mut *mut root::ScEntryPoint,
                                                      size: *mut usize)
+         -> root::ScInternalResult;
+    }
+    extern "C" {
+        pub fn sc_internal_compiler_get_cleansed_entry_point_name(compiler:
+                                                                      *const root::ScInternalCompilerBase,
+                                                                  original_entry_point_name:
+                                                                      *const ::std::os::raw::c_char,
+                                                                  compiled_entry_point_name:
+                                                                      *mut *const ::std::os::raw::c_char)
          -> root::ScInternalResult;
     }
     extern "C" {

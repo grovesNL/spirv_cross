@@ -147,7 +147,7 @@ pub trait Compile<TTarget> {
     type CompilerOptions;
 
     fn set_compiler_options(&mut self, &Self::CompilerOptions) -> Result<(), ErrorCode>;
-    fn compile(&self) -> Result<String, ErrorCode>;
+    fn compile(&mut self) -> Result<String, ErrorCode>;
 }
 
 impl<TTarget> Ast<TTarget>
@@ -175,6 +175,20 @@ where
         self.compiler.get_entry_points()
     }
 
+    /// Gets cleansed entry point names. `compile` must be called first.
+    pub fn get_cleansed_entry_point_name(
+        &self,
+        entry_point_name: &str,
+    ) -> Result<String, ErrorCode> {
+        assert!(
+            self.compiler.has_been_compiled,
+            "`compile` must be called first"
+        );
+        self.compiler
+            .get_cleansed_entry_point_name(entry_point_name)
+    }
+
+    /// Gets shader resources.
     pub fn get_shader_resources(&self) -> Result<ShaderResources, ErrorCode> {
         self.compiler.get_shader_resources()
     }
@@ -193,7 +207,8 @@ where
     }
 
     /// Compiles an abstract syntax tree to a `String` in the specified `TTarget` language.
-    pub fn compile(&self) -> Result<String, ErrorCode> {
+    pub fn compile(&mut self) -> Result<String, ErrorCode> {
+        self.compiler.has_been_compiled = true;
         Compile::<TTarget>::compile(self)
     }
 }

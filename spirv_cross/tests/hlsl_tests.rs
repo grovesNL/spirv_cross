@@ -24,12 +24,10 @@ fn ast_compiles_to_hlsl() {
     assert_eq!(
         ast.compile().unwrap(),
         "\
-struct uniform_buffer_object
+cbuffer _22
 {
-    float4x4 u_model_view_projection;
+    row_major float4x4 uniform_buffer_object_u_model_view_projection : packoffset(c0);
 };
-
-ConstantBuffer<uniform_buffer_object> _22;
 
 static float4 gl_Position;
 static float3 v_normal;
@@ -51,7 +49,7 @@ struct SPIRV_Cross_Output
 void vert_main()
 {
     v_normal = a_normal;
-    gl_Position = mul(a_position, _22.u_model_view_projection);
+    gl_Position = mul(a_position, uniform_buffer_object_u_model_view_projection);
 }
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)

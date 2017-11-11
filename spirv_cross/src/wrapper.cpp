@@ -82,7 +82,7 @@ ScInternalResult sc_internal_compiler_msl_compile(const ScInternalCompilerBase *
                 res_overrides.insert(res_overrides.end(), &p_res_overrides[0], &p_res_overrides[res_override_count]);
             }
 
-            *shader = strdup(strdup(((spirv_cross::CompilerMSL *)compiler)->compile(&vat_overrides, &res_overrides).c_str()));
+            *shader = strdup(((spirv_cross::CompilerMSL *)compiler)->compile(&vat_overrides, &res_overrides).c_str());
         } while (0);)
 }
 
@@ -154,6 +154,17 @@ ScInternalResult sc_internal_compiler_get_entry_points(const ScInternalCompilerB
         } while (0);)
 }
 
+ScInternalResult sc_internal_compiler_get_cleansed_entry_point_name(const ScInternalCompilerBase *compiler, const char *original_entry_point_name, const char **compiled_entry_point_name)
+{
+    INTERNAL_RESULT(
+        do {
+            *compiled_entry_point_name = strdup(
+                (*((spirv_cross::Compiler *)compiler))
+                    .get_cleansed_entry_point_name(std::string(original_entry_point_name))
+                    .c_str());
+        } while (0);)
+}
+
 void fill_resource_array(ScResourceArray *resources, const std::vector<spirv_cross::Resource> &sc_resources)
 {
     auto const sc_size = sc_resources.size();
@@ -199,7 +210,7 @@ ScInternalResult sc_internal_compiler_get_shader_resources(const ScInternalCompi
 
 ScInternalResult sc_internal_compiler_compile(const ScInternalCompilerBase *compiler, const char **shader)
 {
-    INTERNAL_RESULT(*shader = strdup(strdup(((spirv_cross::Compiler *)compiler)->compile().c_str()));)
+    INTERNAL_RESULT(*shader = strdup(((spirv_cross::Compiler *)compiler)->compile().c_str());)
 }
 
 ScInternalResult sc_internal_compiler_delete(ScInternalCompilerBase *compiler)
