@@ -1835,6 +1835,36 @@ pub mod root {
     impl Clone for ScShaderResources {
         fn clone(&self) -> Self { *self }
     }
+    #[repr(C)]
+    #[derive(Debug, Copy)]
+    pub struct ScSpecializationConstant {
+        pub id: u32,
+        pub constant_id: u32,
+    }
+    #[test]
+    fn bindgen_test_layout_ScSpecializationConstant() {
+        assert_eq!(::std::mem::size_of::<ScSpecializationConstant>() , 8usize
+                   , concat ! (
+                   "Size of: " , stringify ! ( ScSpecializationConstant ) ));
+        assert_eq! (::std::mem::align_of::<ScSpecializationConstant>() ,
+                    4usize , concat ! (
+                    "Alignment of " , stringify ! ( ScSpecializationConstant )
+                    ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScSpecializationConstant ) ) . id as
+                    * const _ as usize } , 0usize , concat ! (
+                    "Alignment of field: " , stringify ! (
+                    ScSpecializationConstant ) , "::" , stringify ! ( id ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScSpecializationConstant ) ) .
+                    constant_id as * const _ as usize } , 4usize , concat ! (
+                    "Alignment of field: " , stringify ! (
+                    ScSpecializationConstant ) , "::" , stringify ! (
+                    constant_id ) ));
+    }
+    impl Clone for ScSpecializationConstant {
+        fn clone(&self) -> Self { *self }
+    }
     extern "C" {
         pub fn sc_internal_get_latest_exception_message(message:
                                                             *mut *const ::std::os::raw::c_char)
@@ -1931,6 +1961,22 @@ pub mod root {
                                                              *const root::ScInternalCompilerBase,
                                                          shader_resources:
                                                              *mut root::ScShaderResources)
+         -> root::ScInternalResult;
+    }
+    extern "C" {
+        pub fn sc_internal_compiler_get_specialization_constants(compiler:
+                                                                     *const root::ScInternalCompilerBase,
+                                                                 constants:
+                                                                     *mut *mut root::ScSpecializationConstant,
+                                                                 size:
+                                                                     *mut usize)
+         -> root::ScInternalResult;
+    }
+    extern "C" {
+        pub fn sc_internal_compiler_set_scalar_constant(compiler:
+                                                            *const root::ScInternalCompilerBase,
+                                                        id: u32,
+                                                        constant: u64)
          -> root::ScInternalResult;
     }
     extern "C" {

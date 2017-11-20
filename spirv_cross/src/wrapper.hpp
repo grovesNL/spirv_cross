@@ -75,6 +75,12 @@ typedef struct ScShaderResources
     ScResourceArray separate_samplers;
 } ScShaderResources;
 
+typedef struct ScSpecializationConstant
+{
+    uint32_t id;
+    uint32_t constant_id;
+} ScSpecializationConstant;
+
 ScInternalResult sc_internal_get_latest_exception_message(const char **message);
 
 ScInternalResult sc_internal_compiler_hlsl_new(ScInternalCompilerHlsl **compiler, const uint32_t *ir, size_t size);
@@ -94,6 +100,8 @@ ScInternalResult sc_internal_compiler_set_decoration(const ScInternalCompilerBas
 ScInternalResult sc_internal_compiler_get_entry_points(const ScInternalCompilerBase *compiler, ScEntryPoint **entry_points, size_t *size);
 ScInternalResult sc_internal_compiler_get_cleansed_entry_point_name(const ScInternalCompilerBase *compiler, const char *original_entry_point_name, const char **compiled_entry_point_name);
 ScInternalResult sc_internal_compiler_get_shader_resources(const ScInternalCompilerBase *compiler, ScShaderResources *shader_resources);
+ScInternalResult sc_internal_compiler_get_specialization_constants(const ScInternalCompilerBase *compiler, ScSpecializationConstant **constants, size_t *size);
+ScInternalResult sc_internal_compiler_set_scalar_constant(const ScInternalCompilerBase *compiler, uint32_t id, uint64_t constant);
 ScInternalResult sc_internal_compiler_compile(const ScInternalCompilerBase *compiler, const char **shader);
 ScInternalResult sc_internal_compiler_delete(ScInternalCompilerBase *compiler);
 

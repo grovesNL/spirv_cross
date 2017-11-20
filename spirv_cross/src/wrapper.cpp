@@ -208,6 +208,34 @@ ScInternalResult sc_internal_compiler_get_shader_resources(const ScInternalCompi
         } while (0);)
 }
 
+ScInternalResult sc_internal_compiler_get_specialization_constants(const ScInternalCompilerBase *compiler, ScSpecializationConstant **constants, size_t *size)
+{
+    INTERNAL_RESULT(
+        do {
+            auto const sc_constants = ((const spirv_cross::Compiler *)compiler)->get_specialization_constants();
+            auto const sc_size = sc_constants.size();
+
+            *constants = (ScSpecializationConstant *)malloc(sc_size * sizeof(ScSpecializationConstant));
+            *size = sc_size;
+            for (uint32_t i = 0; i < sc_size; i++)
+            {
+                auto const &sc_constant = sc_constants[i];
+                constants[i]->id = sc_constant.id;
+                constants[i]->constant_id = sc_constant.constant_id;
+            }
+
+        } while (0);)
+}
+
+ScInternalResult sc_internal_compiler_set_scalar_constant(const ScInternalCompilerBase *compiler, uint32_t id, uint64_t constant)
+{
+    INTERNAL_RESULT(
+        do {
+            auto& sc_constant = ((spirv_cross::Compiler *)compiler)->get_constant(id);
+            sc_constant.m.c[0].r[0].u64 = constant;
+        } while (0);)
+}
+
 ScInternalResult sc_internal_compiler_compile(const ScInternalCompilerBase *compiler, const char **shader)
 {
     INTERNAL_RESULT(*shader = strdup(((spirv_cross::Compiler *)compiler)->compile().c_str());)
