@@ -97,6 +97,13 @@ pub struct Resource {
     pub name: String,
 }
 
+/// Specialization constant reference.
+#[derive(Debug, Clone)]
+pub struct SpecializationConstant {
+    pub id: u32,
+    pub constant_id: u32,
+}
+
 /// Shader resources.
 #[derive(Debug, Clone)]
 pub struct ShaderResources {
@@ -186,6 +193,18 @@ where
         );
         self.compiler
             .get_cleansed_entry_point_name(entry_point_name)
+    }
+
+    /// Gets all specialization constants.
+    pub fn get_specialization_constants(&self) -> Result<Vec<SpecializationConstant>, ErrorCode> {
+        self.compiler.get_specialization_constants()
+    }
+
+    /// Set reference of a scalar constant to a value, overriding the default.
+    ///
+    /// Can be used to override specialization constants.
+    pub fn set_scalar_constant(&self, id: u32, value: u64) -> Result<(), ErrorCode> {
+        self.compiler.set_scalar_constant(id, value)
     }
 
     /// Gets shader resources.

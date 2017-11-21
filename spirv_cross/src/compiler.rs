@@ -221,6 +221,49 @@ impl<TTargetData> Compiler<TTargetData> {
         }
     }
 
+    pub fn get_specialization_constants(&self) -> Result<Vec<spirv::SpecializationConstant>, ErrorCode> {
+        let mut constants_raw = ptr::null_mut();
+        let mut constants_raw_length = 0 as usize;
+
+        unsafe {
+            check!(sc_internal_compiler_get_specialization_constants(
+                self.sc_compiler,
+                &mut constants_raw,
+                &mut constants_raw_length,
+            ));
+
+            let constants = (0..constants_raw_length)
+                .map(|offset| {
+                    let constant_raw_ptr = constants_raw.offset(offset as isize);
+                    let constant_raw = *constant_raw_ptr;
+
+                    let constant = spirv::SpecializationConstant {
+                        id: constant_raw.id,
+                        constant_id: constant_raw.constant_id,
+                    };
+
+                    check!(sc_internal_free_pointer(constant_raw_ptr as *mut c_void));
+
+                    Ok(constant)
+                })
+                .collect::<Result<Vec<_>, _>>();
+
+            Ok(try!(constants))
+        }
+    }
+
+    pub fn set_scalar_constant(&self, id: u32, value: u64) -> Result<(), ErrorCode> {
+        unsafe {
+            check!(sc_internal_compiler_set_scalar_constant(
+                self.sc_compiler,
+                id,
+                value,
+            ));
+        }
+
+        Ok(())
+    }
+
     pub fn get_shader_resources(&self) -> Result<spirv::ShaderResources, ErrorCode> {
         unsafe {
             let mut shader_resources_raw = mem::zeroed();
