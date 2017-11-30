@@ -25,11 +25,19 @@ typedef struct ScEntryPoint
     uint32_t work_group_size_z;
 } ScEntryPoint;
 
+typedef struct ScHlslRootConstant
+{
+    uint32_t start;
+    uint32_t end;
+} ScHlslRootConstant;
+
 typedef struct ScHlslCompilerOptions
 {
     int32_t shader_model;
     bool vertex_transform_clip_space;
     bool vertex_invert_y;
+    const ScHlslRootConstant *root_constants_layout;
+    size_t num_root_constants;
 } ScHlslCompilerOptions;
 
 typedef struct ScMslCompilerOptions
