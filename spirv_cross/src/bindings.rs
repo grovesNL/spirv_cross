@@ -1563,17 +1563,47 @@ pub mod root {
     }
     #[repr(C)]
     #[derive(Debug, Copy)]
+    pub struct ScHlslRootConstant {
+        pub start: u32,
+        pub end: u32,
+    }
+    #[test]
+    fn bindgen_test_layout_ScHlslRootConstant() {
+        assert_eq!(::std::mem::size_of::<ScHlslRootConstant>() , 8usize ,
+                   concat ! ( "Size of: " , stringify ! ( ScHlslRootConstant )
+                   ));
+        assert_eq! (::std::mem::align_of::<ScHlslRootConstant>() , 4usize ,
+                    concat ! (
+                    "Alignment of " , stringify ! ( ScHlslRootConstant ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScHlslRootConstant ) ) . start as *
+                    const _ as usize } , 0usize , concat ! (
+                    "Alignment of field: " , stringify ! ( ScHlslRootConstant
+                    ) , "::" , stringify ! ( start ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScHlslRootConstant ) ) . end as *
+                    const _ as usize } , 4usize , concat ! (
+                    "Alignment of field: " , stringify ! ( ScHlslRootConstant
+                    ) , "::" , stringify ! ( end ) ));
+    }
+    impl Clone for ScHlslRootConstant {
+        fn clone(&self) -> Self { *self }
+    }
+    #[repr(C)]
+    #[derive(Debug, Copy)]
     pub struct ScHlslCompilerOptions {
         pub shader_model: i32,
         pub vertex_transform_clip_space: bool,
         pub vertex_invert_y: bool,
+        pub root_constants_layout: *const root::ScHlslRootConstant,
+        pub num_root_constants: usize,
     }
     #[test]
     fn bindgen_test_layout_ScHlslCompilerOptions() {
-        assert_eq!(::std::mem::size_of::<ScHlslCompilerOptions>() , 8usize ,
+        assert_eq!(::std::mem::size_of::<ScHlslCompilerOptions>() , 24usize ,
                    concat ! (
                    "Size of: " , stringify ! ( ScHlslCompilerOptions ) ));
-        assert_eq! (::std::mem::align_of::<ScHlslCompilerOptions>() , 4usize ,
+        assert_eq! (::std::mem::align_of::<ScHlslCompilerOptions>() , 8usize ,
                     concat ! (
                     "Alignment of " , stringify ! ( ScHlslCompilerOptions )
                     ));
@@ -1597,6 +1627,20 @@ pub mod root {
                     "Alignment of field: " , stringify ! (
                     ScHlslCompilerOptions ) , "::" , stringify ! (
                     vertex_invert_y ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScHlslCompilerOptions ) ) .
+                    root_constants_layout as * const _ as usize } , 8usize ,
+                    concat ! (
+                    "Alignment of field: " , stringify ! (
+                    ScHlslCompilerOptions ) , "::" , stringify ! (
+                    root_constants_layout ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScHlslCompilerOptions ) ) .
+                    num_root_constants as * const _ as usize } , 16usize ,
+                    concat ! (
+                    "Alignment of field: " , stringify ! (
+                    ScHlslCompilerOptions ) , "::" , stringify ! (
+                    num_root_constants ) ));
     }
     impl Clone for ScHlslCompilerOptions {
         fn clone(&self) -> Self { *self }

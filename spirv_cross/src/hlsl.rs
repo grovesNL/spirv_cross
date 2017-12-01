@@ -3,6 +3,8 @@ use bindings::root::*;
 use std::ptr;
 use std::marker::PhantomData;
 
+pub use bindings::root::ScHlslRootConstant as RootConstant;
+
 /// A HLSL target.
 #[derive(Debug, Clone)]
 pub enum Target {}
@@ -64,6 +66,7 @@ impl Default for CompilerVertexOptions {
 pub struct CompilerOptions {
     pub shader_model: ShaderModel,
     pub vertex: CompilerVertexOptions,
+    pub root_constants_layout: Vec<RootConstant>,
 }
 
 impl CompilerOptions {
@@ -72,6 +75,8 @@ impl CompilerOptions {
             shader_model: self.shader_model.as_raw(),
             vertex_invert_y: self.vertex.invert_y,
             vertex_transform_clip_space: self.vertex.transform_clip_space,
+            root_constants_layout: self.root_constants_layout.as_ptr(),
+            num_root_constants: self.root_constants_layout.len(),
         }
     }
 }
@@ -81,6 +86,7 @@ impl Default for CompilerOptions {
         CompilerOptions {
             shader_model: ShaderModel::V3_0,
             vertex: CompilerVertexOptions::default(),
+            root_constants_layout: Vec::default(),
         }
     }
 }
