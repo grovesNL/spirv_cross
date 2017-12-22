@@ -135,6 +135,9 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
 
     /// Generate GLSL shader from the AST.
     fn compile(&mut self) -> Result<String, ErrorCode> {
+        unsafe {
+            check!(sc_internal_compiler_glsl_build_combined_image_samplers(self.compiler.sc_compiler));
+        }
         self.compiler.compile()
     }
 }
