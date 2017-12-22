@@ -130,6 +130,14 @@ ScInternalResult sc_internal_compiler_glsl_set_options(const ScInternalCompilerG
         } while (0);)
 }
 
+ScInternalResult sc_internal_compiler_glsl_build_combined_image_samplers(const ScInternalCompilerBase *compiler)
+{
+    INTERNAL_RESULT(
+        do {
+            ((spirv_cross::CompilerGLSL *)compiler)->build_combined_image_samplers();
+        } while (0);)
+}
+
 ScInternalResult sc_internal_compiler_get_decoration(const ScInternalCompilerBase *compiler, uint32_t *result, uint32_t id, spv::Decoration decoration)
 {
     INTERNAL_RESULT(*result = ((spirv_cross::Compiler *)compiler)->get_decoration(id, decoration);)
