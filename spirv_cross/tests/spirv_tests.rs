@@ -93,7 +93,7 @@ fn ast_sets_decoration() {
 #[test]
 fn ast_gets_type() {
     let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.spv")));
-    let mut ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
+    let ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
 
     let uniform_buffers = ast.get_shader_resources().unwrap().uniform_buffers;
 
@@ -108,7 +108,7 @@ fn ast_gets_type() {
 #[test]
 fn ast_gets_member_name() {
     let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.spv")));
-    let mut ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
+    let ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
 
     let uniform_buffers = ast.get_shader_resources().unwrap().uniform_buffers;
 
@@ -122,7 +122,7 @@ fn ast_gets_member_name() {
 #[test]
 fn ast_gets_member_decoration() {
     let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.spv")));
-    let mut ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
+    let ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
 
     let uniform_buffers = ast.get_shader_resources().unwrap().uniform_buffers;
 
