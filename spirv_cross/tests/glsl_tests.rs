@@ -29,6 +29,7 @@ fn ast_compiles_to_glsl() {
 layout(std140) uniform uniform_buffer_object
 {
     mat4 u_model_view_projection;
+    float u_scale;
 } _22;
 
 layout(location = 0) out vec3 v_normal;
@@ -38,7 +39,7 @@ layout(location = 0) in vec4 a_position;
 void main()
 {
     v_normal = a_normal;
-    gl_Position = _22.u_model_view_projection * a_position;
+    gl_Position = (_22.u_model_view_projection * a_position) * _22.u_scale;
 }
 
 "

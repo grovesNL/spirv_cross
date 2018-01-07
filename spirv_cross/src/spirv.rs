@@ -120,6 +120,26 @@ pub struct ShaderResources {
     pub separate_samplers: Vec<Resource>,
 }
 
+#[derive(Debug, Clone)]
+pub enum Type {
+    // TODO: Add missing fields to relevant variants from SPIRType
+    Unknown,
+    Void,
+    Boolean,
+    Char,
+    Int,
+    UInt,
+    Int64,
+    UInt64,
+    AtomicCounter,
+    Float,
+    Double,
+    Struct,
+    Image,
+    SampledImage,
+    Sampler,
+}
+
 /// A SPIR-V shader module.
 #[derive(Debug, Clone)]
 pub struct Module<'a> {
@@ -203,13 +223,45 @@ where
     /// Set reference of a scalar constant to a value, overriding the default.
     ///
     /// Can be used to override specialization constants.
-    pub fn set_scalar_constant(&self, id: u32, value: u64) -> Result<(), ErrorCode> {
+    pub fn set_scalar_constant(&mut self, id: u32, value: u64) -> Result<(), ErrorCode> {
         self.compiler.set_scalar_constant(id, value)
     }
 
     /// Gets shader resources.
     pub fn get_shader_resources(&self) -> Result<ShaderResources, ErrorCode> {
         self.compiler.get_shader_resources()
+    }
+
+    /// Gets the SPIR-V type associated with an ID.
+    pub fn get_type(&self, id: u32) -> Result<Type, ErrorCode> {
+        self.compiler.get_type(id)
+    }
+
+    /// Gets the identifier for a member located at `index` within an `OpTypeStruct`.
+    pub fn get_member_name(&self, id: u32, index: u32) -> Result<String, ErrorCode> {
+        self.compiler.get_member_name(id, index)
+    }
+
+    /// Gets a decoration for a member located at `index` within an `OpTypeStruct`.
+    pub fn get_member_decoration(
+        &self,
+        id: u32,
+        index: u32,
+        decoration: Decoration,
+    ) -> Result<u32, ErrorCode> {
+        self.compiler.get_member_decoration(id, index, decoration)
+    }
+
+    /// Sets a decoration for a member located at `index` within an `OpTypeStruct`.
+    pub fn set_member_decoration(
+        &mut self,
+        id: u32,
+        index: u32,
+        decoration: Decoration,
+        argument: u32,
+    ) -> Result<(), ErrorCode> {
+        self.compiler
+            .set_member_decoration(id, index, decoration, argument)
     }
 
     /// Parses a module into `Ast`.

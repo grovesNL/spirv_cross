@@ -89,3 +89,75 @@ fn ast_sets_decoration() {
         updated_value
     );
 }
+
+#[test]
+fn ast_gets_type() {
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.spv")));
+    let mut ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
+
+    let uniform_buffers = ast.get_shader_resources().unwrap().uniform_buffers;
+
+    assert!(
+        match ast.get_type(uniform_buffers[0].base_type_id).unwrap() {
+            spirv::Type::Struct => true,
+            _ => false,
+        }
+    );
+}
+
+#[test]
+fn ast_gets_member_name() {
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.spv")));
+    let mut ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
+
+    let uniform_buffers = ast.get_shader_resources().unwrap().uniform_buffers;
+
+    assert_eq!(
+        ast.get_member_name(uniform_buffers[0].base_type_id, 0)
+            .unwrap(),
+        "u_model_view_projection"
+    );
+}
+
+#[test]
+fn ast_gets_member_decoration() {
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.spv")));
+    let mut ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
+
+    let uniform_buffers = ast.get_shader_resources().unwrap().uniform_buffers;
+
+    assert_eq!(
+        ast.get_member_decoration(
+            uniform_buffers[0].base_type_id,
+            1,
+            spirv::Decoration::Offset
+        ).unwrap(),
+        64
+    );
+}
+
+#[test]
+fn ast_sets_member_decoration() {
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.spv")));
+    let mut ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
+
+    let uniform_buffers = ast.get_shader_resources().unwrap().uniform_buffers;
+
+    let new_offset = 128;
+
+    ast.set_member_decoration(
+        uniform_buffers[0].base_type_id,
+        1,
+        spirv::Decoration::Offset,
+        new_offset
+    ).unwrap();
+
+    assert_eq!(
+        ast.get_member_decoration(
+            uniform_buffers[0].base_type_id,
+            1,
+            spirv::Decoration::Offset
+        ).unwrap(),
+        new_offset
+    );
+}

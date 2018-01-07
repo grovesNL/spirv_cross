@@ -2,8 +2,7 @@
 
 use bindings::root::*;
 use ErrorCode;
-use spirv;
-use spirv::Decoration;
+use spirv::{self, Decoration, Type};
 use std::{mem, ptr, slice};
 use std::ffi::{CStr, CString};
 
@@ -90,6 +89,30 @@ impl spirv::Decoration {
             Decoration::SecondaryViewportRelativeNv => {
                 spv::Decoration::DecorationSecondaryViewportRelativeNV
             }
+        }
+    }
+}
+
+impl spirv::Type {
+    pub fn from_raw(ty: spirv_cross::SPIRType_BaseType) -> Type {
+        use bindings::root::spirv_cross::SPIRType_BaseType as b;
+        use spirv::Type::*;
+        match ty {
+            b::Unknown => Unknown,
+            b::Void => Void,
+            b::Boolean => Boolean,
+            b::Char => Char,
+            b::Int => Int,
+            b::UInt => UInt,
+            b::Int64 => Int64,
+            b::UInt64 => UInt64,
+            b::AtomicCounter => AtomicCounter,
+            b::Float => Float,
+            b::Double => Double,
+            b::Struct => Struct,
+            b::Image => Image,
+            b::SampledImage => SampledImage,
+            b::Sampler => Sampler,
         }
     }
 }
@@ -221,7 +244,9 @@ impl<TTargetData> Compiler<TTargetData> {
         }
     }
 
-    pub fn get_specialization_constants(&self) -> Result<Vec<spirv::SpecializationConstant>, ErrorCode> {
+    pub fn get_specialization_constants(
+        &self,
+    ) -> Result<Vec<spirv::SpecializationConstant>, ErrorCode> {
         let mut constants_raw = ptr::null_mut();
         let mut constants_raw_length = 0 as usize;
 
@@ -258,6 +283,77 @@ impl<TTargetData> Compiler<TTargetData> {
                 self.sc_compiler,
                 id,
                 value,
+            ));
+        }
+
+        Ok(())
+    }
+
+    pub fn get_type(&self, id: u32) -> Result<spirv::Type, ErrorCode> {
+        unsafe {
+            let mut type_ptr = ptr::null();
+            check!(sc_internal_compiler_get_type(
+                self.sc_compiler,
+                id,
+                &mut type_ptr,
+            ));
+            let result = Type::from_raw((*type_ptr).type_);
+            check!(sc_internal_free_pointer(type_ptr as *mut c_void));
+            Ok(result)
+        }
+    }
+
+    pub fn get_member_name(&self, id: u32, index: u32) -> Result<String, ErrorCode> {
+        unsafe {
+            let mut name_ptr = ptr::null();
+            check!(sc_internal_compiler_get_member_name(
+                self.sc_compiler,
+                id,
+                index,
+                &mut name_ptr,
+            ));
+            let name = match CStr::from_ptr(name_ptr).to_owned().into_string() {
+                Err(_) => return Err(ErrorCode::Unhandled),
+                Ok(n) => n,
+            };
+            check!(sc_internal_free_pointer(name_ptr as *mut c_void));
+            Ok(name)
+        }
+    }
+
+    pub fn get_member_decoration(
+        &self,
+        id: u32,
+        index: u32,
+        decoration: Decoration,
+    ) -> Result<u32, ErrorCode> {
+        let mut result = 0;
+        unsafe {
+            check!(sc_internal_compiler_get_member_decoration(
+                self.sc_compiler,
+                id,
+                index,
+                decoration.as_raw(),
+                &mut result,
+            ));
+        }
+        Ok(result)
+    }
+
+    pub fn set_member_decoration(
+        &self,
+        id: u32,
+        index: u32,
+        decoration: Decoration,
+        argument: u32,
+    ) -> Result<(), ErrorCode> {
+        unsafe {
+            check!(sc_internal_compiler_set_member_decoration(
+                self.sc_compiler,
+                id,
+                index,
+                decoration.as_raw(),
+                argument,
             ));
         }
 

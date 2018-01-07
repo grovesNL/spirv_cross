@@ -1,3 +1,4 @@
+#pragma warning(disable : 4996 4101)
 #include "vendor/SPIRV-Cross/spirv_hlsl.hpp"
 #include "vendor/SPIRV-Cross/spirv_msl.hpp"
 #include "wrapper.hpp"
@@ -33,11 +34,10 @@ static const char *latest_exception_message;
 extern "C" {
 ScInternalResult sc_internal_get_latest_exception_message(const char **message)
 {
-    INTERNAL_RESULT(
-            *message = latest_exception_message;)
+    INTERNAL_RESULT(*message = latest_exception_message;)
 }
 
-ScInternalResult sc_internal_compiler_hlsl_new(ScInternalCompilerHlsl **compiler, const uint32_t *ir, size_t size)
+ScInternalResult sc_internal_compiler_hlsl_new(ScInternalCompilerHlsl **compiler, const uint32_t *ir, const size_t size)
 {
     INTERNAL_RESULT(*compiler = new spirv_cross::CompilerHLSL(ir, size);)
 }
@@ -62,9 +62,9 @@ ScInternalResult sc_internal_compiler_hlsl_set_options(const ScInternalCompilerH
                 for (int i = 0; i < options->num_root_constants; i++)
                 {
                     hlsl_options.root_constants_layout.push_back(
-                        spirv_cross::RootConstants {
+                        spirv_cross::RootConstants{
                             options->root_constants_layout[i].start,
-                            options->root_constants_layout[i].end });
+                            options->root_constants_layout[i].end});
                 }
             }
 
@@ -72,14 +72,14 @@ ScInternalResult sc_internal_compiler_hlsl_set_options(const ScInternalCompilerH
         } while (0);)
 }
 
-ScInternalResult sc_internal_compiler_msl_new(ScInternalCompilerMsl **compiler, const uint32_t *ir, size_t size)
+ScInternalResult sc_internal_compiler_msl_new(ScInternalCompilerMsl **compiler, const uint32_t *ir, const size_t size)
 {
     INTERNAL_RESULT(*compiler = new spirv_cross::CompilerMSL(ir, size);)
 }
 
 ScInternalResult sc_internal_compiler_msl_compile(const ScInternalCompilerBase *compiler, const char **shader,
-                                                  const spirv_cross::MSLVertexAttr *p_vat_overrides, size_t vat_override_count,
-                                                  const spirv_cross::MSLResourceBinding *p_res_overrides, size_t res_override_count)
+                                                  const spirv_cross::MSLVertexAttr *p_vat_overrides, const size_t vat_override_count,
+                                                  const spirv_cross::MSLResourceBinding *p_res_overrides, const size_t res_override_count)
 {
     INTERNAL_RESULT(
         do {
@@ -111,7 +111,7 @@ ScInternalResult sc_internal_compiler_msl_set_options(const ScInternalCompilerMs
         } while (0);)
 }
 
-ScInternalResult sc_internal_compiler_glsl_new(ScInternalCompilerGlsl **compiler, const uint32_t *ir, size_t size)
+ScInternalResult sc_internal_compiler_glsl_new(ScInternalCompilerGlsl **compiler, const uint32_t *ir, const size_t size)
 {
     INTERNAL_RESULT(*compiler = new spirv_cross::CompilerGLSL(ir, size);)
 }
@@ -138,27 +138,27 @@ ScInternalResult sc_internal_compiler_glsl_build_combined_image_samplers(const S
         } while (0);)
 }
 
-ScInternalResult sc_internal_compiler_get_decoration(const ScInternalCompilerBase *compiler, uint32_t *result, uint32_t id, spv::Decoration decoration)
+ScInternalResult sc_internal_compiler_get_decoration(const ScInternalCompilerBase *compiler, uint32_t *result, const uint32_t id, const spv::Decoration decoration)
 {
     INTERNAL_RESULT(*result = ((spirv_cross::Compiler *)compiler)->get_decoration(id, decoration);)
 }
 
-ScInternalResult sc_internal_compiler_set_decoration(const ScInternalCompilerBase *compiler, uint32_t id, spv::Decoration decoration, uint32_t argument)
+ScInternalResult sc_internal_compiler_set_decoration(const ScInternalCompilerBase *compiler, const uint32_t id, const spv::Decoration decoration, const uint32_t argument)
 {
     INTERNAL_RESULT(((spirv_cross::Compiler *)compiler)->set_decoration(id, decoration, argument);)
 }
 
-ScInternalResult sc_internal_compiler_get_entry_points(const ScInternalCompilerBase *comp, ScEntryPoint **entry_points, size_t *size)
+ScInternalResult sc_internal_compiler_get_entry_points(const ScInternalCompilerBase *compiler, ScEntryPoint **entry_points, size_t *size)
 {
     INTERNAL_RESULT(
         do {
-            auto const &compiler = *((spirv_cross::Compiler *)comp);
-            auto const &sc_entry_point_names = compiler.get_entry_points();
+            auto const &comp = *((spirv_cross::Compiler *)compiler);
+            auto const &sc_entry_point_names = comp.get_entry_points();
             auto const sc_size = sc_entry_point_names.size();
             auto const &sc_entry_points = std::make_unique<spirv_cross::SPIREntryPoint[]>(sc_size);
             for (uint32_t i = 0; i < sc_size; i++)
             {
-                sc_entry_points[i] = compiler.get_entry_point(sc_entry_point_names[i]);
+                sc_entry_points[i] = comp.get_entry_point(sc_entry_point_names[i]);
             }
 
             *entry_points = (ScEntryPoint *)malloc(sc_size * sizeof(ScEntryPoint));
@@ -248,13 +248,43 @@ ScInternalResult sc_internal_compiler_get_specialization_constants(const ScInter
         } while (0);)
 }
 
-ScInternalResult sc_internal_compiler_set_scalar_constant(const ScInternalCompilerBase *compiler, uint32_t id, uint64_t constant)
+ScInternalResult sc_internal_compiler_set_scalar_constant(const ScInternalCompilerBase *compiler, const uint32_t id, const uint64_t constant)
 {
     INTERNAL_RESULT(
         do {
-            auto& sc_constant = ((spirv_cross::Compiler *)compiler)->get_constant(id);
+            auto &sc_constant = ((spirv_cross::Compiler *)compiler)->get_constant(id);
             sc_constant.m.c[0].r[0].u64 = constant;
         } while (0);)
+}
+
+ScInternalResult sc_internal_compiler_get_type(const ScInternalCompilerBase *compiler, const uint32_t id, const ScType **spirv_type)
+{
+    INTERNAL_RESULT(
+        do {
+            auto const &type = ((spirv_cross::Compiler *)compiler)->get_type(id);
+            auto ty = (ScType *)malloc(sizeof(ScType));
+            ty->type = type.basetype;
+            *spirv_type = ty;
+        } while (0);)
+}
+
+ScInternalResult sc_internal_compiler_get_member_name(const ScInternalCompilerBase *compiler, const uint32_t id, const uint32_t index, const char **name)
+{
+    INTERNAL_RESULT(
+        do {
+            auto const member_name = ((spirv_cross::Compiler *)compiler)->get_member_name(id, index);
+            *name = strdup(member_name.c_str());
+        } while (0);)
+}
+
+ScInternalResult sc_internal_compiler_get_member_decoration(const ScInternalCompilerBase *compiler, const uint32_t id, const uint32_t index, const spv::Decoration decoration, uint32_t *result)
+{
+    INTERNAL_RESULT(*result = ((spirv_cross::Compiler *)compiler)->get_member_decoration(id, index, decoration);)
+}
+
+ScInternalResult sc_internal_compiler_set_member_decoration(const ScInternalCompilerBase *compiler, const uint32_t id, const uint32_t index, const spv::Decoration decoration, const uint32_t argument)
+{
+    INTERNAL_RESULT(((spirv_cross::Compiler *)compiler)->set_member_decoration(id, index, decoration, argument);)
 }
 
 ScInternalResult sc_internal_compiler_compile(const ScInternalCompilerBase *compiler, const char **shader)

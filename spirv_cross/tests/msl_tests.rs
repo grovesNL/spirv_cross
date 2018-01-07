@@ -44,6 +44,7 @@ using namespace metal;
 struct uniform_buffer_object
 {
     float4x4 u_model_view_projection;
+    float u_scale;
 };
 
 struct main0_in
@@ -62,7 +63,7 @@ vertex main0_out main0(main0_in in [[stage_in]], constant uniform_buffer_object&
 {
     main0_out out = {};
     out.v_normal = in.a_normal;
-    out.gl_Position = _22.u_model_view_projection * in.a_position;
+    out.gl_Position = (_22.u_model_view_projection * in.a_position) * _22.u_scale;
     return out;
 }
 
