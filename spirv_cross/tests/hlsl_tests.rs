@@ -27,8 +27,8 @@ fn ast_compiles_to_hlsl() {
         "\
 cbuffer _22
 {
-    row_major float4x4 uniform_buffer_object_u_model_view_projection : packoffset(c0);
-    float uniform_buffer_object_u_scale : packoffset(c4);
+    row_major float4x4 _22_u_model_view_projection : packoffset(c0);
+    float _22_u_scale : packoffset(c4);
 };
 
 static float4 gl_Position;
@@ -51,7 +51,7 @@ struct SPIRV_Cross_Output
 void vert_main()
 {
     v_normal = a_normal;
-    gl_Position = mul(a_position, uniform_buffer_object_u_model_view_projection) * uniform_buffer_object_u_scale;
+    gl_Position = mul(a_position, _22_u_model_view_projection) * _22_u_scale;
 }
 
 SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
