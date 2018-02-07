@@ -66,7 +66,6 @@ impl Default for CompilerVertexOptions {
 pub struct CompilerOptions {
     pub shader_model: ShaderModel,
     pub vertex: CompilerVertexOptions,
-    pub root_constants_layout: Vec<RootConstant>,
 }
 
 impl CompilerOptions {
@@ -75,8 +74,6 @@ impl CompilerOptions {
             shader_model: self.shader_model.as_raw(),
             vertex_invert_y: self.vertex.invert_y,
             vertex_transform_clip_space: self.vertex.transform_clip_space,
-            root_constants_layout: self.root_constants_layout.as_ptr(),
-            num_root_constants: self.root_constants_layout.len(),
         }
     }
 }
@@ -86,7 +83,6 @@ impl Default for CompilerOptions {
         CompilerOptions {
             shader_model: ShaderModel::V3_0,
             vertex: CompilerVertexOptions::default(),
-            root_constants_layout: Vec::default(),
         }
     }
 }
@@ -136,5 +132,20 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
     /// Generate HLSL shader from the AST.
     fn compile(&mut self) -> Result<String, ErrorCode> {
         self.compiler.compile()
+    }
+}
+
+impl spirv::Ast<Target> {
+    ///
+    pub fn set_root_constant_layout(&mut self, layout: Vec<RootConstant>) -> Result<(), ErrorCode> {
+        unsafe {
+            check!(sc_internal_compiler_hlsl_set_root_constant_layout(
+                self.compiler.sc_compiler,
+                layout.as_ptr(),
+                layout.len() as _,
+            ));
+        }
+
+        Ok(())
     }
 }

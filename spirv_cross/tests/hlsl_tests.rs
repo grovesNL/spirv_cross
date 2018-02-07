@@ -19,7 +19,6 @@ fn ast_compiles_to_hlsl() {
     ast.set_compiler_options(&hlsl::CompilerOptions {
         shader_model: hlsl::ShaderModel::V6_0,
         vertex: hlsl::CompilerVertexOptions::default(),
-        root_constants_layout: Vec::new(),
     }).unwrap();
 
     assert_eq!(
@@ -88,7 +87,6 @@ fn ast_compiles_all_shader_models_to_hlsl() {
         match ast.set_compiler_options(&hlsl::CompilerOptions {
             shader_model,
             vertex: hlsl::CompilerVertexOptions::default(),
-            root_constants_layout: Vec::new(),
         }) {
             Err(_) => panic!("Did not compile"),
             _ => (),

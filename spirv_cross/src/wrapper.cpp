@@ -55,20 +55,28 @@ ScInternalResult sc_internal_compiler_hlsl_set_options(const ScInternalCompilerH
             auto compiler_hlsl = (spirv_cross::CompilerHLSL *)compiler;
             auto hlsl_options = compiler_hlsl->get_options();
             hlsl_options.shader_model = options->shader_model;
-            hlsl_options.root_constants_layout.clear();
-            if (options->root_constants_layout)
-            {
-                hlsl_options.root_constants_layout.resize(options->num_root_constants);
-                for (int i = 0; i < options->num_root_constants; i++)
-                {
-                    hlsl_options.root_constants_layout.push_back(
-                        spirv_cross::RootConstants{
-                            options->root_constants_layout[i].start,
-                            options->root_constants_layout[i].end});
-                }
-            }
 
             compiler_hlsl->set_options(hlsl_options);
+        } while (0);)
+}
+
+ScInternalResult sc_internal_compiler_hlsl_set_root_constant_layout(const ScInternalCompilerHlsl *compiler, const ScHlslRootConstant *constants, size_t count)
+{
+    INTERNAL_RESULT(
+        do {
+            std::vector<spirv_cross::RootConstants> root_constants;
+            for (int i = 0; i < count; i++)
+            {
+                root_constants.push_back(
+                    spirv_cross::RootConstants {
+                        constants[i].start,
+                        constants[i].end,
+                        constants[i].binding,
+                        constants[i].space });
+            }
+
+            auto compiler_hlsl = (spirv_cross::CompilerHLSL *)compiler;
+            compiler_hlsl->set_root_constant_layouts(root_constants);
         } while (0);)
 }
 
