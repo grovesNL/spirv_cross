@@ -11,7 +11,6 @@ fn main() {
     ast.set_compiler_options(&hlsl::CompilerOptions {
         shader_model: hlsl::ShaderModel::V5_1,
         vertex: hlsl::CompilerVertexOptions::default(),
-        root_constants_layout: Vec::new(),
     }).unwrap();
 
     // List all entry points

@@ -29,6 +29,8 @@ typedef struct ScHlslRootConstant
 {
     uint32_t start;
     uint32_t end;
+    uint32_t binding;
+    uint32_t space;
 } ScHlslRootConstant;
 
 typedef struct ScHlslCompilerOptions
@@ -36,8 +38,6 @@ typedef struct ScHlslCompilerOptions
     int32_t shader_model;
     bool vertex_transform_clip_space;
     bool vertex_invert_y;
-    const ScHlslRootConstant *root_constants_layout;
-    size_t num_root_constants;
 } ScHlslCompilerOptions;
 
 typedef struct ScMslCompilerOptions
@@ -98,6 +98,7 @@ ScInternalResult sc_internal_get_latest_exception_message(const char **message);
 
 ScInternalResult sc_internal_compiler_hlsl_new(ScInternalCompilerHlsl **compiler, const uint32_t *ir, const size_t size);
 ScInternalResult sc_internal_compiler_hlsl_set_options(const ScInternalCompilerHlsl *compiler, const ScHlslCompilerOptions *options);
+ScInternalResult sc_internal_compiler_hlsl_set_root_constant_layout(const ScInternalCompilerHlsl *compiler, const ScHlslRootConstant *constants, size_t count);
 
 ScInternalResult sc_internal_compiler_msl_new(ScInternalCompilerMsl **compiler, const uint32_t *ir, const size_t size);
 ScInternalResult sc_internal_compiler_msl_set_options(const ScInternalCompilerMsl *compiler, const ScMslCompilerOptions *options);
