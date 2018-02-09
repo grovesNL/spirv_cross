@@ -13,9 +13,9 @@ fn glsl_compiler_options_has_default() {
 
 #[test]
 fn ast_compiles_to_glsl() {
-    let mut ast = spirv::Ast::<glsl::Target>::parse(&spirv::Module::from_words(
-        words_from_bytes(include_bytes!("shaders/simple.spv")),
-    )).unwrap();
+    let mut ast = spirv::Ast::<glsl::Target>::parse(&spirv::Module::from_words(words_from_bytes(
+        include_bytes!("shaders/simple.spv"),
+    ))).unwrap();
     ast.set_compiler_options(&glsl::CompilerOptions {
         version: glsl::Version::V4_60,
         vertex: glsl::CompilerVertexOptions::default(),
@@ -54,21 +54,8 @@ fn ast_compiles_all_versions_to_glsl() {
     let mut ast = spirv::Ast::<glsl::Target>::parse(&module).unwrap();
 
     let versions = [
-        V1_10,
-        V1_20,
-        V1_30,
-        V1_40,
-        V1_50,
-        V3_30,
-        V4_00,
-        V4_10,
-        V4_20,
-        V4_30,
-        V4_40,
-        V4_50,
-        V4_60,
-        V1_00Es,
-        V3_00Es,
+        V1_10, V1_20, V1_30, V1_40, V1_50, V3_30, V4_00, V4_10, V4_20, V4_30, V4_40, V4_50, V4_60,
+        V1_00Es, V3_00Es,
     ];
     for &version in versions.iter() {
         match ast.set_compiler_options(&glsl::CompilerOptions {

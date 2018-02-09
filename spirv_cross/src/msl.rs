@@ -153,36 +153,31 @@ impl spirv::Ast<Target> {
             .target_data
             .vertex_attribute_overrides
             .iter()
-            .map(|(loc, vat)| {
-                spirv_cross::MSLVertexAttr {
-                    location: loc.0,
-                    msl_buffer: vat.buffer_id,
-                    msl_offset: vat.offset,
-                    msl_stride: vat.stride,
-                    per_instance: match vat.step {
-                        spirv::VertexAttributeStep::Vertex => false,
-                        spirv::VertexAttributeStep::Instance => true,
-                    },
-                    used_by_shader: vat.force_used,
-                }
+            .map(|(loc, vat)| spirv_cross::MSLVertexAttr {
+                location: loc.0,
+                msl_buffer: vat.buffer_id,
+                msl_offset: vat.offset,
+                msl_stride: vat.stride,
+                per_instance: match vat.step {
+                    spirv::VertexAttributeStep::Vertex => false,
+                    spirv::VertexAttributeStep::Instance => true,
+                },
+                used_by_shader: vat.force_used,
             })
             .collect::<Vec<_>>();
-
 
         let res_overrides = self.compiler
             .target_data
             .resource_binding_overrides
             .iter()
-            .map(|(loc, res)| {
-                spirv_cross::MSLResourceBinding {
-                    stage: loc.stage.as_raw(),
-                    desc_set: loc.desc_set,
-                    binding: loc.binding,
-                    msl_buffer: res.resource_id,
-                    msl_texture: res.resource_id,
-                    msl_sampler: res.resource_id,
-                    used_by_shader: res.force_used,
-                }
+            .map(|(loc, res)| spirv_cross::MSLResourceBinding {
+                stage: loc.stage.as_raw(),
+                desc_set: loc.desc_set,
+                binding: loc.binding,
+                msl_buffer: res.resource_id,
+                msl_texture: res.resource_id,
+                msl_sampler: res.resource_id,
+                used_by_shader: res.force_used,
             })
             .collect::<Vec<_>>();
 
