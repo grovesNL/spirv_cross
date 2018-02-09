@@ -92,6 +92,8 @@ typedef struct ScSpecializationConstant
 typedef struct ScType
 {
     spirv_cross::SPIRType::BaseType type;
+    uint32_t *member_types;
+    size_t member_types_size;
 } ScType;
 
 ScInternalResult sc_internal_get_latest_exception_message(const char **message);

@@ -134,7 +134,7 @@ pub enum Type {
     AtomicCounter,
     Float,
     Double,
-    Struct,
+    Struct { member_types: Vec<u32> },
     Image,
     SampledImage,
     Sampler,

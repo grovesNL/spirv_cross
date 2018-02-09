@@ -94,7 +94,7 @@ impl spirv::Decoration {
 }
 
 impl spirv::Type {
-    pub fn from_raw(ty: spirv_cross::SPIRType_BaseType) -> Type {
+    pub fn from_raw(ty: spirv_cross::SPIRType_BaseType, member_types: Vec<u32>) -> Type {
         use bindings::root::spirv_cross::SPIRType_BaseType as b;
         use spirv::Type::*;
         match ty {
@@ -109,7 +109,7 @@ impl spirv::Type {
             b::AtomicCounter => AtomicCounter,
             b::Float => Float,
             b::Double => Double,
-            b::Struct => Struct,
+            b::Struct => Struct { member_types },
             b::Image => Image,
             b::SampledImage => SampledImage,
             b::Sampler => Sampler,
@@ -292,13 +292,22 @@ impl<TTargetData> Compiler<TTargetData> {
     pub fn get_type(&self, id: u32) -> Result<spirv::Type, ErrorCode> {
         unsafe {
             let mut type_ptr = ptr::null();
+
             check!(sc_internal_compiler_get_type(
                 self.sc_compiler,
                 id,
                 &mut type_ptr,
             ));
-            let result = Type::from_raw((*type_ptr).type_);
+
+            let raw = *type_ptr;
+
+            let member_types =
+                slice::from_raw_parts(raw.member_types, raw.member_types_size).to_vec();
+            let result = Type::from_raw(raw.type_, member_types);
+
+            check!(sc_internal_free_pointer(raw.member_types as *mut c_void));
             check!(sc_internal_free_pointer(type_ptr as *mut c_void));
+
             Ok(result)
         }
     }

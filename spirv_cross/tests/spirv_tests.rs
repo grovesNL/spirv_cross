@@ -38,18 +38,18 @@ fn ast_gets_shader_resources() {
     assert!(
         stage_inputs
             .iter()
-            .any(|stage_input| { stage_input.name == "a_normal" })
+            .any(|stage_input| stage_input.name == "a_normal")
     );
     assert!(
         stage_inputs
             .iter()
-            .any(|stage_input| { stage_input.name == "a_position" })
+            .any(|stage_input| stage_input.name == "a_position")
     );
     assert_eq!(stage_outputs.len(), 1);
     assert!(
         stage_outputs
             .iter()
-            .any(|stage_output| { stage_output.name == "v_normal" })
+            .any(|stage_output| stage_output.name == "v_normal")
     );
     assert_eq!(shader_resources.subpass_inputs.len(), 0);
     assert_eq!(shader_resources.storage_images.len(), 0);
@@ -97,12 +97,15 @@ fn ast_gets_type() {
 
     let uniform_buffers = ast.get_shader_resources().unwrap().uniform_buffers;
 
-    assert!(
-        match ast.get_type(uniform_buffers[0].base_type_id).unwrap() {
-            spirv::Type::Struct => true,
-            _ => false,
+    let is_struct = match ast.get_type(uniform_buffers[0].base_type_id).unwrap() {
+        spirv::Type::Struct { member_types } => {
+            assert_eq!(member_types.len(), 2);
+            true
         }
-    );
+        _ => false,
+    };
+
+    assert!(is_struct);
 }
 
 #[test]
@@ -149,7 +152,7 @@ fn ast_sets_member_decoration() {
         uniform_buffers[0].base_type_id,
         1,
         spirv::Decoration::Offset,
-        new_offset
+        new_offset,
     ).unwrap();
 
     assert_eq!(

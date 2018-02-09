@@ -68,11 +68,11 @@ ScInternalResult sc_internal_compiler_hlsl_set_root_constant_layout(const ScInte
             for (int i = 0; i < count; i++)
             {
                 root_constants.push_back(
-                    spirv_cross::RootConstants {
+                    spirv_cross::RootConstants{
                         constants[i].start,
                         constants[i].end,
                         constants[i].binding,
-                        constants[i].space });
+                        constants[i].space});
             }
 
             auto compiler_hlsl = (spirv_cross::CompilerHLSL *)compiler;
@@ -270,8 +270,24 @@ ScInternalResult sc_internal_compiler_get_type(const ScInternalCompilerBase *com
     INTERNAL_RESULT(
         do {
             auto const &type = ((spirv_cross::Compiler *)compiler)->get_type(id);
+            auto const member_types_size = type.member_types.size();
+
             auto ty = (ScType *)malloc(sizeof(ScType));
             ty->type = type.basetype;
+            ty->member_types_size = member_types_size;
+
+            if (member_types_size > 0)
+            {
+                auto const &member_types = (uint32_t *)malloc(member_types_size * sizeof(uint32_t));
+
+                for (auto i = 0; i < member_types_size; i++)
+                {
+                    member_types[i] = type.member_types[i];
+                }
+
+                ty->member_types = member_types;
+            }
+
             *spirv_type = ty;
         } while (0);)
 }

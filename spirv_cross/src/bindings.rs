@@ -1938,18 +1938,30 @@ pub mod root {
     #[derive(Debug, Copy)]
     pub struct ScType {
         pub type_: root::spirv_cross::SPIRType_BaseType,
+        pub member_types: *mut u32,
+        pub member_types_size: usize,
     }
     #[test]
     fn bindgen_test_layout_ScType() {
-        assert_eq!(::std::mem::size_of::<ScType>() , 4usize , concat ! (
+        assert_eq!(::std::mem::size_of::<ScType>() , 24usize , concat ! (
                    "Size of: " , stringify ! ( ScType ) ));
-        assert_eq! (::std::mem::align_of::<ScType>() , 4usize , concat ! (
+        assert_eq! (::std::mem::align_of::<ScType>() , 8usize , concat ! (
                     "Alignment of " , stringify ! ( ScType ) ));
         assert_eq! (unsafe {
                     & ( * ( 0 as * const ScType ) ) . type_ as * const _ as
                     usize } , 0usize , concat ! (
                     "Alignment of field: " , stringify ! ( ScType ) , "::" ,
                     stringify ! ( type_ ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScType ) ) . member_types as * const
+                    _ as usize } , 8usize , concat ! (
+                    "Alignment of field: " , stringify ! ( ScType ) , "::" ,
+                    stringify ! ( member_types ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScType ) ) . member_types_size as *
+                    const _ as usize } , 16usize , concat ! (
+                    "Alignment of field: " , stringify ! ( ScType ) , "::" ,
+                    stringify ! ( member_types_size ) ));
     }
     impl Clone for ScType {
         fn clone(&self) -> Self { *self }
@@ -1973,12 +1985,13 @@ pub mod root {
          -> root::ScInternalResult;
     }
     extern "C" {
-        pub fn sc_internal_compiler_hlsl_set_root_constant_layout(
-            compiler: *const root::ScInternalCompilerHlsl,
-            constants: *const root::ScHlslRootConstant,
-            count: usize,
-        ) -> root::ScInternalResult;
-
+        pub fn sc_internal_compiler_hlsl_set_root_constant_layout(compiler:
+                                                                      *const root::ScInternalCompilerHlsl,
+                                                                  constants:
+                                                                      *const root::ScHlslRootConstant,
+                                                                  count:
+                                                                      usize)
+         -> root::ScInternalResult;
     }
     extern "C" {
         pub fn sc_internal_compiler_msl_new(compiler:
