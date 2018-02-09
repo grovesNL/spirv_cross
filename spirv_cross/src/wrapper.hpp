@@ -92,6 +92,8 @@ typedef struct ScSpecializationConstant
 typedef struct ScType
 {
     spirv_cross::SPIRType::BaseType type;
+    uint32_t *member_types;
+    size_t member_types_size;
 } ScType;
 
 ScInternalResult sc_internal_get_latest_exception_message(const char **message);
@@ -121,6 +123,8 @@ ScInternalResult sc_internal_compiler_get_type(const ScInternalCompilerBase *com
 ScInternalResult sc_internal_compiler_get_member_name(const ScInternalCompilerBase *compiler, const uint32_t id, const uint32_t index, const char **name);
 ScInternalResult sc_internal_compiler_get_member_decoration(const ScInternalCompilerBase *compiler, const uint32_t id, const uint32_t index, const spv::Decoration decoration, uint32_t *result);
 ScInternalResult sc_internal_compiler_set_member_decoration(const ScInternalCompilerBase *compiler, const uint32_t id, const uint32_t index, const spv::Decoration decoration, const uint32_t argument);
+ScInternalResult sc_internal_compiler_get_declared_struct_size(const ScInternalCompilerBase *compiler, const uint32_t id, uint32_t *result);
+ScInternalResult sc_internal_compiler_get_declared_struct_member_size(const ScInternalCompilerBase *compiler, const uint32_t id, const uint32_t index, uint32_t *result);
 ScInternalResult sc_internal_compiler_compile(const ScInternalCompilerBase *compiler, const char **shader);
 ScInternalResult sc_internal_compiler_delete(ScInternalCompilerBase *compiler);
 

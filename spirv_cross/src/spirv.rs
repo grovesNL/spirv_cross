@@ -134,7 +134,7 @@ pub enum Type {
     AtomicCounter,
     Float,
     Double,
-    Struct,
+    Struct { member_types: Vec<u32> },
     Image,
     SampledImage,
     Sampler,
@@ -262,6 +262,16 @@ where
     ) -> Result<(), ErrorCode> {
         self.compiler
             .set_member_decoration(id, index, decoration, argument)
+    }
+
+    /// Gets the effective size of a buffer block.
+    pub fn get_declared_struct_size(&self, id: u32) -> Result<u32, ErrorCode> {
+        self.compiler.get_declared_struct_size(id)
+    }
+
+    /// Gets the effective size of a buffer block struct member.
+    pub fn get_declared_struct_member_size(&self, id: u32, index: u32) -> Result<u32, ErrorCode> {
+        self.compiler.get_declared_struct_member_size(id, index)
     }
 
     /// Parses a module into `Ast`.

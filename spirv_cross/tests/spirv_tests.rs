@@ -91,17 +91,44 @@ fn ast_sets_decoration() {
 }
 
 #[test]
-fn ast_gets_type() {
+fn ast_gets_type_and_member_types() {
     let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.spv")));
     let ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
 
     let uniform_buffers = ast.get_shader_resources().unwrap().uniform_buffers;
 
-    assert!(
-        match ast.get_type(uniform_buffers[0].base_type_id).unwrap() {
-            spirv::Type::Struct => true,
-            _ => false,
+    let is_struct = match ast.get_type(uniform_buffers[0].base_type_id).unwrap() {
+        spirv::Type::Struct { member_types } => {
+            assert_eq!(member_types.len(), 2);
+            true
         }
+        _ => false,
+    };
+
+    assert!(is_struct);
+}
+
+#[test]
+fn ast_gets_declared_struct_size_and_struct_member_size() {
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.spv")));
+    let ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
+    let uniform_buffers = ast.get_shader_resources().unwrap().uniform_buffers;
+    let mat4_size = 4 * 16;
+    let float_size = 4;
+    assert_eq!(
+        ast.get_declared_struct_size(uniform_buffers[0].base_type_id)
+            .unwrap(),
+        mat4_size + float_size
+    );
+    assert_eq!(
+        ast.get_declared_struct_member_size(uniform_buffers[0].base_type_id, 0)
+            .unwrap(),
+        mat4_size
+    );
+    assert_eq!(
+        ast.get_declared_struct_member_size(uniform_buffers[0].base_type_id, 1)
+            .unwrap(),
+        float_size
     );
 }
 
