@@ -311,6 +311,14 @@ ScInternalResult sc_internal_compiler_set_member_decoration(const ScInternalComp
     INTERNAL_RESULT(((spirv_cross::Compiler *)compiler)->set_member_decoration(id, index, decoration, argument);)
 }
 
+ScInternalResult sc_internal_compiler_get_declared_struct_size(const ScInternalCompilerBase *compiler, const uint32_t id, uint32_t *result)
+{
+    INTERNAL_RESULT(do {
+        auto const &comp = ((spirv_cross::Compiler *)compiler);
+        *result = comp->get_declared_struct_size(comp->get_type(id));
+    } while (0);)
+}
+
 ScInternalResult sc_internal_compiler_compile(const ScInternalCompilerBase *compiler, const char **shader)
 {
     INTERNAL_RESULT(*shader = strdup(((spirv_cross::Compiler *)compiler)->compile().c_str());)

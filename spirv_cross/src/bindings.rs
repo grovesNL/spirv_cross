@@ -2129,6 +2129,13 @@ pub mod root {
          -> root::ScInternalResult;
     }
     extern "C" {
+        pub fn sc_internal_compiler_get_declared_struct_size(compiler:
+                                                                 *const root::ScInternalCompilerBase,
+                                                             id: u32,
+                                                             result: *mut u32)
+         -> root::ScInternalResult;
+    }
+    extern "C" {
         pub fn sc_internal_compiler_compile(compiler:
                                                 *const root::ScInternalCompilerBase,
                                             shader:
