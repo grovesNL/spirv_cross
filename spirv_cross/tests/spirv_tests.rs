@@ -109,15 +109,26 @@ fn ast_gets_type_and_member_types() {
 }
 
 #[test]
-fn ast_gets_declared_struct_size() {
+fn ast_gets_declared_struct_size_and_struct_member_size() {
     let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.spv")));
     let ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
-
     let uniform_buffers = ast.get_shader_resources().unwrap().uniform_buffers;
+    let mat4_size = 4 * 16;
+    let float_size = 4;
     assert_eq!(
         ast.get_declared_struct_size(uniform_buffers[0].base_type_id)
             .unwrap(),
-        4 * 16 + 4 // `mat4` + `float`
+        mat4_size + float_size
+    );
+    assert_eq!(
+        ast.get_declared_struct_member_size(uniform_buffers[0].base_type_id, 0)
+            .unwrap(),
+        mat4_size
+    );
+    assert_eq!(
+        ast.get_declared_struct_member_size(uniform_buffers[0].base_type_id, 1)
+            .unwrap(),
+        float_size
     );
 }
 

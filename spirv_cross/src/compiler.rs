@@ -381,6 +381,19 @@ impl<TTargetData> Compiler<TTargetData> {
         Ok(result)
     }
 
+    pub fn get_declared_struct_member_size(&self, id: u32, index: u32) -> Result<u32, ErrorCode> {
+        let mut result = 0;
+        unsafe {
+            check!(sc_internal_compiler_get_declared_struct_member_size(
+                self.sc_compiler,
+                id,
+                index,
+                &mut result,
+            ));
+        }
+        Ok(result)
+    }
+
     pub fn get_shader_resources(&self) -> Result<spirv::ShaderResources, ErrorCode> {
         unsafe {
             let mut shader_resources_raw = mem::zeroed();

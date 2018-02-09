@@ -269,6 +269,11 @@ where
         self.compiler.get_declared_struct_size(id)
     }
 
+    /// Gets the effective size of a buffer block struct member.
+    pub fn get_declared_struct_member_size(&self, id: u32, index: u32) -> Result<u32, ErrorCode> {
+        self.compiler.get_declared_struct_member_size(id, index)
+    }
+
     /// Parses a module into `Ast`.
     pub fn parse(module: &Module) -> Result<Self, ErrorCode> {
         Parse::<TTarget>::parse(&module)
