@@ -53,6 +53,7 @@ matrix:
       compiler: clang
       env:
         - JOB="linux_clang_coverage"
+      sudo: required
       addons:
         apt:
           sources:
