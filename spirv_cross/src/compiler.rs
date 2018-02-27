@@ -94,25 +94,25 @@ impl spirv::Decoration {
 }
 
 impl spirv::Type {
-    pub fn from_raw(ty: spirv_cross::SPIRType_BaseType, member_types: Vec<u32>) -> Type {
+    pub fn from_raw(ty: spirv_cross::SPIRType_BaseType, member_types: Vec<u32>, array: Vec<u32>) -> Type {
         use bindings::root::spirv_cross::SPIRType_BaseType as b;
         use spirv::Type::*;
         match ty {
             b::Unknown => Unknown,
             b::Void => Void,
-            b::Boolean => Boolean,
-            b::Char => Char,
-            b::Int => Int,
-            b::UInt => UInt,
-            b::Int64 => Int64,
-            b::UInt64 => UInt64,
-            b::AtomicCounter => AtomicCounter,
-            b::Float => Float,
-            b::Double => Double,
-            b::Struct => Struct { member_types },
-            b::Image => Image,
-            b::SampledImage => SampledImage,
-            b::Sampler => Sampler,
+            b::Boolean => Boolean { array },
+            b::Char => Char { array },
+            b::Int => Int { array },
+            b::UInt => UInt { array },
+            b::Int64 => Int64 { array },
+            b::UInt64 => UInt64 { array },
+            b::AtomicCounter => AtomicCounter { array },
+            b::Float => Float { array },
+            b::Double => Double { array },
+            b::Struct => Struct { member_types, array },
+            b::Image => Image { array },
+            b::SampledImage => SampledImage { array },
+            b::Sampler => Sampler { array },
         }
     }
 }
@@ -303,9 +303,16 @@ impl<TTargetData> Compiler<TTargetData> {
 
             let member_types =
                 slice::from_raw_parts(raw.member_types, raw.member_types_size).to_vec();
-            let result = Type::from_raw(raw.type_, member_types);
+            let array =
+                slice::from_raw_parts(raw.array, raw.array_size).to_vec();
+            let result = Type::from_raw(raw.type_, member_types, array);
 
-            check!(sc_internal_free_pointer(raw.member_types as *mut c_void));
+            if raw.member_types_size > 0 {
+                check!(sc_internal_free_pointer(raw.member_types as *mut c_void));
+            }
+            if raw.array_size > 0 {
+                check!(sc_internal_free_pointer(raw.array as *mut c_void));
+            }
             check!(sc_internal_free_pointer(type_ptr as *mut c_void));
 
             Ok(result)

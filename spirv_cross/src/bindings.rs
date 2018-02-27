@@ -1940,10 +1940,12 @@ pub mod root {
         pub type_: root::spirv_cross::SPIRType_BaseType,
         pub member_types: *mut u32,
         pub member_types_size: usize,
+        pub array: *mut u32,
+        pub array_size: usize,
     }
     #[test]
     fn bindgen_test_layout_ScType() {
-        assert_eq!(::std::mem::size_of::<ScType>() , 24usize , concat ! (
+        assert_eq!(::std::mem::size_of::<ScType>() , 40usize , concat ! (
                    "Size of: " , stringify ! ( ScType ) ));
         assert_eq! (::std::mem::align_of::<ScType>() , 8usize , concat ! (
                     "Alignment of " , stringify ! ( ScType ) ));
@@ -1962,6 +1964,16 @@ pub mod root {
                     const _ as usize } , 16usize , concat ! (
                     "Alignment of field: " , stringify ! ( ScType ) , "::" ,
                     stringify ! ( member_types_size ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScType ) ) . array as * const _ as
+                    usize } , 24usize , concat ! (
+                    "Alignment of field: " , stringify ! ( ScType ) , "::" ,
+                    stringify ! ( array ) ));
+        assert_eq! (unsafe {
+                    & ( * ( 0 as * const ScType ) ) . array_size as * const _
+                    as usize } , 32usize , concat ! (
+                    "Alignment of field: " , stringify ! ( ScType ) , "::" ,
+                    stringify ! ( array_size ) ));
     }
     impl Clone for ScType {
         fn clone(&self) -> Self { *self }
