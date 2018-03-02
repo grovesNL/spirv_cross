@@ -91,15 +91,43 @@ fn ast_sets_decoration() {
 }
 
 #[test]
-fn ast_gets_type_and_member_types() {
+fn ast_gets_type_member_types_and_array() {
     let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.spv")));
     let ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
 
     let uniform_buffers = ast.get_shader_resources().unwrap().uniform_buffers;
 
     let is_struct = match ast.get_type(uniform_buffers[0].base_type_id).unwrap() {
-        spirv::Type::Struct { member_types } => {
+        spirv::Type::Struct { member_types, array } => {
             assert_eq!(member_types.len(), 2);
+            assert_eq!(array.len(), 0);
+            true
+        }
+        _ => false,
+    };
+
+    assert!(is_struct);
+}
+
+#[test]
+fn ast_gets_array_dimensions() {
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/array.spv")));
+    let ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
+
+    let uniform_buffers = ast.get_shader_resources().unwrap().uniform_buffers;
+
+    let is_struct = match ast.get_type(uniform_buffers[0].base_type_id).unwrap() {
+        spirv::Type::Struct { member_types, array } => {
+            assert_eq!(member_types.len(), 3);
+            let is_float = match ast.get_type(member_types[2]).unwrap() {
+                spirv::Type::Float { array } => {
+                    assert_eq!(array.len(), 1);
+                    assert_eq!(array[0], 3);
+                    true
+                }
+                _ => false
+            };
+            assert!(is_float);
             true
         }
         _ => false,

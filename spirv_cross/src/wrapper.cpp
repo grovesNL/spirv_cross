@@ -271,10 +271,12 @@ ScInternalResult sc_internal_compiler_get_type(const ScInternalCompilerBase *com
         do {
             auto const &type = ((spirv_cross::Compiler *)compiler)->get_type(id);
             auto const member_types_size = type.member_types.size();
+            auto const array_size = type.array.size();
 
             auto ty = (ScType *)malloc(sizeof(ScType));
             ty->type = type.basetype;
             ty->member_types_size = member_types_size;
+            ty->array_size = array_size;
 
             if (member_types_size > 0)
             {
@@ -286,6 +288,18 @@ ScInternalResult sc_internal_compiler_get_type(const ScInternalCompilerBase *com
                 }
 
                 ty->member_types = member_types;
+            }
+
+            if (array_size > 0)
+            {
+                auto const &array = (uint32_t *)malloc(array_size * sizeof(uint32_t));
+
+                for (auto i = 0; i < array_size; i++)
+                {
+                    array[i] = type.array[i];
+                }
+
+                ty->array = array;
             }
 
             *spirv_type = ty;
