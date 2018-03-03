@@ -65,7 +65,7 @@ ScInternalResult sc_internal_compiler_hlsl_set_root_constant_layout(const ScInte
     INTERNAL_RESULT(
         do {
             std::vector<spirv_cross::RootConstants> root_constants;
-            for (int i = 0; i < count; i++)
+            for (size_t i = 0; i < count; i++)
             {
                 root_constants.push_back(
                     spirv_cross::RootConstants{
@@ -282,7 +282,7 @@ ScInternalResult sc_internal_compiler_get_type(const ScInternalCompilerBase *com
             {
                 auto const &member_types = (uint32_t *)malloc(member_types_size * sizeof(uint32_t));
 
-                for (auto i = 0; i < member_types_size; i++)
+                for (size_t i = 0; i < member_types_size; i++)
                 {
                     member_types[i] = type.member_types[i];
                 }
@@ -294,7 +294,7 @@ ScInternalResult sc_internal_compiler_get_type(const ScInternalCompilerBase *com
             {
                 auto const &array = (uint32_t *)malloc(array_size * sizeof(uint32_t));
 
-                for (auto i = 0; i < array_size; i++)
+                for (size_t i = 0; i < array_size; i++)
                 {
                     array[i] = type.array[i];
                 }
