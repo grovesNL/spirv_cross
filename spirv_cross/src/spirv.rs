@@ -302,6 +302,17 @@ where
         self.compiler.get_declared_struct_member_size(id, index)
     }
 
+    /// Renames an interface variable.
+    pub fn rename_interface_variable(
+        &mut self,
+        resources: &[Resource],
+        location: u32,
+        name: &str,
+    ) -> Result<(), ErrorCode> {
+        self.compiler
+            .rename_interface_variable(resources, location, name)
+    }
+
     /// Parses a module into `Ast`.
     pub fn parse(module: &Module) -> Result<Self, ErrorCode> {
         Parse::<TTarget>::parse(&module)

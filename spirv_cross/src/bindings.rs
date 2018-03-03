@@ -1381,33 +1381,6 @@ pub mod root {
             pub base_type_id: u32,
             pub name: root::std::string,
         }
-        #[test]
-        fn bindgen_test_layout_Resource() {
-            assert_eq!(::std::mem::size_of::<Resource>() , 48usize , concat !
-                       ( "Size of: " , stringify ! ( Resource ) ));
-            assert_eq! (::std::mem::align_of::<Resource>() , 8usize , concat !
-                        ( "Alignment of " , stringify ! ( Resource ) ));
-            assert_eq! (unsafe {
-                        & ( * ( 0 as * const Resource ) ) . id as * const _ as
-                        usize } , 0usize , concat ! (
-                        "Alignment of field: " , stringify ! ( Resource ) ,
-                        "::" , stringify ! ( id ) ));
-            assert_eq! (unsafe {
-                        & ( * ( 0 as * const Resource ) ) . type_id as * const
-                        _ as usize } , 4usize , concat ! (
-                        "Alignment of field: " , stringify ! ( Resource ) ,
-                        "::" , stringify ! ( type_id ) ));
-            assert_eq! (unsafe {
-                        & ( * ( 0 as * const Resource ) ) . base_type_id as *
-                        const _ as usize } , 8usize , concat ! (
-                        "Alignment of field: " , stringify ! ( Resource ) ,
-                        "::" , stringify ! ( base_type_id ) ));
-            assert_eq! (unsafe {
-                        & ( * ( 0 as * const Resource ) ) . name as * const _
-                        as usize } , 16usize , concat ! (
-                        "Alignment of field: " , stringify ! ( Resource ) ,
-                        "::" , stringify ! ( name ) ));
-        }
         impl Clone for Resource {
             fn clone(&self) -> Self { *self }
         }
@@ -1420,46 +1393,6 @@ pub mod root {
             pub msl_stride: u32,
             pub per_instance: bool,
             pub used_by_shader: bool,
-        }
-        #[test]
-        fn bindgen_test_layout_MSLVertexAttr() {
-            assert_eq!(::std::mem::size_of::<MSLVertexAttr>() , 20usize ,
-                       concat ! ( "Size of: " , stringify ! ( MSLVertexAttr )
-                       ));
-            assert_eq! (::std::mem::align_of::<MSLVertexAttr>() , 4usize ,
-                        concat ! (
-                        "Alignment of " , stringify ! ( MSLVertexAttr ) ));
-            assert_eq! (unsafe {
-                        & ( * ( 0 as * const MSLVertexAttr ) ) . location as *
-                        const _ as usize } , 0usize , concat ! (
-                        "Alignment of field: " , stringify ! ( MSLVertexAttr )
-                        , "::" , stringify ! ( location ) ));
-            assert_eq! (unsafe {
-                        & ( * ( 0 as * const MSLVertexAttr ) ) . msl_buffer as
-                        * const _ as usize } , 4usize , concat ! (
-                        "Alignment of field: " , stringify ! ( MSLVertexAttr )
-                        , "::" , stringify ! ( msl_buffer ) ));
-            assert_eq! (unsafe {
-                        & ( * ( 0 as * const MSLVertexAttr ) ) . msl_offset as
-                        * const _ as usize } , 8usize , concat ! (
-                        "Alignment of field: " , stringify ! ( MSLVertexAttr )
-                        , "::" , stringify ! ( msl_offset ) ));
-            assert_eq! (unsafe {
-                        & ( * ( 0 as * const MSLVertexAttr ) ) . msl_stride as
-                        * const _ as usize } , 12usize , concat ! (
-                        "Alignment of field: " , stringify ! ( MSLVertexAttr )
-                        , "::" , stringify ! ( msl_stride ) ));
-            assert_eq! (unsafe {
-                        & ( * ( 0 as * const MSLVertexAttr ) ) . per_instance
-                        as * const _ as usize } , 16usize , concat ! (
-                        "Alignment of field: " , stringify ! ( MSLVertexAttr )
-                        , "::" , stringify ! ( per_instance ) ));
-            assert_eq! (unsafe {
-                        & ( * ( 0 as * const MSLVertexAttr ) ) .
-                        used_by_shader as * const _ as usize } , 17usize ,
-                        concat ! (
-                        "Alignment of field: " , stringify ! ( MSLVertexAttr )
-                        , "::" , stringify ! ( used_by_shader ) ));
         }
         impl Clone for MSLVertexAttr {
             fn clone(&self) -> Self { *self }
@@ -1474,62 +1407,6 @@ pub mod root {
             pub msl_texture: u32,
             pub msl_sampler: u32,
             pub used_by_shader: bool,
-        }
-        #[test]
-        fn bindgen_test_layout_MSLResourceBinding() {
-            assert_eq!(::std::mem::size_of::<MSLResourceBinding>() , 28usize ,
-                       concat ! (
-                       "Size of: " , stringify ! ( MSLResourceBinding ) ));
-            assert_eq! (::std::mem::align_of::<MSLResourceBinding>() , 4usize
-                        , concat ! (
-                        "Alignment of " , stringify ! ( MSLResourceBinding )
-                        ));
-            assert_eq! (unsafe {
-                        & ( * ( 0 as * const MSLResourceBinding ) ) . stage as
-                        * const _ as usize } , 0usize , concat ! (
-                        "Alignment of field: " , stringify ! (
-                        MSLResourceBinding ) , "::" , stringify ! ( stage )
-                        ));
-            assert_eq! (unsafe {
-                        & ( * ( 0 as * const MSLResourceBinding ) ) . desc_set
-                        as * const _ as usize } , 4usize , concat ! (
-                        "Alignment of field: " , stringify ! (
-                        MSLResourceBinding ) , "::" , stringify ! ( desc_set )
-                        ));
-            assert_eq! (unsafe {
-                        & ( * ( 0 as * const MSLResourceBinding ) ) . binding
-                        as * const _ as usize } , 8usize , concat ! (
-                        "Alignment of field: " , stringify ! (
-                        MSLResourceBinding ) , "::" , stringify ! ( binding )
-                        ));
-            assert_eq! (unsafe {
-                        & ( * ( 0 as * const MSLResourceBinding ) ) .
-                        msl_buffer as * const _ as usize } , 12usize , concat
-                        ! (
-                        "Alignment of field: " , stringify ! (
-                        MSLResourceBinding ) , "::" , stringify ! ( msl_buffer
-                        ) ));
-            assert_eq! (unsafe {
-                        & ( * ( 0 as * const MSLResourceBinding ) ) .
-                        msl_texture as * const _ as usize } , 16usize , concat
-                        ! (
-                        "Alignment of field: " , stringify ! (
-                        MSLResourceBinding ) , "::" , stringify ! (
-                        msl_texture ) ));
-            assert_eq! (unsafe {
-                        & ( * ( 0 as * const MSLResourceBinding ) ) .
-                        msl_sampler as * const _ as usize } , 20usize , concat
-                        ! (
-                        "Alignment of field: " , stringify ! (
-                        MSLResourceBinding ) , "::" , stringify ! (
-                        msl_sampler ) ));
-            assert_eq! (unsafe {
-                        & ( * ( 0 as * const MSLResourceBinding ) ) .
-                        used_by_shader as * const _ as usize } , 24usize ,
-                        concat ! (
-                        "Alignment of field: " , stringify ! (
-                        MSLResourceBinding ) , "::" , stringify ! (
-                        used_by_shader ) ));
         }
         impl Clone for MSLResourceBinding {
             fn clone(&self) -> Self { *self }
@@ -1555,38 +1432,6 @@ pub mod root {
         pub work_group_size_y: u32,
         pub work_group_size_z: u32,
     }
-    #[test]
-    fn bindgen_test_layout_ScEntryPoint() {
-        assert_eq!(::std::mem::size_of::<ScEntryPoint>() , 24usize , concat !
-                   ( "Size of: " , stringify ! ( ScEntryPoint ) ));
-        assert_eq! (::std::mem::align_of::<ScEntryPoint>() , 8usize , concat !
-                    ( "Alignment of " , stringify ! ( ScEntryPoint ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScEntryPoint ) ) . name as * const _
-                    as usize } , 0usize , concat ! (
-                    "Alignment of field: " , stringify ! ( ScEntryPoint ) ,
-                    "::" , stringify ! ( name ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScEntryPoint ) ) . execution_model as
-                    * const _ as usize } , 8usize , concat ! (
-                    "Alignment of field: " , stringify ! ( ScEntryPoint ) ,
-                    "::" , stringify ! ( execution_model ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScEntryPoint ) ) . work_group_size_x
-                    as * const _ as usize } , 12usize , concat ! (
-                    "Alignment of field: " , stringify ! ( ScEntryPoint ) ,
-                    "::" , stringify ! ( work_group_size_x ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScEntryPoint ) ) . work_group_size_y
-                    as * const _ as usize } , 16usize , concat ! (
-                    "Alignment of field: " , stringify ! ( ScEntryPoint ) ,
-                    "::" , stringify ! ( work_group_size_y ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScEntryPoint ) ) . work_group_size_z
-                    as * const _ as usize } , 20usize , concat ! (
-                    "Alignment of field: " , stringify ! ( ScEntryPoint ) ,
-                    "::" , stringify ! ( work_group_size_z ) ));
-    }
     impl Clone for ScEntryPoint {
         fn clone(&self) -> Self { *self }
     }
@@ -1598,35 +1443,6 @@ pub mod root {
         pub binding: u32,
         pub space: u32,
     }
-    #[test]
-    fn bindgen_test_layout_ScHlslRootConstant() {
-        assert_eq!(::std::mem::size_of::<ScHlslRootConstant>() , 16usize ,
-                   concat ! ( "Size of: " , stringify ! ( ScHlslRootConstant )
-                   ));
-        assert_eq! (::std::mem::align_of::<ScHlslRootConstant>() , 4usize ,
-                    concat ! (
-                    "Alignment of " , stringify ! ( ScHlslRootConstant ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScHlslRootConstant ) ) . start as *
-                    const _ as usize } , 0usize , concat ! (
-                    "Alignment of field: " , stringify ! ( ScHlslRootConstant
-                    ) , "::" , stringify ! ( start ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScHlslRootConstant ) ) . end as *
-                    const _ as usize } , 4usize , concat ! (
-                    "Alignment of field: " , stringify ! ( ScHlslRootConstant
-                    ) , "::" , stringify ! ( end ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScHlslRootConstant ) ) . binding as *
-                    const _ as usize } , 8usize , concat ! (
-                    "Alignment of field: " , stringify ! ( ScHlslRootConstant
-                    ) , "::" , stringify ! ( binding ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScHlslRootConstant ) ) . space as *
-                    const _ as usize } , 12usize , concat ! (
-                    "Alignment of field: " , stringify ! ( ScHlslRootConstant
-                    ) , "::" , stringify ! ( space ) ));
-    }
     impl Clone for ScHlslRootConstant {
         fn clone(&self) -> Self { *self }
     }
@@ -1637,36 +1453,6 @@ pub mod root {
         pub vertex_transform_clip_space: bool,
         pub vertex_invert_y: bool,
     }
-    #[test]
-    fn bindgen_test_layout_ScHlslCompilerOptions() {
-        assert_eq!(::std::mem::size_of::<ScHlslCompilerOptions>() , 8usize ,
-                   concat ! (
-                   "Size of: " , stringify ! ( ScHlslCompilerOptions ) ));
-        assert_eq! (::std::mem::align_of::<ScHlslCompilerOptions>() , 4usize ,
-                    concat ! (
-                    "Alignment of " , stringify ! ( ScHlslCompilerOptions )
-                    ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScHlslCompilerOptions ) ) .
-                    shader_model as * const _ as usize } , 0usize , concat ! (
-                    "Alignment of field: " , stringify ! (
-                    ScHlslCompilerOptions ) , "::" , stringify ! (
-                    shader_model ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScHlslCompilerOptions ) ) .
-                    vertex_transform_clip_space as * const _ as usize } ,
-                    4usize , concat ! (
-                    "Alignment of field: " , stringify ! (
-                    ScHlslCompilerOptions ) , "::" , stringify ! (
-                    vertex_transform_clip_space ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScHlslCompilerOptions ) ) .
-                    vertex_invert_y as * const _ as usize } , 5usize , concat
-                    ! (
-                    "Alignment of field: " , stringify ! (
-                    ScHlslCompilerOptions ) , "::" , stringify ! (
-                    vertex_invert_y ) ));
-    }
     impl Clone for ScHlslCompilerOptions {
         fn clone(&self) -> Self { *self }
     }
@@ -1675,29 +1461,6 @@ pub mod root {
     pub struct ScMslCompilerOptions {
         pub vertex_transform_clip_space: bool,
         pub vertex_invert_y: bool,
-    }
-    #[test]
-    fn bindgen_test_layout_ScMslCompilerOptions() {
-        assert_eq!(::std::mem::size_of::<ScMslCompilerOptions>() , 2usize ,
-                   concat ! (
-                   "Size of: " , stringify ! ( ScMslCompilerOptions ) ));
-        assert_eq! (::std::mem::align_of::<ScMslCompilerOptions>() , 1usize ,
-                    concat ! (
-                    "Alignment of " , stringify ! ( ScMslCompilerOptions ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScMslCompilerOptions ) ) .
-                    vertex_transform_clip_space as * const _ as usize } ,
-                    0usize , concat ! (
-                    "Alignment of field: " , stringify ! (
-                    ScMslCompilerOptions ) , "::" , stringify ! (
-                    vertex_transform_clip_space ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScMslCompilerOptions ) ) .
-                    vertex_invert_y as * const _ as usize } , 1usize , concat
-                    ! (
-                    "Alignment of field: " , stringify ! (
-                    ScMslCompilerOptions ) , "::" , stringify ! (
-                    vertex_invert_y ) ));
     }
     impl Clone for ScMslCompilerOptions {
         fn clone(&self) -> Self { *self }
@@ -1710,41 +1473,6 @@ pub mod root {
         pub version: u32,
         pub es: bool,
     }
-    #[test]
-    fn bindgen_test_layout_ScGlslCompilerOptions() {
-        assert_eq!(::std::mem::size_of::<ScGlslCompilerOptions>() , 12usize ,
-                   concat ! (
-                   "Size of: " , stringify ! ( ScGlslCompilerOptions ) ));
-        assert_eq! (::std::mem::align_of::<ScGlslCompilerOptions>() , 4usize ,
-                    concat ! (
-                    "Alignment of " , stringify ! ( ScGlslCompilerOptions )
-                    ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScGlslCompilerOptions ) ) .
-                    vertex_transform_clip_space as * const _ as usize } ,
-                    0usize , concat ! (
-                    "Alignment of field: " , stringify ! (
-                    ScGlslCompilerOptions ) , "::" , stringify ! (
-                    vertex_transform_clip_space ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScGlslCompilerOptions ) ) .
-                    vertex_invert_y as * const _ as usize } , 1usize , concat
-                    ! (
-                    "Alignment of field: " , stringify ! (
-                    ScGlslCompilerOptions ) , "::" , stringify ! (
-                    vertex_invert_y ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScGlslCompilerOptions ) ) . version
-                    as * const _ as usize } , 4usize , concat ! (
-                    "Alignment of field: " , stringify ! (
-                    ScGlslCompilerOptions ) , "::" , stringify ! ( version )
-                    ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScGlslCompilerOptions ) ) . es as *
-                    const _ as usize } , 8usize , concat ! (
-                    "Alignment of field: " , stringify ! (
-                    ScGlslCompilerOptions ) , "::" , stringify ! ( es ) ));
-    }
     impl Clone for ScGlslCompilerOptions {
         fn clone(&self) -> Self { *self }
     }
@@ -1756,33 +1484,6 @@ pub mod root {
         pub base_type_id: u32,
         pub name: *mut ::std::os::raw::c_char,
     }
-    #[test]
-    fn bindgen_test_layout_ScResource() {
-        assert_eq!(::std::mem::size_of::<ScResource>() , 24usize , concat ! (
-                   "Size of: " , stringify ! ( ScResource ) ));
-        assert_eq! (::std::mem::align_of::<ScResource>() , 8usize , concat ! (
-                    "Alignment of " , stringify ! ( ScResource ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScResource ) ) . id as * const _ as
-                    usize } , 0usize , concat ! (
-                    "Alignment of field: " , stringify ! ( ScResource ) , "::"
-                    , stringify ! ( id ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScResource ) ) . type_id as * const _
-                    as usize } , 4usize , concat ! (
-                    "Alignment of field: " , stringify ! ( ScResource ) , "::"
-                    , stringify ! ( type_id ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScResource ) ) . base_type_id as *
-                    const _ as usize } , 8usize , concat ! (
-                    "Alignment of field: " , stringify ! ( ScResource ) , "::"
-                    , stringify ! ( base_type_id ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScResource ) ) . name as * const _ as
-                    usize } , 16usize , concat ! (
-                    "Alignment of field: " , stringify ! ( ScResource ) , "::"
-                    , stringify ! ( name ) ));
-    }
     impl Clone for ScResource {
         fn clone(&self) -> Self { *self }
     }
@@ -1791,24 +1492,6 @@ pub mod root {
     pub struct ScResourceArray {
         pub data: *mut root::ScResource,
         pub num: usize,
-    }
-    #[test]
-    fn bindgen_test_layout_ScResourceArray() {
-        assert_eq!(::std::mem::size_of::<ScResourceArray>() , 16usize , concat
-                   ! ( "Size of: " , stringify ! ( ScResourceArray ) ));
-        assert_eq! (::std::mem::align_of::<ScResourceArray>() , 8usize ,
-                    concat ! (
-                    "Alignment of " , stringify ! ( ScResourceArray ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScResourceArray ) ) . data as * const
-                    _ as usize } , 0usize , concat ! (
-                    "Alignment of field: " , stringify ! ( ScResourceArray ) ,
-                    "::" , stringify ! ( data ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScResourceArray ) ) . num as * const
-                    _ as usize } , 8usize , concat ! (
-                    "Alignment of field: " , stringify ! ( ScResourceArray ) ,
-                    "::" , stringify ! ( num ) ));
     }
     impl Clone for ScResourceArray {
         fn clone(&self) -> Self { *self }
@@ -1828,79 +1511,6 @@ pub mod root {
         pub separate_images: root::ScResourceArray,
         pub separate_samplers: root::ScResourceArray,
     }
-    #[test]
-    fn bindgen_test_layout_ScShaderResources() {
-        assert_eq!(::std::mem::size_of::<ScShaderResources>() , 176usize ,
-                   concat ! ( "Size of: " , stringify ! ( ScShaderResources )
-                   ));
-        assert_eq! (::std::mem::align_of::<ScShaderResources>() , 8usize ,
-                    concat ! (
-                    "Alignment of " , stringify ! ( ScShaderResources ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScShaderResources ) ) .
-                    uniform_buffers as * const _ as usize } , 0usize , concat
-                    ! (
-                    "Alignment of field: " , stringify ! ( ScShaderResources )
-                    , "::" , stringify ! ( uniform_buffers ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScShaderResources ) ) .
-                    storage_buffers as * const _ as usize } , 16usize , concat
-                    ! (
-                    "Alignment of field: " , stringify ! ( ScShaderResources )
-                    , "::" , stringify ! ( storage_buffers ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScShaderResources ) ) . stage_inputs
-                    as * const _ as usize } , 32usize , concat ! (
-                    "Alignment of field: " , stringify ! ( ScShaderResources )
-                    , "::" , stringify ! ( stage_inputs ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScShaderResources ) ) . stage_outputs
-                    as * const _ as usize } , 48usize , concat ! (
-                    "Alignment of field: " , stringify ! ( ScShaderResources )
-                    , "::" , stringify ! ( stage_outputs ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScShaderResources ) ) .
-                    subpass_inputs as * const _ as usize } , 64usize , concat
-                    ! (
-                    "Alignment of field: " , stringify ! ( ScShaderResources )
-                    , "::" , stringify ! ( subpass_inputs ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScShaderResources ) ) .
-                    storage_images as * const _ as usize } , 80usize , concat
-                    ! (
-                    "Alignment of field: " , stringify ! ( ScShaderResources )
-                    , "::" , stringify ! ( storage_images ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScShaderResources ) ) .
-                    sampled_images as * const _ as usize } , 96usize , concat
-                    ! (
-                    "Alignment of field: " , stringify ! ( ScShaderResources )
-                    , "::" , stringify ! ( sampled_images ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScShaderResources ) ) .
-                    atomic_counters as * const _ as usize } , 112usize ,
-                    concat ! (
-                    "Alignment of field: " , stringify ! ( ScShaderResources )
-                    , "::" , stringify ! ( atomic_counters ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScShaderResources ) ) .
-                    push_constant_buffers as * const _ as usize } , 128usize ,
-                    concat ! (
-                    "Alignment of field: " , stringify ! ( ScShaderResources )
-                    , "::" , stringify ! ( push_constant_buffers ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScShaderResources ) ) .
-                    separate_images as * const _ as usize } , 144usize ,
-                    concat ! (
-                    "Alignment of field: " , stringify ! ( ScShaderResources )
-                    , "::" , stringify ! ( separate_images ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScShaderResources ) ) .
-                    separate_samplers as * const _ as usize } , 160usize ,
-                    concat ! (
-                    "Alignment of field: " , stringify ! ( ScShaderResources )
-                    , "::" , stringify ! ( separate_samplers ) ));
-    }
     impl Clone for ScShaderResources {
         fn clone(&self) -> Self { *self }
     }
@@ -1909,27 +1519,6 @@ pub mod root {
     pub struct ScSpecializationConstant {
         pub id: u32,
         pub constant_id: u32,
-    }
-    #[test]
-    fn bindgen_test_layout_ScSpecializationConstant() {
-        assert_eq!(::std::mem::size_of::<ScSpecializationConstant>() , 8usize
-                   , concat ! (
-                   "Size of: " , stringify ! ( ScSpecializationConstant ) ));
-        assert_eq! (::std::mem::align_of::<ScSpecializationConstant>() ,
-                    4usize , concat ! (
-                    "Alignment of " , stringify ! ( ScSpecializationConstant )
-                    ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScSpecializationConstant ) ) . id as
-                    * const _ as usize } , 0usize , concat ! (
-                    "Alignment of field: " , stringify ! (
-                    ScSpecializationConstant ) , "::" , stringify ! ( id ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScSpecializationConstant ) ) .
-                    constant_id as * const _ as usize } , 4usize , concat ! (
-                    "Alignment of field: " , stringify ! (
-                    ScSpecializationConstant ) , "::" , stringify ! (
-                    constant_id ) ));
     }
     impl Clone for ScSpecializationConstant {
         fn clone(&self) -> Self { *self }
@@ -1942,38 +1531,6 @@ pub mod root {
         pub member_types_size: usize,
         pub array: *mut u32,
         pub array_size: usize,
-    }
-    #[test]
-    fn bindgen_test_layout_ScType() {
-        assert_eq!(::std::mem::size_of::<ScType>() , 40usize , concat ! (
-                   "Size of: " , stringify ! ( ScType ) ));
-        assert_eq! (::std::mem::align_of::<ScType>() , 8usize , concat ! (
-                    "Alignment of " , stringify ! ( ScType ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScType ) ) . type_ as * const _ as
-                    usize } , 0usize , concat ! (
-                    "Alignment of field: " , stringify ! ( ScType ) , "::" ,
-                    stringify ! ( type_ ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScType ) ) . member_types as * const
-                    _ as usize } , 8usize , concat ! (
-                    "Alignment of field: " , stringify ! ( ScType ) , "::" ,
-                    stringify ! ( member_types ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScType ) ) . member_types_size as *
-                    const _ as usize } , 16usize , concat ! (
-                    "Alignment of field: " , stringify ! ( ScType ) , "::" ,
-                    stringify ! ( member_types_size ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScType ) ) . array as * const _ as
-                    usize } , 24usize , concat ! (
-                    "Alignment of field: " , stringify ! ( ScType ) , "::" ,
-                    stringify ! ( array ) ));
-        assert_eq! (unsafe {
-                    & ( * ( 0 as * const ScType ) ) . array_size as * const _
-                    as usize } , 32usize , concat ! (
-                    "Alignment of field: " , stringify ! ( ScType ) , "::" ,
-                    stringify ! ( array_size ) ));
     }
     impl Clone for ScType {
         fn clone(&self) -> Self { *self }
@@ -2157,6 +1714,18 @@ pub mod root {
                                                                         u32,
                                                                     result:
                                                                         *mut u32)
+         -> root::ScInternalResult;
+    }
+    extern "C" {
+        pub fn sc_internal_compiler_rename_interface_variable(compiler:
+                                                                  *const root::ScInternalCompilerBase,
+                                                              resources:
+                                                                  *const root::ScResource,
+                                                              resources_size:
+                                                                  usize,
+                                                              location: u32,
+                                                              name:
+                                                                  *const ::std::os::raw::c_char)
          -> root::ScInternalResult;
     }
     extern "C" {

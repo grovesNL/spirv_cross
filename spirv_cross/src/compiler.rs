@@ -94,7 +94,7 @@ impl spirv::Decoration {
 }
 
 impl spirv::Type {
-    pub fn from_raw(
+    pub(crate) fn from_raw(
         ty: spirv_cross::SPIRType_BaseType,
         member_types: Vec<u32>,
         array: Vec<u32>,
@@ -470,6 +470,48 @@ impl<TTargetData> Compiler<TTargetData> {
                 separate_images,
                 separate_samplers,
             })
+        }
+    }
+
+    pub fn rename_interface_variable(
+        &self,
+        resources: &[spirv::Resource],
+        location: u32,
+        new_name: &str,
+    ) -> Result<(), ErrorCode> {
+        unsafe {
+            let mut resources_names = Vec::new();
+            for resource in resources.iter() {
+                match CString::new(&*resource.name) {
+                    Ok(rn) => resources_names.push(rn),
+                    Err(_) => return Err(ErrorCode::Unhandled),
+                }
+            }
+
+            match CString::new(new_name) {
+                Ok(n) => {
+                    check!(sc_internal_compiler_rename_interface_variable(
+                        self.sc_compiler,
+                        resources
+                            .iter()
+                            .enumerate()
+                            .map(|(i, r)| ScResource {
+                                id: r.id,
+                                type_id: r.type_id,
+                                base_type_id: r.base_type_id,
+                                name: resources_names[i].as_ptr() as _,
+                            })
+                            .collect::<Vec<_>>()
+                            .as_ptr(),
+                        resources_names.len(),
+                        location,
+                        n.as_ptr()
+                    ));
+                }
+                Err(_) => return Err(ErrorCode::Unhandled),
+            }
+
+            Ok(())
         }
     }
 }

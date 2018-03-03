@@ -20,6 +20,7 @@ fn main() {
         .file("src/wrapper.cpp")
         .file("src/vendor/SPIRV-Cross/spirv_cfg.cpp")
         .file("src/vendor/SPIRV-Cross/spirv_cross.cpp")
+        .file("src/vendor/SPIRV-Cross/spirv_cross_util.cpp")
         .file("src/vendor/SPIRV-Cross/spirv_glsl.cpp")
         .file("src/vendor/SPIRV-Cross/spirv_hlsl.cpp")
         .file("src/vendor/SPIRV-Cross/spirv_msl.cpp")

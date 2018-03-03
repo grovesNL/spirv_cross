@@ -15,7 +15,7 @@ fn msl_compiler_options_has_default() {
 
 #[test]
 fn ast_compiles_to_msl() {
-    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.spv")));
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
     let mut ast = spirv::Ast::<msl::Target>::parse(&module).unwrap();
 
     let mut compiler_options = msl::CompilerOptions::default();
