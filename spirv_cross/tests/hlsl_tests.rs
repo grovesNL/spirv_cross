@@ -14,7 +14,7 @@ fn hlsl_compiler_options_has_default() {
 
 #[test]
 fn ast_compiles_to_hlsl() {
-    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.spv")));
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
     let mut ast = spirv::Ast::<hlsl::Target>::parse(&module).unwrap();
     ast.set_compiler_options(&hlsl::CompilerOptions {
         shader_model: hlsl::ShaderModel::V6_0,
@@ -69,7 +69,7 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
 
 #[test]
 fn ast_compiles_all_shader_models_to_hlsl() {
-    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.spv")));
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
     let mut ast = spirv::Ast::<hlsl::Target>::parse(&module).unwrap();
 
     let shader_models = [

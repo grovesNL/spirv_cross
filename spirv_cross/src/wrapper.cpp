@@ -1,6 +1,8 @@
 #pragma warning(disable : 4996 4101)
+#include "vendor/SPIRV-Cross/spirv_cross_util.hpp"
 #include "vendor/SPIRV-Cross/spirv_hlsl.hpp"
 #include "vendor/SPIRV-Cross/spirv_msl.hpp"
+#include "vendor/SPIRV-Cross/spirv_glsl.hpp"
 #include "wrapper.hpp"
 
 static const char *latest_exception_message;
@@ -339,6 +341,28 @@ ScInternalResult sc_internal_compiler_get_declared_struct_member_size(const ScIn
     INTERNAL_RESULT(do {
         auto const &comp = ((spirv_cross::Compiler *)compiler);
         *result = comp->get_declared_struct_member_size(comp->get_type(id), index);
+    } while (0);)
+}
+
+ScInternalResult sc_internal_compiler_rename_interface_variable(const ScInternalCompilerBase *compiler, const ScResource *resources, const size_t resources_size, uint32_t location, const char *name)
+{
+    INTERNAL_RESULT(do {
+        std::vector<spirv_cross::Resource> sc_resources;
+        for (size_t i = 0; i < resources_size; i++)
+        {
+            auto const &resource = resources[i];
+            spirv_cross::Resource sc_resource;
+            std::string sc_name(resource.name);
+            sc_resource.id = resource.id;
+            sc_resource.type_id = resource.type_id;
+            sc_resource.base_type_id = resource.base_type_id;
+            sc_resource.name = sc_name;
+            sc_resources.push_back(sc_resource);
+        }
+
+        auto &comp = *(spirv_cross::Compiler *)compiler;
+        std::string new_name(name);
+        spirv_cross_util::rename_interface_variable(comp, sc_resources, location, new_name);
     } while (0);)
 }
 

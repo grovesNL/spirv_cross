@@ -1,6 +1,8 @@
 #include "vendor/SPIRV-Cross/spirv.hpp"
+#include "vendor/SPIRV-Cross/spirv_cross_util.hpp"
 #include "vendor/SPIRV-Cross/spirv_hlsl.hpp"
 #include "vendor/SPIRV-Cross/spirv_msl.hpp"
+#include "vendor/SPIRV-Cross/spirv_glsl.hpp"
 
 typedef void ScInternalCompilerBase;
 typedef void ScInternalCompilerHlsl;
@@ -127,6 +129,7 @@ ScInternalResult sc_internal_compiler_get_member_decoration(const ScInternalComp
 ScInternalResult sc_internal_compiler_set_member_decoration(const ScInternalCompilerBase *compiler, const uint32_t id, const uint32_t index, const spv::Decoration decoration, const uint32_t argument);
 ScInternalResult sc_internal_compiler_get_declared_struct_size(const ScInternalCompilerBase *compiler, const uint32_t id, uint32_t *result);
 ScInternalResult sc_internal_compiler_get_declared_struct_member_size(const ScInternalCompilerBase *compiler, const uint32_t id, const uint32_t index, uint32_t *result);
+ScInternalResult sc_internal_compiler_rename_interface_variable(const ScInternalCompilerBase *compiler, const ScResource *resources, const size_t resources_size, uint32_t location, const char *name);
 ScInternalResult sc_internal_compiler_compile(const ScInternalCompilerBase *compiler, const char **shader);
 ScInternalResult sc_internal_compiler_delete(ScInternalCompilerBase *compiler);
 
