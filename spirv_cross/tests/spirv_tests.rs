@@ -114,7 +114,7 @@ fn ast_gets_type_member_types_and_array() {
 
 #[test]
 fn ast_gets_array_dimensions() {
-    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/array.spv")));
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/array.vert.spv")));
     let ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
 
     let uniform_buffers = ast.get_shader_resources().unwrap().uniform_buffers;
