@@ -94,7 +94,11 @@ impl spirv::Decoration {
 }
 
 impl spirv::Type {
-    pub fn from_raw(ty: spirv_cross::SPIRType_BaseType, member_types: Vec<u32>, array: Vec<u32>) -> Type {
+    pub fn from_raw(
+        ty: spirv_cross::SPIRType_BaseType,
+        member_types: Vec<u32>,
+        array: Vec<u32>,
+    ) -> Type {
         use bindings::root::spirv_cross::SPIRType_BaseType as b;
         use spirv::Type::*;
         match ty {
@@ -109,7 +113,10 @@ impl spirv::Type {
             b::AtomicCounter => AtomicCounter { array },
             b::Float => Float { array },
             b::Double => Double { array },
-            b::Struct => Struct { member_types, array },
+            b::Struct => Struct {
+                member_types,
+                array,
+            },
             b::Image => Image { array },
             b::SampledImage => SampledImage { array },
             b::Sampler => Sampler { array },
@@ -223,6 +230,7 @@ impl<TTargetData> Compiler<TTargetData> {
     pub fn get_cleansed_entry_point_name(
         &self,
         entry_point_name: &str,
+        execution_model: spirv::ExecutionModel,
     ) -> Result<String, ErrorCode> {
         let mut cleansed_ptr = ptr::null();
         let entry_point = CString::new(entry_point_name);
@@ -231,6 +239,7 @@ impl<TTargetData> Compiler<TTargetData> {
                 check!(sc_internal_compiler_get_cleansed_entry_point_name(
                     self.sc_compiler,
                     ep.as_ptr(),
+                    execution_model.as_raw(),
                     &mut cleansed_ptr
                 ));
                 let cleansed = match CStr::from_ptr(cleansed_ptr).to_owned().into_string() {
@@ -303,8 +312,7 @@ impl<TTargetData> Compiler<TTargetData> {
 
             let member_types =
                 slice::from_raw_parts(raw.member_types, raw.member_types_size).to_vec();
-            let array =
-                slice::from_raw_parts(raw.array, raw.array_size).to_vec();
+            let array = slice::from_raw_parts(raw.array, raw.array_size).to_vec();
             let result = Type::from_raw(raw.type_, member_types, array);
 
             if raw.member_types_size > 0 {

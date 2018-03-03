@@ -161,12 +161,13 @@ ScInternalResult sc_internal_compiler_get_entry_points(const ScInternalCompilerB
     INTERNAL_RESULT(
         do {
             auto const &comp = *((spirv_cross::Compiler *)compiler);
-            auto const &sc_entry_point_names = comp.get_entry_points();
-            auto const sc_size = sc_entry_point_names.size();
+            auto const &sc_entry_point_names_and_stages = comp.get_entry_points_and_stages();
+            auto const sc_size = sc_entry_point_names_and_stages.size();
             auto const &sc_entry_points = std::make_unique<spirv_cross::SPIREntryPoint[]>(sc_size);
             for (uint32_t i = 0; i < sc_size; i++)
             {
-                sc_entry_points[i] = comp.get_entry_point(sc_entry_point_names[i]);
+                auto const &sc_entry_point = sc_entry_point_names_and_stages[i];
+                sc_entry_points[i] = comp.get_entry_point(sc_entry_point.name, sc_entry_point.execution_model);
             }
 
             *entry_points = (ScEntryPoint *)malloc(sc_size * sizeof(ScEntryPoint));
@@ -183,13 +184,13 @@ ScInternalResult sc_internal_compiler_get_entry_points(const ScInternalCompilerB
         } while (0);)
 }
 
-ScInternalResult sc_internal_compiler_get_cleansed_entry_point_name(const ScInternalCompilerBase *compiler, const char *original_entry_point_name, const char **compiled_entry_point_name)
+ScInternalResult sc_internal_compiler_get_cleansed_entry_point_name(const ScInternalCompilerBase *compiler, const char *original_entry_point_name, const spv::ExecutionModel execution_model, const char **compiled_entry_point_name)
 {
     INTERNAL_RESULT(
         do {
             *compiled_entry_point_name = strdup(
                 (*((spirv_cross::Compiler *)compiler))
-                    .get_cleansed_entry_point_name(std::string(original_entry_point_name))
+                    .get_cleansed_entry_point_name(std::string(original_entry_point_name), execution_model)
                     .c_str());
         } while (0);)
 }

@@ -69,5 +69,9 @@ vertex main0_out main0(main0_in in [[stage_in]], constant uniform_buffer_object&
 
 "
     );
-    assert_eq!(ast.get_cleansed_entry_point_name("main").unwrap(), "main0");
+    assert_eq!(
+        ast.get_cleansed_entry_point_name("main", spirv::ExecutionModel::Vertex)
+            .unwrap(),
+        "main0"
+    );
 }
