@@ -117,7 +117,7 @@ fn ast_gets_array_dimensions() {
     let uniform_buffers = ast.get_shader_resources().unwrap().uniform_buffers;
 
     let is_struct = match ast.get_type(uniform_buffers[0].base_type_id).unwrap() {
-        spirv::Type::Struct { member_types, array } => {
+        spirv::Type::Struct { member_types, .. } => {
             assert_eq!(member_types.len(), 3);
             let is_float = match ast.get_type(member_types[2]).unwrap() {
                 spirv::Type::Float { array } => {
