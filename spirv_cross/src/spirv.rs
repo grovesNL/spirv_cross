@@ -125,19 +125,46 @@ pub enum Type {
     // TODO: Add missing fields to relevant variants from SPIRType
     Unknown,
     Void,
-    Boolean { array: Vec<u32> },
-    Char { array: Vec<u32> },
-    Int { array: Vec<u32> },
-    UInt { array: Vec<u32> },
-    Int64 { array: Vec<u32> },
-    UInt64 { array: Vec<u32> },
-    AtomicCounter { array: Vec<u32> },
-    Float { array: Vec<u32> },
-    Double { array: Vec<u32> },
-    Struct { member_types: Vec<u32>, array: Vec<u32> },
-    Image { array: Vec<u32> },
-    SampledImage { array: Vec<u32> },
-    Sampler { array: Vec<u32> },
+    Boolean {
+        array: Vec<u32>,
+    },
+    Char {
+        array: Vec<u32>,
+    },
+    Int {
+        array: Vec<u32>,
+    },
+    UInt {
+        array: Vec<u32>,
+    },
+    Int64 {
+        array: Vec<u32>,
+    },
+    UInt64 {
+        array: Vec<u32>,
+    },
+    AtomicCounter {
+        array: Vec<u32>,
+    },
+    Float {
+        array: Vec<u32>,
+    },
+    Double {
+        array: Vec<u32>,
+    },
+    Struct {
+        member_types: Vec<u32>,
+        array: Vec<u32>,
+    },
+    Image {
+        array: Vec<u32>,
+    },
+    SampledImage {
+        array: Vec<u32>,
+    },
+    Sampler {
+        array: Vec<u32>,
+    },
 }
 
 /// A SPIR-V shader module.
@@ -206,13 +233,14 @@ where
     pub fn get_cleansed_entry_point_name(
         &self,
         entry_point_name: &str,
+        execution_model: ExecutionModel,
     ) -> Result<String, ErrorCode> {
         assert!(
             self.compiler.has_been_compiled,
             "`compile` must be called first"
         );
         self.compiler
-            .get_cleansed_entry_point_name(entry_point_name)
+            .get_cleansed_entry_point_name(entry_point_name, execution_model)
     }
 
     /// Gets all specialization constants.

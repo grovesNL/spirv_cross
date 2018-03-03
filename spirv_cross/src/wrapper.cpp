@@ -65,7 +65,7 @@ ScInternalResult sc_internal_compiler_hlsl_set_root_constant_layout(const ScInte
     INTERNAL_RESULT(
         do {
             std::vector<spirv_cross::RootConstants> root_constants;
-            for (int i = 0; i < count; i++)
+            for (size_t i = 0; i < count; i++)
             {
                 root_constants.push_back(
                     spirv_cross::RootConstants{
@@ -161,12 +161,13 @@ ScInternalResult sc_internal_compiler_get_entry_points(const ScInternalCompilerB
     INTERNAL_RESULT(
         do {
             auto const &comp = *((spirv_cross::Compiler *)compiler);
-            auto const &sc_entry_point_names = comp.get_entry_points();
-            auto const sc_size = sc_entry_point_names.size();
+            auto const &sc_entry_point_names_and_stages = comp.get_entry_points_and_stages();
+            auto const sc_size = sc_entry_point_names_and_stages.size();
             auto const &sc_entry_points = std::make_unique<spirv_cross::SPIREntryPoint[]>(sc_size);
             for (uint32_t i = 0; i < sc_size; i++)
             {
-                sc_entry_points[i] = comp.get_entry_point(sc_entry_point_names[i]);
+                auto const &sc_entry_point = sc_entry_point_names_and_stages[i];
+                sc_entry_points[i] = comp.get_entry_point(sc_entry_point.name, sc_entry_point.execution_model);
             }
 
             *entry_points = (ScEntryPoint *)malloc(sc_size * sizeof(ScEntryPoint));
@@ -183,13 +184,13 @@ ScInternalResult sc_internal_compiler_get_entry_points(const ScInternalCompilerB
         } while (0);)
 }
 
-ScInternalResult sc_internal_compiler_get_cleansed_entry_point_name(const ScInternalCompilerBase *compiler, const char *original_entry_point_name, const char **compiled_entry_point_name)
+ScInternalResult sc_internal_compiler_get_cleansed_entry_point_name(const ScInternalCompilerBase *compiler, const char *original_entry_point_name, const spv::ExecutionModel execution_model, const char **compiled_entry_point_name)
 {
     INTERNAL_RESULT(
         do {
             *compiled_entry_point_name = strdup(
                 (*((spirv_cross::Compiler *)compiler))
-                    .get_cleansed_entry_point_name(std::string(original_entry_point_name))
+                    .get_cleansed_entry_point_name(std::string(original_entry_point_name), execution_model)
                     .c_str());
         } while (0);)
 }
@@ -282,7 +283,7 @@ ScInternalResult sc_internal_compiler_get_type(const ScInternalCompilerBase *com
             {
                 auto const &member_types = (uint32_t *)malloc(member_types_size * sizeof(uint32_t));
 
-                for (auto i = 0; i < member_types_size; i++)
+                for (size_t i = 0; i < member_types_size; i++)
                 {
                     member_types[i] = type.member_types[i];
                 }
@@ -294,7 +295,7 @@ ScInternalResult sc_internal_compiler_get_type(const ScInternalCompilerBase *com
             {
                 auto const &array = (uint32_t *)malloc(array_size * sizeof(uint32_t));
 
-                for (auto i = 0; i < array_size; i++)
+                for (size_t i = 0; i < array_size; i++)
                 {
                     array[i] = type.array[i];
                 }
