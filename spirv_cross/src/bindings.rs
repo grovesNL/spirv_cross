@@ -81,6 +81,15 @@ pub mod root {
             ExecutionModeOutputTriangleStrip = 29,
             ExecutionModeVecTypeHint = 30,
             ExecutionModeContractionOff = 31,
+            ExecutionModeInitializer = 33,
+            ExecutionModeFinalizer = 34,
+            ExecutionModeSubgroupSize = 35,
+            ExecutionModeSubgroupsPerWorkgroup = 36,
+            ExecutionModeSubgroupsPerWorkgroupId = 37,
+            ExecutionModeLocalSizeId = 38,
+            ExecutionModeLocalSizeHintId = 39,
+            ExecutionModePostDepthCoverage = 4446,
+            ExecutionModeStencilRefReplacingEXT = 5027,
             ExecutionModeMax = 2147483647,
         }
         #[repr(i32)]
@@ -447,12 +456,28 @@ pub mod root {
             DecorationNoContraction = 42,
             DecorationInputAttachmentIndex = 43,
             DecorationAlignment = 44,
+            DecorationMaxByteOffset = 45,
+            DecorationAlignmentId = 46,
+            DecorationMaxByteOffsetId = 47,
+            DecorationExplicitInterpAMD = 4999,
             DecorationOverrideCoverageNV = 5248,
             DecorationPassthroughNV = 5250,
             DecorationViewportRelativeNV = 5252,
             DecorationSecondaryViewportRelativeNV = 5256,
+            DecorationHlslCounterBufferGOOGLE = 5634,
+            DecorationHlslSemanticGOOGLE = 5635,
             DecorationMax = 2147483647,
         }
+        pub const BuiltIn_BuiltInSubgroupEqMaskKHR: root::spv::BuiltIn =
+            BuiltIn::BuiltInSubgroupEqMask;
+        pub const BuiltIn_BuiltInSubgroupGeMaskKHR: root::spv::BuiltIn =
+            BuiltIn::BuiltInSubgroupGeMask;
+        pub const BuiltIn_BuiltInSubgroupGtMaskKHR: root::spv::BuiltIn =
+            BuiltIn::BuiltInSubgroupGtMask;
+        pub const BuiltIn_BuiltInSubgroupLeMaskKHR: root::spv::BuiltIn =
+            BuiltIn::BuiltInSubgroupLeMask;
+        pub const BuiltIn_BuiltInSubgroupLtMaskKHR: root::spv::BuiltIn =
+            BuiltIn::BuiltInSubgroupLtMask;
         #[repr(i32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum BuiltIn {
@@ -497,21 +522,30 @@ pub mod root {
             BuiltInSubgroupLocalInvocationId = 41,
             BuiltInVertexIndex = 42,
             BuiltInInstanceIndex = 43,
-            BuiltInSubgroupEqMaskKHR = 4416,
-            BuiltInSubgroupGeMaskKHR = 4417,
-            BuiltInSubgroupGtMaskKHR = 4418,
-            BuiltInSubgroupLeMaskKHR = 4419,
-            BuiltInSubgroupLtMaskKHR = 4420,
+            BuiltInSubgroupEqMask = 4416,
+            BuiltInSubgroupGeMask = 4417,
+            BuiltInSubgroupGtMask = 4418,
+            BuiltInSubgroupLeMask = 4419,
+            BuiltInSubgroupLtMask = 4420,
             BuiltInBaseVertex = 4424,
             BuiltInBaseInstance = 4425,
             BuiltInDrawIndex = 4426,
             BuiltInDeviceIndex = 4438,
             BuiltInViewIndex = 4440,
+            BuiltInBaryCoordNoPerspAMD = 4992,
+            BuiltInBaryCoordNoPerspCentroidAMD = 4993,
+            BuiltInBaryCoordNoPerspSampleAMD = 4994,
+            BuiltInBaryCoordSmoothAMD = 4995,
+            BuiltInBaryCoordSmoothCentroidAMD = 4996,
+            BuiltInBaryCoordSmoothSampleAMD = 4997,
+            BuiltInBaryCoordPullModelAMD = 4998,
+            BuiltInFragStencilRefEXT = 5014,
             BuiltInViewportMaskNV = 5253,
             BuiltInSecondaryPositionNV = 5257,
             BuiltInSecondaryViewportMaskNV = 5258,
             BuiltInPositionPerViewNV = 5261,
             BuiltInViewportMaskPerViewNV = 5262,
+            BuiltInFullyCoveredEXT = 5264,
             BuiltInMax = 2147483647,
         }
         #[repr(i32)]
@@ -573,6 +607,8 @@ pub mod root {
         pub enum LoopControlShift {
             LoopControlUnrollShift = 0,
             LoopControlDontUnrollShift = 1,
+            LoopControlDependencyInfiniteShift = 2,
+            LoopControlDependencyLengthShift = 3,
             LoopControlMax = 2147483647,
         }
         pub const LoopControlMask_LoopControlMaskNone:
@@ -584,6 +620,12 @@ pub mod root {
         pub const LoopControlMask_LoopControlDontUnrollMask:
                   root::spv::LoopControlMask =
             LoopControlMask(2);
+        pub const LoopControlMask_LoopControlDependencyInfiniteMask:
+                  root::spv::LoopControlMask =
+            LoopControlMask(4);
+        pub const LoopControlMask_LoopControlDependencyLengthMask:
+                  root::spv::LoopControlMask =
+            LoopControlMask(8);
         impl ::std::ops::BitOr<root::spv::LoopControlMask> for
          root::spv::LoopControlMask {
             type
@@ -840,6 +882,7 @@ pub mod root {
             GroupOperationReduce = 0,
             GroupOperationInclusiveScan = 1,
             GroupOperationExclusiveScan = 2,
+            GroupOperationClusteredReduce = 3,
             GroupOperationMax = 2147483647,
         }
         pub const KernelEnqueueFlags_KernelEnqueueFlagsNoWait:
@@ -948,6 +991,9 @@ pub mod root {
         pub const Capability_CapabilityUniformAndStorageBuffer16BitAccess:
                   root::spv::Capability =
             Capability::CapabilityStorageUniform16;
+        pub const Capability_CapabilityShaderViewportIndexLayerNV:
+                  root::spv::Capability =
+            Capability::CapabilityShaderViewportIndexLayerEXT;
         #[repr(i32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum Capability {
@@ -1007,6 +1053,17 @@ pub mod root {
             CapabilityStorageImageReadWithoutFormat = 55,
             CapabilityStorageImageWriteWithoutFormat = 56,
             CapabilityMultiViewport = 57,
+            CapabilitySubgroupDispatch = 58,
+            CapabilityNamedBarrier = 59,
+            CapabilityPipeStorage = 60,
+            CapabilityGroupNonUniform = 61,
+            CapabilityGroupNonUniformVote = 62,
+            CapabilityGroupNonUniformArithmetic = 63,
+            CapabilityGroupNonUniformBallot = 64,
+            CapabilityGroupNonUniformShuffle = 65,
+            CapabilityGroupNonUniformShuffleRelative = 66,
+            CapabilityGroupNonUniformClustered = 67,
+            CapabilityGroupNonUniformQuad = 68,
             CapabilitySubgroupBallotKHR = 4423,
             CapabilityDrawParameters = 4427,
             CapabilitySubgroupVoteKHR = 4431,
@@ -1018,12 +1075,23 @@ pub mod root {
             CapabilityMultiView = 4439,
             CapabilityVariablePointersStorageBuffer = 4441,
             CapabilityVariablePointers = 4442,
+            CapabilityAtomicStorageOps = 4445,
+            CapabilitySampleMaskPostDepthCoverage = 4447,
+            CapabilityFloat16ImageAMD = 5008,
+            CapabilityImageGatherBiasLodAMD = 5009,
+            CapabilityFragmentMaskAMD = 5010,
+            CapabilityStencilExportEXT = 5013,
+            CapabilityImageReadWriteLodAMD = 5015,
             CapabilitySampleMaskOverrideCoverageNV = 5249,
             CapabilityGeometryShaderPassthroughNV = 5251,
-            CapabilityShaderViewportIndexLayerNV = 5254,
+            CapabilityShaderViewportIndexLayerEXT = 5254,
             CapabilityShaderViewportMaskNV = 5255,
             CapabilityShaderStereoViewNV = 5259,
             CapabilityPerViewAttributesNV = 5260,
+            CapabilityFragmentFullyCoveredEXT = 5265,
+            CapabilitySubgroupShuffleINTEL = 5568,
+            CapabilitySubgroupBufferBlockIOINTEL = 5569,
+            CapabilitySubgroupImageBlockIOINTEL = 5570,
             CapabilityMax = 2147483647,
         }
         #[repr(i32)]
@@ -1323,6 +1391,52 @@ pub mod root {
             OpAtomicFlagTestAndSet = 318,
             OpAtomicFlagClear = 319,
             OpImageSparseRead = 320,
+            OpSizeOf = 321,
+            OpTypePipeStorage = 322,
+            OpConstantPipeStorage = 323,
+            OpCreatePipeFromPipeStorage = 324,
+            OpGetKernelLocalSizeForSubgroupCount = 325,
+            OpGetKernelMaxNumSubgroups = 326,
+            OpTypeNamedBarrier = 327,
+            OpNamedBarrierInitialize = 328,
+            OpMemoryNamedBarrier = 329,
+            OpModuleProcessed = 330,
+            OpExecutionModeId = 331,
+            OpDecorateId = 332,
+            OpGroupNonUniformElect = 333,
+            OpGroupNonUniformAll = 334,
+            OpGroupNonUniformAny = 335,
+            OpGroupNonUniformAllEqual = 336,
+            OpGroupNonUniformBroadcast = 337,
+            OpGroupNonUniformBroadcastFirst = 338,
+            OpGroupNonUniformBallot = 339,
+            OpGroupNonUniformInverseBallot = 340,
+            OpGroupNonUniformBallotBitExtract = 341,
+            OpGroupNonUniformBallotBitCount = 342,
+            OpGroupNonUniformBallotFindLSB = 343,
+            OpGroupNonUniformBallotFindMSB = 344,
+            OpGroupNonUniformShuffle = 345,
+            OpGroupNonUniformShuffleXor = 346,
+            OpGroupNonUniformShuffleUp = 347,
+            OpGroupNonUniformShuffleDown = 348,
+            OpGroupNonUniformIAdd = 349,
+            OpGroupNonUniformFAdd = 350,
+            OpGroupNonUniformIMul = 351,
+            OpGroupNonUniformFMul = 352,
+            OpGroupNonUniformSMin = 353,
+            OpGroupNonUniformUMin = 354,
+            OpGroupNonUniformFMin = 355,
+            OpGroupNonUniformSMax = 356,
+            OpGroupNonUniformUMax = 357,
+            OpGroupNonUniformFMax = 358,
+            OpGroupNonUniformBitwiseAnd = 359,
+            OpGroupNonUniformBitwiseOr = 360,
+            OpGroupNonUniformBitwiseXor = 361,
+            OpGroupNonUniformLogicalAnd = 362,
+            OpGroupNonUniformLogicalOr = 363,
+            OpGroupNonUniformLogicalXor = 364,
+            OpGroupNonUniformQuadBroadcast = 365,
+            OpGroupNonUniformQuadSwap = 366,
             OpSubgroupBallotKHR = 4421,
             OpSubgroupFirstInvocationKHR = 4422,
             OpSubgroupAllKHR = 4428,
@@ -1339,6 +1453,16 @@ pub mod root {
             OpGroupSMaxNonUniformAMD = 5007,
             OpFragmentMaskFetchAMD = 5011,
             OpFragmentFetchAMD = 5012,
+            OpSubgroupShuffleINTEL = 5571,
+            OpSubgroupShuffleDownINTEL = 5572,
+            OpSubgroupShuffleUpINTEL = 5573,
+            OpSubgroupShuffleXorINTEL = 5574,
+            OpSubgroupBlockReadINTEL = 5575,
+            OpSubgroupBlockWriteINTEL = 5576,
+            OpSubgroupImageBlockReadINTEL = 5577,
+            OpSubgroupImageBlockWriteINTEL = 5578,
+            OpDecorateStringGOOGLE = 5632,
+            OpMemberDecorateStringGOOGLE = 5633,
             OpMax = 2147483647,
         }
     }
@@ -1366,12 +1490,13 @@ pub mod root {
             Int64 = 6,
             UInt64 = 7,
             AtomicCounter = 8,
-            Float = 9,
-            Double = 10,
-            Struct = 11,
-            Image = 12,
-            SampledImage = 13,
-            Sampler = 14,
+            Half = 9,
+            Float = 10,
+            Double = 11,
+            Struct = 12,
+            Image = 13,
+            SampledImage = 14,
+            Sampler = 15,
         }
         #[repr(C)]
         #[derive(Debug, Copy)]
