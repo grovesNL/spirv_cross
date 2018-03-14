@@ -49,16 +49,16 @@ ScInternalResult sc_internal_compiler_hlsl_set_options(const ScInternalCompilerH
     INTERNAL_RESULT(
         do {
             auto compiler_glsl = (spirv_cross::CompilerGLSL *)compiler;
-            auto glsl_options = compiler_glsl->spirv_cross::CompilerGLSL::get_options();
+            auto glsl_options = compiler_glsl->get_common_options();
             glsl_options.vertex.fixup_clipspace = options->vertex_transform_clip_space;
             glsl_options.vertex.flip_vert_y = options->vertex_invert_y;
-            compiler_glsl->spirv_cross::CompilerGLSL::set_options(glsl_options);
+            compiler_glsl->set_common_options(glsl_options);
 
             auto compiler_hlsl = (spirv_cross::CompilerHLSL *)compiler;
-            auto hlsl_options = compiler_hlsl->get_options();
+            auto hlsl_options = compiler_hlsl->get_hlsl_options();
             hlsl_options.shader_model = options->shader_model;
 
-            compiler_hlsl->set_options(hlsl_options);
+            compiler_hlsl->set_hlsl_options(hlsl_options);
         } while (0);)
 }
 
@@ -114,10 +114,10 @@ ScInternalResult sc_internal_compiler_msl_set_options(const ScInternalCompilerMs
     INTERNAL_RESULT(
         do {
             auto compiler_glsl = (spirv_cross::CompilerGLSL *)compiler;
-            auto glsl_options = compiler_glsl->spirv_cross::CompilerGLSL::get_options();
+            auto glsl_options = compiler_glsl->get_common_options();
             glsl_options.vertex.fixup_clipspace = options->vertex_transform_clip_space;
             glsl_options.vertex.flip_vert_y = options->vertex_invert_y;
-            compiler_glsl->spirv_cross::CompilerGLSL::set_options(glsl_options);
+            compiler_glsl->set_common_options(glsl_options);
         } while (0);)
 }
 
@@ -131,12 +131,12 @@ ScInternalResult sc_internal_compiler_glsl_set_options(const ScInternalCompilerG
     INTERNAL_RESULT(
         do {
             auto compiler_glsl = (spirv_cross::CompilerGLSL *)compiler;
-            auto glsl_options = compiler_glsl->spirv_cross::CompilerGLSL::get_options();
+            auto glsl_options = compiler_glsl->get_common_options();
             glsl_options.version = options->version;
             glsl_options.es = options->es;
             glsl_options.vertex.fixup_clipspace = options->vertex_transform_clip_space;
             glsl_options.vertex.flip_vert_y = options->vertex_invert_y;
-            compiler_glsl->spirv_cross::CompilerGLSL::set_options(glsl_options);
+            compiler_glsl->set_common_options(glsl_options);
         } while (0);)
 }
 
