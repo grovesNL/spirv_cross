@@ -111,6 +111,7 @@ impl spirv::Type {
             b::Int64 => Int64 { array },
             b::UInt64 => UInt64 { array },
             b::AtomicCounter => AtomicCounter { array },
+            b::Half => Half { array },
             b::Float => Float { array },
             b::Double => Double { array },
             b::Struct => Struct {

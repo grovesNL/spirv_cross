@@ -146,6 +146,9 @@ pub enum Type {
     AtomicCounter {
         array: Vec<u32>,
     },
+    Half {
+        array: Vec<u32>,
+    },
     Float {
         array: Vec<u32>,
     },
