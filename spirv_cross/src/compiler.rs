@@ -277,11 +277,11 @@ impl<TTargetData> Compiler<TTargetData> {
                         constant_id: constant_raw.constant_id,
                     };
 
-                    check!(sc_internal_free_pointer(constant_raw_ptr as *mut c_void));
-
                     Ok(constant)
                 })
                 .collect::<Result<Vec<_>, _>>();
+
+             check!(sc_internal_free_pointer(constants_raw as *mut c_void));
 
             Ok(try!(constants))
         }
