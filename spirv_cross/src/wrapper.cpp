@@ -247,13 +247,14 @@ ScInternalResult sc_internal_compiler_get_specialization_constants(const ScInter
             auto const sc_constants = ((const spirv_cross::Compiler *)compiler)->get_specialization_constants();
             auto const sc_size = sc_constants.size();
 
-            *constants = (ScSpecializationConstant *)malloc(sc_size * sizeof(ScSpecializationConstant));
+            auto p_constants = (ScSpecializationConstant *)malloc(sc_size * sizeof(ScSpecializationConstant));
+            *constants = p_constants;
             *size = sc_size;
             for (uint32_t i = 0; i < sc_size; i++)
             {
                 auto const &sc_constant = sc_constants[i];
-                constants[i]->id = sc_constant.id;
-                constants[i]->constant_id = sc_constant.constant_id;
+                p_constants[i].id = sc_constant.id;
+                p_constants[i].constant_id = sc_constant.constant_id;
             }
 
         } while (0);)
