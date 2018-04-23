@@ -43,7 +43,9 @@ pub struct ResourceBindingLocation {
 /// Resource binding description for overriding
 #[derive(Debug, Clone)]
 pub struct ResourceBinding {
-    pub resource_id: u32,
+    pub buffer_id: u32,
+    pub texture_id: u32,
+    pub sampler_id: u32,
     pub force_used: bool,
 }
 
@@ -174,9 +176,9 @@ impl spirv::Ast<Target> {
                 stage: loc.stage.as_raw(),
                 desc_set: loc.desc_set,
                 binding: loc.binding,
-                msl_buffer: res.resource_id,
-                msl_texture: res.resource_id,
-                msl_sampler: res.resource_id,
+                msl_buffer: res.buffer_id,
+                msl_texture: res.texture_id,
+                msl_sampler: res.sampler_id,
                 used_by_shader: res.force_used,
             })
             .collect::<Vec<_>>();
