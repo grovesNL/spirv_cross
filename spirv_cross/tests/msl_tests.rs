@@ -27,7 +27,9 @@ fn ast_compiles_to_msl() {
             binding: 0,
         },
         msl::ResourceBinding {
-            resource_id: 5,
+            buffer_id: 5,
+            texture_id: 6,
+            sampler_id: 7,
             force_used: false,
         },
     );
