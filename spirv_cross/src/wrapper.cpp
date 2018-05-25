@@ -113,11 +113,17 @@ ScInternalResult sc_internal_compiler_msl_set_options(const ScInternalCompilerMs
 {
     INTERNAL_RESULT(
         do {
-            auto compiler_glsl = (spirv_cross::CompilerGLSL *)compiler;
-            auto glsl_options = compiler_glsl->get_common_options();
+            auto compiler_msl = (spirv_cross::CompilerMSL *)compiler;
+
+            auto glsl_options = compiler_msl->get_common_options();
             glsl_options.vertex.fixup_clipspace = options->vertex_transform_clip_space;
             glsl_options.vertex.flip_vert_y = options->vertex_invert_y;
-            compiler_glsl->set_common_options(glsl_options);
+            compiler_msl->set_common_options(glsl_options);
+
+            auto msl_options = compiler_msl->get_msl_options();
+            msl_options.enable_point_size_builtin = options->enable_point_size_builtin;
+            msl_options.resolve_specialized_array_lengths = options->resolve_specialized_array_lengths;
+            compiler_msl->set_msl_options(msl_options);
         } while (0);)
 }
 

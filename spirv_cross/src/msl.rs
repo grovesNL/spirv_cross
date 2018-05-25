@@ -56,7 +56,7 @@ pub struct CompilerVertexOptions {
 }
 
 impl Default for CompilerVertexOptions {
-    fn default() -> CompilerVertexOptions {
+    fn default() -> Self {
         CompilerVertexOptions {
             invert_y: false,
             transform_clip_space: false,
@@ -67,7 +67,14 @@ impl Default for CompilerVertexOptions {
 /// MSL compiler options.
 #[derive(Debug, Clone)]
 pub struct CompilerOptions {
+    ///
+    pub version: u32, //TODO
+    ///
     pub vertex: CompilerVertexOptions,
+    ///
+    pub enable_point_size_builtin: bool,
+    ///
+    pub resolve_specialized_array_lengths: bool,
     /// MSL resource bindings overrides.
     pub resource_binding_overrides: HashMap<ResourceBindingLocation, ResourceBinding>,
     /// MSL vertex attribute overrides.
@@ -79,14 +86,20 @@ impl CompilerOptions {
         ScMslCompilerOptions {
             vertex_invert_y: self.vertex.invert_y,
             vertex_transform_clip_space: self.vertex.transform_clip_space,
+            version: self.version,
+            enable_point_size_builtin: self.enable_point_size_builtin,
+            resolve_specialized_array_lengths: self.resolve_specialized_array_lengths,
         }
     }
 }
 
 impl Default for CompilerOptions {
-    fn default() -> CompilerOptions {
+    fn default() -> Self {
         CompilerOptions {
+            version: 10200,
             vertex: CompilerVertexOptions::default(),
+            enable_point_size_builtin: true,
+            resolve_specialized_array_lengths: true,
             resource_binding_overrides: Default::default(),
             vertex_attribute_overrides: Default::default(),
         }
