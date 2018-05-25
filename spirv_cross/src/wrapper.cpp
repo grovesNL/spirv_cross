@@ -121,6 +121,8 @@ ScInternalResult sc_internal_compiler_msl_set_options(const ScInternalCompilerMs
             compiler_msl->set_common_options(glsl_options);
 
             auto msl_options = compiler_msl->get_msl_options();
+            msl_options.platform = static_cast<spirv_cross::CompilerMSL::Options::Platform>(options->platform);
+            msl_options.msl_version = options->version;
             msl_options.enable_point_size_builtin = options->enable_point_size_builtin;
             msl_options.resolve_specialized_array_lengths = options->resolve_specialized_array_lengths;
             compiler_msl->set_msl_options(msl_options);

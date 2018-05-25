@@ -49,6 +49,36 @@ pub struct ResourceBinding {
     pub force_used: bool,
 }
 
+/// A MSL shader platform.
+#[repr(u8)]
+#[allow(non_snake_case, non_camel_case_types)]
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+pub enum Platform {
+    iOS = 0,
+    macOS = 1,
+}
+
+/// A MSL shader model version.
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+pub enum Version {
+    V1_0,
+    V1_1,
+    V1_2,
+    V2_0,
+}
+
+impl Version {
+    fn as_raw(&self) -> u32 {
+        use self::Version::*;
+        match *self {
+            V1_0 => 10000,
+            V1_1 => 10100,
+            V1_2 => 10200,
+            V2_0 => 20000,
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct CompilerVertexOptions {
     pub invert_y: bool,
@@ -68,7 +98,9 @@ impl Default for CompilerVertexOptions {
 #[derive(Debug, Clone)]
 pub struct CompilerOptions {
     ///
-    pub version: u32, //TODO
+    pub platform: Platform,
+    ///
+    pub version: Version,
     ///
     pub vertex: CompilerVertexOptions,
     ///
@@ -86,7 +118,8 @@ impl CompilerOptions {
         ScMslCompilerOptions {
             vertex_invert_y: self.vertex.invert_y,
             vertex_transform_clip_space: self.vertex.transform_clip_space,
-            version: self.version,
+            platform: self.platform as _,
+            version: self.version.as_raw(),
             enable_point_size_builtin: self.enable_point_size_builtin,
             resolve_specialized_array_lengths: self.resolve_specialized_array_lengths,
         }
@@ -96,7 +129,8 @@ impl CompilerOptions {
 impl Default for CompilerOptions {
     fn default() -> Self {
         CompilerOptions {
-            version: 10200,
+            platform: Platform::macOS,
+            version: Version::V1_2,
             vertex: CompilerVertexOptions::default(),
             enable_point_size_builtin: true,
             resolve_specialized_array_lengths: true,
