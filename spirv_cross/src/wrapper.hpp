@@ -46,6 +46,10 @@ typedef struct ScMslCompilerOptions
 {
     bool vertex_transform_clip_space;
     bool vertex_invert_y;
+    uint8_t platform;
+    uint32_t version;
+    bool enable_point_size_builtin;
+    bool resolve_specialized_array_lengths;
 } ScMslCompilerOptions;
 
 typedef struct ScGlslCompilerOptions

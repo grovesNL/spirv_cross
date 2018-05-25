@@ -1586,6 +1586,10 @@ pub mod root {
     pub struct ScMslCompilerOptions {
         pub vertex_transform_clip_space: bool,
         pub vertex_invert_y: bool,
+        pub platform: u8,
+        pub version: u32,
+        pub enable_point_size_builtin: bool,
+        pub resolve_specialized_array_lengths: bool,
     }
     impl Clone for ScMslCompilerOptions {
         fn clone(&self) -> Self { *self }
