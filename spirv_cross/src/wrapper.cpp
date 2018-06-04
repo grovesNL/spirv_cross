@@ -156,6 +156,16 @@ ScInternalResult sc_internal_compiler_glsl_build_combined_image_samplers(const S
         } while (0);)
 }
 
+ScInternalResult sc_internal_compiler_glsl_get_combined_image_samplers(const ScInternalCompilerBase *compiler, const ScCombinedImageSampler ** samplers, size_t *size)
+{
+    INTERNAL_RESULT(
+        do {
+            std::vector<spirv_cross::CombinedImageSampler> ret = ((spirv_cross::CompilerGLSL *)compiler)->get_combined_image_samplers();
+            *samplers = (const ScCombinedImageSampler*)ret.data();
+            *size = ret.size();
+        } while (0);)
+}
+
 ScInternalResult sc_internal_compiler_get_decoration(const ScInternalCompilerBase *compiler, uint32_t *result, const uint32_t id, const spv::Decoration decoration)
 {
     INTERNAL_RESULT(*result = ((spirv_cross::Compiler *)compiler)->get_decoration(id, decoration);)
