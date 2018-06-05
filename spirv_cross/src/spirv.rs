@@ -4,6 +4,14 @@ use std::marker::PhantomData;
 
 /// A stage or compute kernel.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+pub struct CombinedImageSampler {
+    pub combined_id: u32,
+    pub image_id: u32,
+    pub sampler_id: u32,
+}
+
+/// A stage or compute kernel.
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 pub enum ExecutionModel {
     Vertex,
     TessellationControl,
