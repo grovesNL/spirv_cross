@@ -232,11 +232,21 @@ fn ast_sets_member_decoration() {
 }
 
 #[test]
+fn as_gets_specialization_constants() {
+    let comp = spirv::Module::from_words(words_from_bytes(include_bytes!(
+        "shaders/specialization.comp.spv"
+    )));
+    let comp_ast = spirv::Ast::<lang::Target>::parse(&comp).unwrap();
+    let specialization_constants = comp_ast.get_specialization_constants().unwrap();
+    assert_eq!(specialization_constants[0].constant_id, 10);
+}
+
+#[test]
 fn as_gets_work_group_size_specialization_constants() {
     let comp = spirv::Module::from_words(words_from_bytes(include_bytes!(
         "shaders/workgroup.comp.spv"
     )));
-    let mut comp_ast = spirv::Ast::<lang::Target>::parse(&comp).unwrap();
+    let comp_ast = spirv::Ast::<lang::Target>::parse(&comp).unwrap();
     let work_group_size = comp_ast
         .get_work_group_size_specialization_constants()
         .unwrap();
