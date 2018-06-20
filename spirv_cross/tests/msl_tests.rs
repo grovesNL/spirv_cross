@@ -15,7 +15,8 @@ fn msl_compiler_options_has_default() {
 
 #[test]
 fn ast_compiles_to_msl() {
-    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
+    let module =
+        spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
     let mut ast = spirv::Ast::<msl::Target>::parse(&module).unwrap();
 
     let mut compiler_options = msl::CompilerOptions::default();
@@ -49,16 +50,16 @@ struct uniform_buffer_object
     float u_scale;
 };
 
-struct main0_in
-{
-    float3 a_normal [[attribute(1)]];
-    float4 a_position [[attribute(0)]];
-};
-
 struct main0_out
 {
     float3 v_normal [[user(locn0)]];
     float4 gl_Position [[position]];
+};
+
+struct main0_in
+{
+    float4 a_position [[attribute(0)]];
+    float3 a_normal [[attribute(1)]];
 };
 
 vertex main0_out main0(main0_in in [[stage_in]], constant uniform_buffer_object& _22 [[buffer(5)]])

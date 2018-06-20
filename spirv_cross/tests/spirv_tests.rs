@@ -237,19 +237,24 @@ fn as_gets_work_group_size_specialization_constants() {
         "shaders/workgroup.comp.spv"
     )));
     let mut comp_ast = spirv::Ast::<lang::Target>::parse(&comp).unwrap();
-    let work_group_size = comp_ast.get_work_group_size_specialization_constants().unwrap();
-    assert_eq!(work_group_size, spirv::WorkGroupSizeSpecializationConstants {
-        x: spirv::SpecializationConstant {
-            id: 7,
-            constant_id: 5,
-        },
-        y: spirv::SpecializationConstant {
-            id: 8,
-            constant_id: 10,
-        },
-        z: spirv::SpecializationConstant {
-            id: 9,
-            constant_id: 15,
-        },
-    });
+    let work_group_size = comp_ast
+        .get_work_group_size_specialization_constants()
+        .unwrap();
+    assert_eq!(
+        work_group_size,
+        spirv::WorkGroupSizeSpecializationConstants {
+            x: spirv::SpecializationConstant {
+                id: 7,
+                constant_id: 5,
+            },
+            y: spirv::SpecializationConstant {
+                id: 8,
+                constant_id: 10,
+            },
+            z: spirv::SpecializationConstant {
+                id: 9,
+                constant_id: 15,
+            },
+        }
+    );
 }

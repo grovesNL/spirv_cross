@@ -333,7 +333,9 @@ where
     }
 
     /// Gets work group size specialization constants.
-    pub fn get_work_group_size_specialization_constants(&self) -> Result<WorkGroupSizeSpecializationConstants, ErrorCode> {
+    pub fn get_work_group_size_specialization_constants(
+        &self,
+    ) -> Result<WorkGroupSizeSpecializationConstants, ErrorCode> {
         self.compiler.get_work_group_size_specialization_constants()
     }
 

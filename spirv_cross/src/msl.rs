@@ -1,9 +1,9 @@
-use {compiler, spirv, ErrorCode};
 use bindings::root::*;
-use std::ptr;
-use std::marker::PhantomData;
 use std::collections::HashMap;
 use std::ffi::CStr;
+use std::marker::PhantomData;
+use std::ptr;
+use {compiler, spirv, ErrorCode};
 
 /// A MSL target.
 #[derive(Debug, Clone)]
@@ -198,7 +198,8 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
 
 impl spirv::Ast<Target> {
     fn compile_internal(&self) -> Result<String, ErrorCode> {
-        let vat_overrides = self.compiler
+        let vat_overrides = self
+            .compiler
             .target_data
             .vertex_attribute_overrides
             .iter()
@@ -215,7 +216,8 @@ impl spirv::Ast<Target> {
             })
             .collect::<Vec<_>>();
 
-        let res_overrides = self.compiler
+        let res_overrides = self
+            .compiler
             .target_data
             .resource_binding_overrides
             .iter()
