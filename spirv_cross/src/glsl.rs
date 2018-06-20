@@ -1,7 +1,7 @@
-use {compiler, spirv, ErrorCode};
 use bindings::root::*;
-use std::ptr;
 use std::marker::PhantomData;
+use std::ptr;
+use {compiler, spirv, ErrorCode};
 
 /// A GLSL target.
 #[derive(Debug, Clone)]
@@ -160,10 +160,12 @@ impl spirv::Ast<Target> {
         Ok(())
     }
 
-    pub fn get_combined_image_samplers(&mut self) -> Result<Vec<spirv::CombinedImageSampler>, ErrorCode> {
+    pub fn get_combined_image_samplers(
+        &mut self,
+    ) -> Result<Vec<spirv::CombinedImageSampler>, ErrorCode> {
         self.build_combined_image_samplers()?;
         unsafe {
-            use std::{slice, ptr};
+            use std::{ptr, slice};
             let mut samplers: *const ScCombinedImageSampler = ptr::null();
             let mut size: usize = 0;
 
@@ -173,11 +175,14 @@ impl spirv::Ast<Target> {
                 &mut size as _,
             ));
 
-            Ok(slice::from_raw_parts(samplers, size).iter().map(|sc| spirv::CombinedImageSampler {
-                combined_id: sc.combined_id,
-                image_id: sc.image_id,
-                sampler_id: sc.sampler_id,
-            }).collect())
+            Ok(slice::from_raw_parts(samplers, size)
+                .iter()
+                .map(|sc| spirv::CombinedImageSampler {
+                    combined_id: sc.combined_id,
+                    image_id: sc.image_id,
+                    sampler_id: sc.sampler_id,
+                })
+                .collect())
         }
     }
 }

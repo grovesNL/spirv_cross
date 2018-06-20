@@ -1873,6 +1873,13 @@ pub mod root {
          -> root::ScInternalResult;
     }
     extern "C" {
+        pub fn sc_internal_compiler_get_work_group_size_specialization_constants(compiler:
+                                                                                     *const root::ScInternalCompilerBase,
+                                                                                 constants:
+                                                                                     *mut *mut root::ScSpecializationConstant)
+         -> root::ScInternalResult;
+    }
+    extern "C" {
         pub fn sc_internal_compiler_compile(compiler:
                                                 *const root::ScInternalCompilerBase,
                                             shader:

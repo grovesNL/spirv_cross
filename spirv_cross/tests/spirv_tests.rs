@@ -6,7 +6,8 @@ use common::words_from_bytes;
 
 #[test]
 fn ast_gets_entry_points() {
-    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
+    let module =
+        spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
     let entry_points = spirv::Ast::<lang::Target>::parse(&module)
         .unwrap()
         .get_entry_points()
@@ -18,7 +19,8 @@ fn ast_gets_entry_points() {
 
 #[test]
 fn ast_gets_shader_resources() {
-    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
+    let module =
+        spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
     let shader_resources = spirv::Ast::<lang::Target>::parse(&module)
         .unwrap()
         .get_shader_resources()
@@ -62,18 +64,21 @@ fn ast_gets_shader_resources() {
 
 #[test]
 fn ast_gets_decoration() {
-    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
+    let module =
+        spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
     let ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
 
     let stage_inputs = ast.get_shader_resources().unwrap().stage_inputs;
-    let decoration = ast.get_decoration(stage_inputs[0].id, spirv::Decoration::DescriptorSet)
+    let decoration = ast
+        .get_decoration(stage_inputs[0].id, spirv::Decoration::DescriptorSet)
         .unwrap();
     assert_eq!(decoration, 0);
 }
 
 #[test]
 fn ast_sets_decoration() {
-    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
+    let module =
+        spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
     let mut ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
 
     let stage_inputs = ast.get_shader_resources().unwrap().stage_inputs;
@@ -92,7 +97,8 @@ fn ast_sets_decoration() {
 
 #[test]
 fn ast_gets_type_member_types_and_array() {
-    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
+    let module =
+        spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
     let ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
 
     let uniform_buffers = ast.get_shader_resources().unwrap().uniform_buffers;
@@ -114,7 +120,8 @@ fn ast_gets_type_member_types_and_array() {
 
 #[test]
 fn ast_gets_array_dimensions() {
-    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/array.vert.spv")));
+    let module =
+        spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/array.vert.spv")));
     let ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
 
     let uniform_buffers = ast.get_shader_resources().unwrap().uniform_buffers;
@@ -141,7 +148,8 @@ fn ast_gets_array_dimensions() {
 
 #[test]
 fn ast_gets_declared_struct_size_and_struct_member_size() {
-    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
+    let module =
+        spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
     let ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
     let uniform_buffers = ast.get_shader_resources().unwrap().uniform_buffers;
     let mat4_size = 4 * 16;
@@ -165,7 +173,8 @@ fn ast_gets_declared_struct_size_and_struct_member_size() {
 
 #[test]
 fn ast_gets_member_name() {
-    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
+    let module =
+        spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
     let ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
 
     let uniform_buffers = ast.get_shader_resources().unwrap().uniform_buffers;
@@ -179,7 +188,8 @@ fn ast_gets_member_name() {
 
 #[test]
 fn ast_gets_member_decoration() {
-    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
+    let module =
+        spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
     let ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
 
     let uniform_buffers = ast.get_shader_resources().unwrap().uniform_buffers;
@@ -196,7 +206,8 @@ fn ast_gets_member_decoration() {
 
 #[test]
 fn ast_sets_member_decoration() {
-    let module = spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
+    let module =
+        spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
     let mut ast = spirv::Ast::<lang::Target>::parse(&module).unwrap();
 
     let uniform_buffers = ast.get_shader_resources().unwrap().uniform_buffers;
@@ -217,5 +228,43 @@ fn ast_sets_member_decoration() {
             spirv::Decoration::Offset
         ).unwrap(),
         new_offset
+    );
+}
+
+#[test]
+fn as_gets_specialization_constants() {
+    let comp = spirv::Module::from_words(words_from_bytes(include_bytes!(
+        "shaders/specialization.comp.spv"
+    )));
+    let comp_ast = spirv::Ast::<lang::Target>::parse(&comp).unwrap();
+    let specialization_constants = comp_ast.get_specialization_constants().unwrap();
+    assert_eq!(specialization_constants[0].constant_id, 10);
+}
+
+#[test]
+fn as_gets_work_group_size_specialization_constants() {
+    let comp = spirv::Module::from_words(words_from_bytes(include_bytes!(
+        "shaders/workgroup.comp.spv"
+    )));
+    let comp_ast = spirv::Ast::<lang::Target>::parse(&comp).unwrap();
+    let work_group_size = comp_ast
+        .get_work_group_size_specialization_constants()
+        .unwrap();
+    assert_eq!(
+        work_group_size,
+        spirv::WorkGroupSizeSpecializationConstants {
+            x: spirv::SpecializationConstant {
+                id: 7,
+                constant_id: 5,
+            },
+            y: spirv::SpecializationConstant {
+                id: 8,
+                constant_id: 10,
+            },
+            z: spirv::SpecializationConstant {
+                id: 9,
+                constant_id: 15,
+            },
+        }
     );
 }

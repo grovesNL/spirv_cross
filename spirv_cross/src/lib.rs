@@ -8,21 +8,19 @@ macro_rules! check {
             if ScInternalResult::CompilationError == result {
                 let mut message_ptr = ptr::null();
 
-                if ScInternalResult::Success !=
-                    sc_internal_get_latest_exception_message(&mut message_ptr) {
+                if ScInternalResult::Success
+                    != sc_internal_get_latest_exception_message(&mut message_ptr)
+                {
                     return Err(ErrorCode::Unhandled);
                 }
 
-                let message = match CStr::from_ptr(message_ptr)
-                    .to_owned()
-                    .into_string() {
-                        Err(_) => return Err(ErrorCode::Unhandled),
-                        Ok(v) => v,
-                    };
+                let message = match CStr::from_ptr(message_ptr).to_owned().into_string() {
+                    Err(_) => return Err(ErrorCode::Unhandled),
+                    Ok(v) => v,
+                };
 
-                if ScInternalResult::Success != sc_internal_free_pointer(
-                    message_ptr as *mut c_void,
-                ) {
+                if ScInternalResult::Success != sc_internal_free_pointer(message_ptr as *mut c_void)
+                {
                     return Err(ErrorCode::Unhandled);
                 }
 
@@ -31,15 +29,15 @@ macro_rules! check {
 
             return Err(ErrorCode::Unhandled);
         }
-    }
-}}
+    }};
+}
 
 mod compiler;
 
-pub mod spirv;
+pub mod glsl;
 pub mod hlsl;
 pub mod msl;
-pub mod glsl;
+pub mod spirv;
 
 mod bindings {
     #![allow(dead_code)]

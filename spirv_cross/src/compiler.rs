@@ -1,15 +1,15 @@
 //! Raw compiler bindings for SPIRV-Cross.
 
 use bindings::root::*;
-use ErrorCode;
 use spirv::{self, Decoration, Type};
-use std::{mem, ptr, slice};
 use std::ffi::{CStr, CString};
+use std::{mem, ptr, slice};
+use ErrorCode;
 
 impl spirv::ExecutionModel {
     fn from_raw(raw: spv::ExecutionModel) -> Result<Self, ErrorCode> {
-        use spirv::ExecutionModel::*;
         use self::spv::ExecutionModel as Em;
+        use spirv::ExecutionModel::*;
         match raw {
             Em::ExecutionModelVertex => Ok(Vertex),
             Em::ExecutionModelTessellationControl => Ok(TessellationControl),
@@ -23,8 +23,8 @@ impl spirv::ExecutionModel {
     }
 
     pub(crate) fn as_raw(&self) -> spv::ExecutionModel {
-        use spirv::ExecutionModel::*;
         use self::spv::ExecutionModel as Em;
+        use spirv::ExecutionModel::*;
         match *self {
             Vertex => Em::ExecutionModelVertex,
             TessellationControl => Em::ExecutionModelTessellationControl,
@@ -281,7 +281,7 @@ impl<TTargetData> Compiler<TTargetData> {
                 })
                 .collect::<Result<Vec<_>, _>>();
 
-             check!(sc_internal_free_pointer(constants_raw as *mut c_void));
+            check!(sc_internal_free_pointer(constants_raw as *mut c_void));
 
             Ok(try!(constants))
         }
@@ -513,6 +513,44 @@ impl<TTargetData> Compiler<TTargetData> {
             }
 
             Ok(())
+        }
+    }
+
+    pub fn get_work_group_size_specialization_constants(
+        &self,
+    ) -> Result<spirv::WorkGroupSizeSpecializationConstants, ErrorCode> {
+        let mut constants_raw = ptr::null_mut();
+
+        unsafe {
+            check!(
+                sc_internal_compiler_get_work_group_size_specialization_constants(
+                    self.sc_compiler,
+                    &mut constants_raw,
+                )
+            );
+
+            let x = *constants_raw.offset(0);
+            let y = *constants_raw.offset(1);
+            let z = *constants_raw.offset(2);
+
+            let constants = spirv::WorkGroupSizeSpecializationConstants {
+                x: spirv::SpecializationConstant {
+                    id: x.id,
+                    constant_id: x.constant_id,
+                },
+                y: spirv::SpecializationConstant {
+                    id: y.id,
+                    constant_id: y.constant_id,
+                },
+                z: spirv::SpecializationConstant {
+                    id: z.id,
+                    constant_id: z.constant_id,
+                },
+            };
+
+            check!(sc_internal_free_pointer(constants_raw as *mut c_void));
+
+            Ok(constants)
         }
     }
 }

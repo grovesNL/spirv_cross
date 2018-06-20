@@ -1,7 +1,7 @@
-use {compiler, spirv, ErrorCode};
 use bindings::root::*;
-use std::ptr;
 use std::marker::PhantomData;
+use std::ptr;
+use {compiler, spirv, ErrorCode};
 
 pub use bindings::root::ScHlslRootConstant as RootConstant;
 

@@ -1,6 +1,6 @@
-use ErrorCode;
 use compiler;
 use std::marker::PhantomData;
+use ErrorCode;
 
 /// A stage or compute kernel.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
@@ -89,7 +89,7 @@ pub struct WorkGroupSize {
 }
 
 /// An entry point for a SPIR-V module.
-#[derive(Debug, Clone)]
+#[derive(Clone, Debug)]
 pub struct EntryPoint {
     pub name: String,
     pub execution_model: ExecutionModel,
@@ -97,7 +97,7 @@ pub struct EntryPoint {
 }
 
 /// A resource.
-#[derive(Debug, Clone)]
+#[derive(Clone, Debug, Hash, Eq, PartialEq)]
 pub struct Resource {
     pub id: u32,
     pub type_id: u32,
@@ -106,10 +106,18 @@ pub struct Resource {
 }
 
 /// Specialization constant reference.
-#[derive(Debug, Clone)]
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 pub struct SpecializationConstant {
     pub id: u32,
     pub constant_id: u32,
+}
+
+/// Work group size specialization constants.
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+pub struct WorkGroupSizeSpecializationConstants {
+    pub x: SpecializationConstant,
+    pub y: SpecializationConstant,
+    pub z: SpecializationConstant,
 }
 
 /// Shader resources.
@@ -322,6 +330,13 @@ where
     ) -> Result<(), ErrorCode> {
         self.compiler
             .rename_interface_variable(resources, location, name)
+    }
+
+    /// Gets work group size specialization constants.
+    pub fn get_work_group_size_specialization_constants(
+        &self,
+    ) -> Result<WorkGroupSizeSpecializationConstants, ErrorCode> {
+        self.compiler.get_work_group_size_specialization_constants()
     }
 
     /// Parses a module into `Ast`.
