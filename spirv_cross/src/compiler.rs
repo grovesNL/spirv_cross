@@ -162,6 +162,23 @@ impl<TTargetData> Compiler<TTargetData> {
         Ok(result)
     }
 
+    pub fn set_name(&mut self, id: u32, name: &str) -> Result<(), ErrorCode> {
+        let name = CString::new(name);
+        unsafe {
+            match name {
+                Ok(name) => {
+                    check!(sc_internal_compiler_set_name(
+                        self.sc_compiler,
+                        id,
+                        name.as_ptr(),
+                    ));
+                },
+                _ => return Err(ErrorCode::Unhandled),
+            }
+        }
+        Ok(())
+    }
+
     pub fn unset_decoration(
         &mut self,
         id: u32,
