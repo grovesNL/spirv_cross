@@ -233,6 +233,15 @@ where
         self.compiler.get_decoration(id, decoration)
     }
 
+    /// Unsets a decoration.
+    pub fn unset_decoration(
+        &mut self,
+        id: u32,
+        decoration: Decoration,
+    ) -> Result<(), ErrorCode> {
+        self.compiler.unset_decoration(id, decoration)
+    }
+
     /// Sets a decoration.
     pub fn set_decoration(
         &mut self,
