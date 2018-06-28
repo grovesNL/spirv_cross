@@ -162,6 +162,22 @@ impl<TTargetData> Compiler<TTargetData> {
         Ok(result)
     }
 
+    pub fn unset_decoration(
+        &mut self,
+        id: u32,
+        decoration: spirv::Decoration,
+    ) -> Result<(), ErrorCode> {
+        unsafe {
+            check!(sc_internal_compiler_unset_decoration(
+                self.sc_compiler,
+                id,
+                decoration.as_raw(),
+            ));
+        }
+
+        Ok(())
+    }
+
     pub fn set_decoration(
         &mut self,
         id: u32,
