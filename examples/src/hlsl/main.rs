@@ -10,6 +10,8 @@ fn main() {
     let mut ast = spirv::Ast::<hlsl::Target>::parse(&module).unwrap();
     ast.set_compiler_options(&hlsl::CompilerOptions {
         shader_model: hlsl::ShaderModel::V5_1,
+        point_size_compat: false,
+        point_coord_compat: false,
         vertex: hlsl::CompilerVertexOptions::default(),
     }).unwrap();
 
