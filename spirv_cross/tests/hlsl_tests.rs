@@ -8,6 +8,8 @@ use common::words_from_bytes;
 fn hlsl_compiler_options_has_default() {
     let compiler_options = hlsl::CompilerOptions::default();
     assert_eq!(compiler_options.shader_model, hlsl::ShaderModel::V3_0);
+    assert_eq!(compiler_options.point_size_compat, false);
+    assert_eq!(compiler_options.point_coord_compat, false);
     assert_eq!(compiler_options.vertex.invert_y, false);
     assert_eq!(compiler_options.vertex.transform_clip_space, false);
 }
@@ -19,6 +21,8 @@ fn ast_compiles_to_hlsl() {
     let mut ast = spirv::Ast::<hlsl::Target>::parse(&module).unwrap();
     ast.set_compiler_options(&hlsl::CompilerOptions {
         shader_model: hlsl::ShaderModel::V6_0,
+        point_size_compat: false,
+        point_coord_compat: false,
         vertex: hlsl::CompilerVertexOptions::default(),
     }).unwrap();
 
@@ -88,6 +92,8 @@ fn ast_compiles_all_shader_models_to_hlsl() {
     for &shader_model in shader_models.iter() {
         match ast.set_compiler_options(&hlsl::CompilerOptions {
             shader_model,
+            point_size_compat: false,
+            point_coord_compat: false,
             vertex: hlsl::CompilerVertexOptions::default(),
         }) {
             Err(_) => panic!("Did not compile"),

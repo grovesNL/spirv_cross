@@ -1589,6 +1589,8 @@ pub mod root {
     #[derive(Debug, Copy)]
     pub struct ScHlslCompilerOptions {
         pub shader_model: i32,
+        pub point_size_compat: bool,
+        pub point_coord_compat: bool,
         pub vertex_transform_clip_space: bool,
         pub vertex_invert_y: bool,
     }

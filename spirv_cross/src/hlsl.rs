@@ -65,6 +65,10 @@ impl Default for CompilerVertexOptions {
 #[derive(Debug, Clone)]
 pub struct CompilerOptions {
     pub shader_model: ShaderModel,
+    /// Support point size builtin but ignore the value.
+    pub point_size_compat: bool,
+    /// Support point coordinate builtin but ignore the value.
+    pub point_coord_compat: bool,
     pub vertex: CompilerVertexOptions,
 }
 
@@ -72,6 +76,8 @@ impl CompilerOptions {
     fn as_raw(&self) -> ScHlslCompilerOptions {
         ScHlslCompilerOptions {
             shader_model: self.shader_model.as_raw(),
+            point_size_compat: self.point_size_compat,
+            point_coord_compat: self.point_coord_compat,
             vertex_invert_y: self.vertex.invert_y,
             vertex_transform_clip_space: self.vertex.transform_clip_space,
         }
@@ -82,6 +88,8 @@ impl Default for CompilerOptions {
     fn default() -> CompilerOptions {
         CompilerOptions {
             shader_model: ShaderModel::V3_0,
+            point_size_compat: false,
+            point_coord_compat: false,
             vertex: CompilerVertexOptions::default(),
         }
     }

@@ -58,6 +58,8 @@ extern "C"
                 auto compiler_hlsl = (spirv_cross::CompilerHLSL *)compiler;
                 auto hlsl_options = compiler_hlsl->get_hlsl_options();
                 hlsl_options.shader_model = options->shader_model;
+                hlsl_options.point_size_compat = options->point_size_compat;
+                hlsl_options.point_coord_compat = options->point_coord_compat;
 
                 compiler_hlsl->set_hlsl_options(hlsl_options);
             } while (0);)
@@ -182,7 +184,7 @@ extern "C"
         INTERNAL_RESULT(((spirv_cross::Compiler *)compiler)->set_decoration(id, decoration, argument);)
     }
 
-    ScInternalResult sc_internal_compiler_set_name(const ScInternalCompilerBase *compiler, const uint32_t id, const char* name)
+    ScInternalResult sc_internal_compiler_set_name(const ScInternalCompilerBase *compiler, const uint32_t id, const char *name)
     {
         INTERNAL_RESULT(((spirv_cross::Compiler *)compiler)->set_name(id, std::string(name));)
     }
