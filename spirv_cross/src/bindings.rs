@@ -1469,16 +1469,8 @@ pub mod root {
     pub mod std {
         #[allow(unused_imports)]
         use self::super::super::root;
-        pub type string = [u64; 4usize];
+        pub type string = [u64; 3usize];
     }
-    pub mod __gnu_cxx {
-        #[allow(unused_imports)]
-        use self::super::super::root;
-    }
-    pub type __uint8_t = ::std::os::raw::c_uchar;
-    pub type __int32_t = ::std::os::raw::c_int;
-    pub type __uint32_t = ::std::os::raw::c_uint;
-    pub type __uint64_t = ::std::os::raw::c_ulong;
     pub mod spirv_cross {
         #[allow(unused_imports)]
         use self::super::super::root;
