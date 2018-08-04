@@ -10,8 +10,8 @@ use {compiler, spirv, ErrorCode};
 pub enum Target {}
 
 pub struct TargetData {
-    pub(crate) vertex_attribute_overrides: HashMap<VertexAttributeLocation, VertexAttribute>,
-    pub(crate) resource_binding_overrides: HashMap<ResourceBindingLocation, ResourceBinding>,
+    pub(crate) vertex_attribute_overrides: Vec<spirv_cross::MSLVertexAttr>,
+    pub(crate) resource_binding_overrides: Vec<spirv_cross::MSLResourceBinding>,
 }
 
 impl spirv::Target for Target {
@@ -142,28 +142,24 @@ impl Default for CompilerOptions {
 
 impl<'a> spirv::Parse<Target> for spirv::Ast<Target> {
     fn parse(module: &spirv::Module) -> Result<Self, ErrorCode> {
-        let compiler = {
-            let mut compiler = ptr::null_mut();
-            unsafe {
-                check!(sc_internal_compiler_msl_new(
-                    &mut compiler,
-                    module.words.as_ptr() as *const u32,
-                    module.words.len() as usize
-                ));
-            }
-
-            compiler::Compiler {
-                sc_compiler: compiler,
-                target_data: TargetData {
-                    resource_binding_overrides: Default::default(),
-                    vertex_attribute_overrides: Default::default(),
-                },
-                has_been_compiled: false,
-            }
-        };
+        let mut sc_compiler = ptr::null_mut();
+        unsafe {
+            check!(sc_internal_compiler_msl_new(
+                &mut sc_compiler,
+                module.words.as_ptr(),
+                module.words.len(),
+            ));
+        }
 
         Ok(spirv::Ast {
-            compiler,
+            compiler: compiler::Compiler {
+                sc_compiler,
+                target_data: TargetData {
+                    resource_binding_overrides: Vec::new(),
+                    vertex_attribute_overrides: Vec::new(),
+                },
+                has_been_compiled: false,
+            },
             target_type: PhantomData,
         })
     }
@@ -182,25 +178,23 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
             ));
         }
 
-        self.compiler.target_data.resource_binding_overrides =
-            options.resource_binding_overrides.clone();
-        self.compiler.target_data.vertex_attribute_overrides =
-            options.vertex_attribute_overrides.clone();
+        self.compiler.target_data.resource_binding_overrides.clear();
+        self.compiler.target_data.resource_binding_overrides.extend(options
+            .resource_binding_overrides
+            .iter()
+            .map(|(loc, res)| spirv_cross::MSLResourceBinding {
+                stage: loc.stage.as_raw(),
+                desc_set: loc.desc_set,
+                binding: loc.binding,
+                msl_buffer: res.buffer_id,
+                msl_texture: res.texture_id,
+                msl_sampler: res.sampler_id,
+                used_by_shader: res.force_used,
+            })
+        );
 
-        Ok(())
-    }
-
-    /// Generate MSL shader from the AST.
-    fn compile(&mut self) -> Result<String, ErrorCode> {
-        self.compile_internal()
-    }
-}
-
-impl spirv::Ast<Target> {
-    fn compile_internal(&self) -> Result<String, ErrorCode> {
-        let vat_overrides = self
-            .compiler
-            .target_data
+        self.compiler.target_data.vertex_attribute_overrides.clear();
+        self.compiler.target_data.vertex_attribute_overrides.extend(options
             .vertex_attribute_overrides
             .iter()
             .map(|(loc, vat)| spirv_cross::MSLVertexAttr {
@@ -214,24 +208,21 @@ impl spirv::Ast<Target> {
                 },
                 used_by_shader: vat.force_used,
             })
-            .collect::<Vec<_>>();
+        );
 
-        let res_overrides = self
-            .compiler
-            .target_data
-            .resource_binding_overrides
-            .iter()
-            .map(|(loc, res)| spirv_cross::MSLResourceBinding {
-                stage: loc.stage.as_raw(),
-                desc_set: loc.desc_set,
-                binding: loc.binding,
-                msl_buffer: res.buffer_id,
-                msl_texture: res.texture_id,
-                msl_sampler: res.sampler_id,
-                used_by_shader: res.force_used,
-            })
-            .collect::<Vec<_>>();
+        Ok(())
+    }
 
+    /// Generate MSL shader from the AST.
+    fn compile(&mut self) -> Result<String, ErrorCode> {
+        self.compile_internal()
+    }
+}
+
+impl spirv::Ast<Target> {
+    fn compile_internal(&self) -> Result<String, ErrorCode> {
+        let vat_overrides = &self.compiler.target_data.vertex_attribute_overrides;
+        let res_overrides = &self.compiler.target_data.resource_binding_overrides;
         unsafe {
             let mut shader_ptr = ptr::null();
             check!(sc_internal_compiler_msl_compile(
