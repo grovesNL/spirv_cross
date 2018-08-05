@@ -1,5 +1,5 @@
 use bindings::root::*;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::ffi::CStr;
 use std::marker::PhantomData;
 use std::ptr;
@@ -10,8 +10,8 @@ use {compiler, spirv, ErrorCode};
 pub enum Target {}
 
 pub struct TargetData {
-    pub(crate) vertex_attribute_overrides: Vec<spirv_cross::MSLVertexAttr>,
-    pub(crate) resource_binding_overrides: Vec<spirv_cross::MSLResourceBinding>,
+    vertex_attribute_overrides: Vec<spirv_cross::MSLVertexAttr>,
+    resource_binding_overrides: Vec<spirv_cross::MSLResourceBinding>,
 }
 
 impl spirv::Target for Target {
@@ -19,11 +19,11 @@ impl spirv::Target for Target {
 }
 
 /// Location of a vertex attribute to override
-#[derive(Debug, Clone, Hash, Eq, PartialEq)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]
 pub struct VertexAttributeLocation(pub u32);
 
 /// Vertex attribute description for overriding
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct VertexAttribute {
     pub buffer_id: u32,
     pub offset: u32,
@@ -33,7 +33,7 @@ pub struct VertexAttribute {
 }
 
 /// Location of a resource binding to override
-#[derive(Debug, Clone, Hash, Eq, PartialEq)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]
 pub struct ResourceBindingLocation {
     pub stage: spirv::ExecutionModel,
     pub desc_set: u32,
@@ -41,7 +41,7 @@ pub struct ResourceBindingLocation {
 }
 
 /// Resource binding description for overriding
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct ResourceBinding {
     pub buffer_id: u32,
     pub texture_id: u32,
@@ -65,6 +65,7 @@ pub enum Version {
     V1_1,
     V1_2,
     V2_0,
+    V2_1,
 }
 
 impl Version {
@@ -75,11 +76,12 @@ impl Version {
             V1_1 => 10100,
             V1_2 => 10200,
             V2_0 => 20000,
+            V2_1 => 20100,
         }
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct CompilerVertexOptions {
     pub invert_y: bool,
     pub transform_clip_space: bool,
@@ -95,7 +97,7 @@ impl Default for CompilerVertexOptions {
 }
 
 /// MSL compiler options.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct CompilerOptions {
     ///
     pub platform: Platform,
@@ -108,9 +110,9 @@ pub struct CompilerOptions {
     ///
     pub resolve_specialized_array_lengths: bool,
     /// MSL resource bindings overrides.
-    pub resource_binding_overrides: HashMap<ResourceBindingLocation, ResourceBinding>,
+    pub resource_binding_overrides: BTreeMap<ResourceBindingLocation, ResourceBinding>,
     /// MSL vertex attribute overrides.
-    pub vertex_attribute_overrides: HashMap<VertexAttributeLocation, VertexAttribute>,
+    pub vertex_attribute_overrides: BTreeMap<VertexAttributeLocation, VertexAttribute>,
 }
 
 impl CompilerOptions {
@@ -233,9 +235,9 @@ impl spirv::Ast<Target> {
                 res_overrides.as_ptr(),
                 res_overrides.len(),
             ));
-            let shader = match CStr::from_ptr(shader_ptr).to_owned().into_string() {
+            let shader = match CStr::from_ptr(shader_ptr).to_str() {
+                Ok(v) => v.to_owned(),
                 Err(_) => return Err(ErrorCode::Unhandled),
-                Ok(v) => v,
             };
             check!(sc_internal_free_pointer(shader_ptr as *mut c_void));
             Ok(shader)

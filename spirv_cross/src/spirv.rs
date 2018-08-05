@@ -11,7 +11,7 @@ pub struct CombinedImageSampler {
 }
 
 /// A stage or compute kernel.
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, Ord, PartialOrd)]
 pub enum ExecutionModel {
     Vertex,
     TessellationControl,
@@ -89,7 +89,7 @@ pub struct WorkGroupSize {
 }
 
 /// An entry point for a SPIR-V module.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Hash, Eq, PartialEq)]
 pub struct EntryPoint {
     pub name: String,
     pub execution_model: ExecutionModel,

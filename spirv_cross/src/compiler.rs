@@ -276,8 +276,8 @@ impl<TTargetData> Compiler<TTargetData> {
                     execution_model.as_raw(),
                     &mut cleansed_ptr
                 ));
-                let cleansed = match CStr::from_ptr(cleansed_ptr).to_owned().into_string() {
-                    Ok(c) => c,
+                let cleansed = match CStr::from_ptr(cleansed_ptr).to_str() {
+                    Ok(c) => c.to_owned(),
                     _ => return Err(ErrorCode::Unhandled),
                 };
                 check!(sc_internal_free_pointer(cleansed_ptr as *mut c_void));
