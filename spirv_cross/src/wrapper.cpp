@@ -163,7 +163,7 @@ extern "C"
     {
         INTERNAL_RESULT(
             do {
-                std::vector<spirv_cross::CombinedImageSampler> ret = ((spirv_cross::CompilerGLSL *)compiler)->get_combined_image_samplers();
+                const std::vector<spirv_cross::CombinedImageSampler>& ret = ((spirv_cross::CompilerGLSL *)compiler)->get_combined_image_samplers();
                 *samplers = (const ScCombinedImageSampler *)ret.data();
                 *size = ret.size();
             } while (0);)
