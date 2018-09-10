@@ -128,8 +128,14 @@ extern "C"
                 msl_options.msl_version = options->version;
                 msl_options.enable_point_size_builtin = options->enable_point_size_builtin;
                 msl_options.resolve_specialized_array_lengths = options->resolve_specialized_array_lengths;
+                msl_options.disable_rasterization = options->disable_rasterization;
                 compiler_msl->set_msl_options(msl_options);
             } while (0);)
+    }
+
+    ScInternalResult sc_internal_compiler_msl_get_is_rasterization_disabled(const ScInternalCompilerMsl *compiler, bool *is_rasterization_disabled)
+    {
+        INTERNAL_RESULT(*is_rasterization_disabled = ((spirv_cross::CompilerMSL *)compiler)->get_is_rasterization_disabled();)
     }
 
     ScInternalResult sc_internal_compiler_glsl_new(ScInternalCompilerGlsl **compiler, const uint32_t *ir, const size_t size)
