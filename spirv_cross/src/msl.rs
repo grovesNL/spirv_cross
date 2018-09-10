@@ -248,11 +248,11 @@ impl spirv::Ast<Target> {
         }
     }
 
-    pub fn is_rasterization_disabled(&self) -> Result<bool, ErrorCode> {
+    pub fn is_rasterization_enabled(&self) -> Result<bool, ErrorCode> {
         unsafe {
-            let mut value = false;
-            check!(sc_internal_compiler_msl_get_is_rasterization_disabled(self.compiler.sc_compiler, &mut value));
-            Ok(value)
+            let mut is_disabled = false;
+            check!(sc_internal_compiler_msl_get_is_rasterization_disabled(self.compiler.sc_compiler, &mut is_disabled));
+            Ok(!is_disabled)
         }
     }
 }
