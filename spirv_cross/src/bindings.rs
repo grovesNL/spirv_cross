@@ -1598,6 +1598,7 @@ pub mod root {
         pub version: u32,
         pub enable_point_size_builtin: bool,
         pub resolve_specialized_array_lengths: bool,
+        pub disable_rasterization: bool,
     }
     impl Clone for ScMslCompilerOptions {
         fn clone(&self) -> Self { *self }
@@ -1710,6 +1711,13 @@ pub mod root {
                                                         *const root::ScInternalCompilerMsl,
                                                     options:
                                                         *const root::ScMslCompilerOptions)
+         -> root::ScInternalResult;
+    }
+    extern "C" {
+        pub fn sc_internal_compiler_msl_get_is_rasterization_disabled(compiler:
+                                                                          *const root::ScInternalCompilerMsl,
+                                                                      is_rasterization_disabled:
+                                                                          *mut bool)
          -> root::ScInternalResult;
     }
     extern "C" {

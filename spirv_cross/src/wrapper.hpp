@@ -60,6 +60,7 @@ extern "C"
         uint32_t version;
         bool enable_point_size_builtin;
         bool resolve_specialized_array_lengths;
+        bool disable_rasterization;
     } ScMslCompilerOptions;
 
     typedef struct ScGlslCompilerOptions
@@ -122,6 +123,7 @@ extern "C"
 
     ScInternalResult sc_internal_compiler_msl_new(ScInternalCompilerMsl **compiler, const uint32_t *ir, const size_t size);
     ScInternalResult sc_internal_compiler_msl_set_options(const ScInternalCompilerMsl *compiler, const ScMslCompilerOptions *options);
+    ScInternalResult sc_internal_compiler_msl_get_is_rasterization_disabled(const ScInternalCompilerMsl *compiler, bool *is_rasterization_disabled);
     ScInternalResult sc_internal_compiler_msl_compile(const ScInternalCompilerBase *compiler, const char **shader,
                                                       const spirv_cross::MSLVertexAttr *p_vat_overrides, const size_t vat_override_count,
                                                       const spirv_cross::MSLResourceBinding *p_res_overrides, const size_t res_override_count);

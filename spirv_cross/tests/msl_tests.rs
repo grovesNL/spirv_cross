@@ -14,6 +14,19 @@ fn msl_compiler_options_has_default() {
 }
 
 #[test]
+fn is_rasterization_disabled() {
+    let modules = [
+        (false, spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")))),
+        (true, spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/rasterize_disabled.vert.spv")))),
+    ];
+    for (expected, module) in &modules {
+        let mut ast = spirv::Ast::<msl::Target>::parse(&module).unwrap();
+        ast.compile().unwrap();
+        assert_eq!(*expected, ast.is_rasterization_disabled().unwrap());
+    }
+}
+
+#[test]
 fn ast_compiles_to_msl() {
     let module =
         spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
