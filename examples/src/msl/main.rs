@@ -34,6 +34,7 @@ fn main() {
             stride: 3,
             step: spirv::VertexAttributeStep::Instance,
             force_used: true,
+            format: msl::Format::Other,
         },
     );
 
