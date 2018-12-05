@@ -37,22 +37,16 @@ fn ast_gets_shader_resources() {
     assert_eq!(uniform_buffers[0].name, "uniform_buffer_object");
     assert_eq!(shader_resources.storage_buffers.len(), 0);
     assert_eq!(stage_inputs.len(), 2);
-    assert!(
-        stage_inputs
-            .iter()
-            .any(|stage_input| stage_input.name == "a_normal")
-    );
-    assert!(
-        stage_inputs
-            .iter()
-            .any(|stage_input| stage_input.name == "a_position")
-    );
+    assert!(stage_inputs
+        .iter()
+        .any(|stage_input| stage_input.name == "a_normal"));
+    assert!(stage_inputs
+        .iter()
+        .any(|stage_input| stage_input.name == "a_position"));
     assert_eq!(stage_outputs.len(), 1);
-    assert!(
-        stage_outputs
-            .iter()
-            .any(|stage_output| stage_output.name == "v_normal")
-    );
+    assert!(stage_outputs
+        .iter()
+        .any(|stage_output| stage_output.name == "v_normal"));
     assert_eq!(shader_resources.subpass_inputs.len(), 0);
     assert_eq!(shader_resources.storage_images.len(), 0);
     assert_eq!(shader_resources.sampled_images.len(), 0);
@@ -87,7 +81,8 @@ fn ast_sets_decoration() {
         stage_inputs[0].id,
         spirv::Decoration::DescriptorSet,
         updated_value,
-    ).unwrap();
+    )
+    .unwrap();
     assert_eq!(
         ast.get_decoration(stage_inputs[0].id, spirv::Decoration::DescriptorSet)
             .unwrap(),
@@ -199,7 +194,8 @@ fn ast_gets_member_decoration() {
             uniform_buffers[0].base_type_id,
             1,
             spirv::Decoration::Offset
-        ).unwrap(),
+        )
+        .unwrap(),
         64
     );
 }
@@ -219,14 +215,16 @@ fn ast_sets_member_decoration() {
         1,
         spirv::Decoration::Offset,
         new_offset,
-    ).unwrap();
+    )
+    .unwrap();
 
     assert_eq!(
         ast.get_member_decoration(
             uniform_buffers[0].base_type_id,
             1,
             spirv::Decoration::Offset
-        ).unwrap(),
+        )
+        .unwrap(),
         new_offset
     );
 }

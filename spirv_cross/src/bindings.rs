@@ -1481,18 +1481,22 @@ pub mod root {
             Void = 1,
             Boolean = 2,
             Char = 3,
-            Int = 4,
-            UInt = 5,
-            Int64 = 6,
-            UInt64 = 7,
-            AtomicCounter = 8,
-            Half = 9,
-            Float = 10,
-            Double = 11,
-            Struct = 12,
-            Image = 13,
-            SampledImage = 14,
-            Sampler = 15,
+            SByte = 4,
+            UByte = 5,
+            Short = 6,
+            UShort = 7,
+            Int = 8,
+            UInt = 9,
+            Int64 = 10,
+            UInt64 = 11,
+            AtomicCounter = 12,
+            Half = 13,
+            Float = 14,
+            Double = 15,
+            Struct = 16,
+            Image = 17,
+            SampledImage = 18,
+            Sampler = 19,
         }
         #[repr(C)]
         #[derive(Debug, Copy)]
@@ -1505,6 +1509,13 @@ pub mod root {
         impl Clone for Resource {
             fn clone(&self) -> Self { *self }
         }
+        #[repr(u32)]
+        #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+        pub enum MSLVertexFormat {
+            MSL_VERTEX_FORMAT_OTHER = 0,
+            MSL_VERTEX_FORMAT_UINT8 = 1,
+            MSL_VERTEX_FORMAT_UINT16 = 2,
+        }
         #[repr(C)]
         #[derive(Debug, Copy)]
         pub struct MSLVertexAttr {
@@ -1513,6 +1524,7 @@ pub mod root {
             pub msl_offset: u32,
             pub msl_stride: u32,
             pub per_instance: bool,
+            pub format: root::spirv_cross::MSLVertexFormat,
             pub used_by_shader: bool,
         }
         impl Clone for MSLVertexAttr {
@@ -1597,7 +1609,6 @@ pub mod root {
         pub platform: u8,
         pub version: u32,
         pub enable_point_size_builtin: bool,
-        pub resolve_specialized_array_lengths: bool,
         pub disable_rasterization: bool,
     }
     impl Clone for ScMslCompilerOptions {

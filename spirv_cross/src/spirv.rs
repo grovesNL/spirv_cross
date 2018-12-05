@@ -184,6 +184,18 @@ pub enum Type {
     Sampler {
         array: Vec<u32>,
     },
+    SByte {
+        array: Vec<u32>,
+    },
+    UByte {
+        array: Vec<u32>,
+    },
+    Short {
+        array: Vec<u32>,
+    },
+    UShort {
+        array: Vec<u32>,
+    },
 }
 
 /// A SPIR-V shader module.
@@ -239,11 +251,7 @@ where
     }
 
     /// Unsets a decoration.
-    pub fn unset_decoration(
-        &mut self,
-        id: u32,
-        decoration: Decoration,
-    ) -> Result<(), ErrorCode> {
+    pub fn unset_decoration(&mut self, id: u32, decoration: Decoration) -> Result<(), ErrorCode> {
         self.compiler.unset_decoration(id, decoration)
     }
 

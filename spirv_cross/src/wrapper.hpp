@@ -59,7 +59,6 @@ extern "C"
         uint8_t platform;
         uint32_t version;
         bool enable_point_size_builtin;
-        bool resolve_specialized_array_lengths;
         bool disable_rasterization;
     } ScMslCompilerOptions;
 
