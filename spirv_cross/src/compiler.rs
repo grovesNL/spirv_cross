@@ -121,6 +121,10 @@ impl spirv::Type {
             b::Image => Image { array },
             b::SampledImage => SampledImage { array },
             b::Sampler => Sampler { array },
+            b::SByte => SByte { array },
+            b::UByte => UByte { array },
+            b::Short => Short { array },
+            b::UShort => UShort { array },
         }
     }
 }

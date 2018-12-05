@@ -29,11 +29,12 @@ fn ast_compiles_to_hlsl() {
     assert_eq!(
         ast.compile().unwrap(),
         "\
-cbuffer _22
+cbuffer uniform_buffer_object
 {
     row_major float4x4 _22_u_model_view_projection : packoffset(c0);
     float _22_u_scale : packoffset(c4);
 };
+
 
 static float4 gl_Position;
 static float3 v_normal;

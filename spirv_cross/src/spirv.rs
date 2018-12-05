@@ -184,6 +184,18 @@ pub enum Type {
     Sampler {
         array: Vec<u32>,
     },
+    SByte {
+        array: Vec<u32>,
+    },
+    UByte {
+        array: Vec<u32>,
+    },
+    Short {
+        array: Vec<u32>,
+    },
+    UShort {
+        array: Vec<u32>,
+    },
 }
 
 /// A SPIR-V shader module.

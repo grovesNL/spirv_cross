@@ -22,6 +22,26 @@ impl spirv::Target for Target {
 #[derive(Debug, Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]
 pub struct VertexAttributeLocation(pub u32);
 
+/// Format of the vertex attribute
+#[derive(Debug, Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]
+pub enum Format {
+    Other,
+    Uint8,
+    Uint16,
+}
+
+impl Format {
+    fn as_raw(&self) -> spirv_cross::MSLVertexFormat {
+        use self::Format::*;
+        use self::spirv_cross::MSLVertexFormat as R;
+        match self {
+            Other => R::MSL_VERTEX_FORMAT_OTHER,
+            Uint8 => R::MSL_VERTEX_FORMAT_UINT8,
+            Uint16 => R::MSL_VERTEX_FORMAT_UINT16,
+        }
+    }
+}
+
 /// Vertex attribute description for overriding
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct VertexAttribute {
@@ -30,6 +50,7 @@ pub struct VertexAttribute {
     pub stride: u32,
     pub step: spirv::VertexAttributeStep,
     pub force_used: bool,
+    pub format: Format,
 }
 
 /// Location of a resource binding to override
@@ -107,8 +128,6 @@ pub struct CompilerOptions {
     pub vertex: CompilerVertexOptions,
     /// Whether the built-in point size should be enabled.
     pub enable_point_size_builtin: bool,
-    /// Whether array lengths should be resolved instead of specialized.
-    pub resolve_specialized_array_lengths: bool,
     /// Whether rasterization should be enabled.
     pub enable_rasterization: bool,
     /// MSL resource bindings overrides.
@@ -125,7 +144,6 @@ impl CompilerOptions {
             platform: self.platform as _,
             version: self.version.as_raw(),
             enable_point_size_builtin: self.enable_point_size_builtin,
-            resolve_specialized_array_lengths: self.resolve_specialized_array_lengths,
             disable_rasterization: !self.enable_rasterization,
         }
     }
@@ -138,7 +156,6 @@ impl Default for CompilerOptions {
             version: Version::V1_2,
             vertex: CompilerVertexOptions::default(),
             enable_point_size_builtin: true,
-            resolve_specialized_array_lengths: true,
             enable_rasterization: true,
             resource_binding_overrides: Default::default(),
             vertex_attribute_overrides: Default::default(),
@@ -213,6 +230,7 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
                     spirv::VertexAttributeStep::Instance => true,
                 },
                 used_by_shader: vat.force_used,
+                format: vat.format.as_raw(),
             })
         );
 
