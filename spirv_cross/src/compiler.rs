@@ -176,7 +176,7 @@ impl<TTargetData> Compiler<TTargetData> {
                         id,
                         name.as_ptr(),
                     ));
-                },
+                }
                 _ => return Err(ErrorCode::Unhandled),
             }
         }

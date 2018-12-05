@@ -24,7 +24,8 @@ fn ast_compiles_to_hlsl() {
         point_size_compat: false,
         point_coord_compat: false,
         vertex: hlsl::CompilerVertexOptions::default(),
-    }).unwrap();
+    })
+    .unwrap();
 
     assert_eq!(
         ast.compile().unwrap(),

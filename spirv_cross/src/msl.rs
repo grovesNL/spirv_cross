@@ -32,8 +32,8 @@ pub enum Format {
 
 impl Format {
     fn as_raw(&self) -> spirv_cross::MSLVertexFormat {
-        use self::Format::*;
         use self::spirv_cross::MSLVertexFormat as R;
+        use self::Format::*;
         match self {
             Other => R::MSL_VERTEX_FORMAT_OTHER,
             Uint8 => R::MSL_VERTEX_FORMAT_UINT8,
@@ -202,36 +202,36 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
         }
 
         self.compiler.target_data.resource_binding_overrides.clear();
-        self.compiler.target_data.resource_binding_overrides.extend(options
-            .resource_binding_overrides
-            .iter()
-            .map(|(loc, res)| spirv_cross::MSLResourceBinding {
-                stage: loc.stage.as_raw(),
-                desc_set: loc.desc_set,
-                binding: loc.binding,
-                msl_buffer: res.buffer_id,
-                msl_texture: res.texture_id,
-                msl_sampler: res.sampler_id,
-                used_by_shader: res.force_used,
-            })
+        self.compiler.target_data.resource_binding_overrides.extend(
+            options.resource_binding_overrides.iter().map(|(loc, res)| {
+                spirv_cross::MSLResourceBinding {
+                    stage: loc.stage.as_raw(),
+                    desc_set: loc.desc_set,
+                    binding: loc.binding,
+                    msl_buffer: res.buffer_id,
+                    msl_texture: res.texture_id,
+                    msl_sampler: res.sampler_id,
+                    used_by_shader: res.force_used,
+                }
+            }),
         );
 
         self.compiler.target_data.vertex_attribute_overrides.clear();
-        self.compiler.target_data.vertex_attribute_overrides.extend(options
-            .vertex_attribute_overrides
-            .iter()
-            .map(|(loc, vat)| spirv_cross::MSLVertexAttr {
-                location: loc.0,
-                msl_buffer: vat.buffer_id,
-                msl_offset: vat.offset,
-                msl_stride: vat.stride,
-                per_instance: match vat.step {
-                    spirv::VertexAttributeStep::Vertex => false,
-                    spirv::VertexAttributeStep::Instance => true,
-                },
-                used_by_shader: vat.force_used,
-                format: vat.format.as_raw(),
-            })
+        self.compiler.target_data.vertex_attribute_overrides.extend(
+            options.vertex_attribute_overrides.iter().map(|(loc, vat)| {
+                spirv_cross::MSLVertexAttr {
+                    location: loc.0,
+                    msl_buffer: vat.buffer_id,
+                    msl_offset: vat.offset,
+                    msl_stride: vat.stride,
+                    per_instance: match vat.step {
+                        spirv::VertexAttributeStep::Vertex => false,
+                        spirv::VertexAttributeStep::Instance => true,
+                    },
+                    used_by_shader: vat.force_used,
+                    format: vat.format.as_raw(),
+                }
+            }),
         );
 
         Ok(())
@@ -269,7 +269,10 @@ impl spirv::Ast<Target> {
     pub fn is_rasterization_enabled(&self) -> Result<bool, ErrorCode> {
         unsafe {
             let mut is_disabled = false;
-            check!(sc_internal_compiler_msl_get_is_rasterization_disabled(self.compiler.sc_compiler, &mut is_disabled));
+            check!(sc_internal_compiler_msl_get_is_rasterization_disabled(
+                self.compiler.sc_compiler,
+                &mut is_disabled
+            ));
             Ok(!is_disabled)
         }
     }

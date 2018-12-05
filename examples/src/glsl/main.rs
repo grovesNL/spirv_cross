@@ -1,7 +1,7 @@
-extern crate spirv_cross;
 extern crate examples;
-use spirv_cross::{glsl, spirv};
+extern crate spirv_cross;
 use examples::words_from_bytes;
+use spirv_cross::{glsl, spirv};
 
 fn main() {
     let module = spirv::Module::from_words(words_from_bytes(include_bytes!("../vertex.spv")));
@@ -11,7 +11,8 @@ fn main() {
     ast.set_compiler_options(&glsl::CompilerOptions {
         version: glsl::Version::V4_60,
         vertex: glsl::CompilerVertexOptions::default(),
-    }).unwrap();
+    })
+    .unwrap();
 
     // List all entry points
     for entry_point in &ast.get_entry_points().unwrap() {

@@ -15,11 +15,13 @@ fn glsl_compiler_options_has_default() {
 fn ast_compiles_to_glsl() {
     let mut ast = spirv::Ast::<glsl::Target>::parse(&spirv::Module::from_words(words_from_bytes(
         include_bytes!("shaders/simple.vert.spv"),
-    ))).unwrap();
+    )))
+    .unwrap();
     ast.set_compiler_options(&glsl::CompilerOptions {
         version: glsl::Version::V4_60,
         vertex: glsl::CompilerVertexOptions::default(),
-    }).unwrap();
+    })
+    .unwrap();
 
     assert_eq!(
         ast.compile().unwrap(),
