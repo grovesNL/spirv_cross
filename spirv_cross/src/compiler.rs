@@ -1,15 +1,14 @@
 //! Raw compiler bindings for SPIRV-Cross.
-
-use bindings::root::*;
-use spirv::{self, Decoration, Type};
+use crate::bindings::root as br;
+use crate::spirv::{self, Decoration, Type};
+use crate::ErrorCode;
 use std::ffi::{CStr, CString};
 use std::{mem, ptr, slice};
-use ErrorCode;
 
 impl spirv::ExecutionModel {
-    fn from_raw(raw: spv::ExecutionModel) -> Result<Self, ErrorCode> {
-        use self::spv::ExecutionModel as Em;
-        use spirv::ExecutionModel::*;
+    fn from_raw(raw: br::spv::ExecutionModel) -> Result<Self, ErrorCode> {
+        use crate::bindings::root::spv::ExecutionModel as Em;
+        use crate::spirv::ExecutionModel::*;
         match raw {
             Em::ExecutionModelVertex => Ok(Vertex),
             Em::ExecutionModelTessellationControl => Ok(TessellationControl),
@@ -22,9 +21,9 @@ impl spirv::ExecutionModel {
         }
     }
 
-    pub(crate) fn as_raw(&self) -> spv::ExecutionModel {
-        use self::spv::ExecutionModel as Em;
-        use spirv::ExecutionModel::*;
+    pub(crate) fn as_raw(&self) -> br::spv::ExecutionModel {
+        use crate::bindings::root::spv::ExecutionModel as Em;
+        use crate::spirv::ExecutionModel::*;
         match *self {
             Vertex => Em::ExecutionModelVertex,
             TessellationControl => Em::ExecutionModelTessellationControl,
@@ -38,100 +37,99 @@ impl spirv::ExecutionModel {
 }
 
 impl spirv::Decoration {
-    fn as_raw(&self) -> spv::Decoration {
+    fn as_raw(&self) -> br::spv::Decoration {
+        use crate::bindings::root::spv::Decoration as D;
         match *self {
-            Decoration::RelaxedPrecision => spv::Decoration::DecorationRelaxedPrecision,
-            Decoration::SpecId => spv::Decoration::DecorationSpecId,
-            Decoration::Block => spv::Decoration::DecorationBlock,
-            Decoration::BufferBlock => spv::Decoration::DecorationBufferBlock,
-            Decoration::RowMajor => spv::Decoration::DecorationRowMajor,
-            Decoration::ColMajor => spv::Decoration::DecorationColMajor,
-            Decoration::ArrayStride => spv::Decoration::DecorationArrayStride,
-            Decoration::MatrixStride => spv::Decoration::DecorationMatrixStride,
-            Decoration::GlslShared => spv::Decoration::DecorationGLSLShared,
-            Decoration::GlslPacked => spv::Decoration::DecorationGLSLPacked,
-            Decoration::CPacked => spv::Decoration::DecorationCPacked,
-            Decoration::BuiltIn => spv::Decoration::DecorationBuiltIn,
-            Decoration::NoPerspective => spv::Decoration::DecorationNoPerspective,
-            Decoration::Flat => spv::Decoration::DecorationFlat,
-            Decoration::Patch => spv::Decoration::DecorationPatch,
-            Decoration::Centroid => spv::Decoration::DecorationCentroid,
-            Decoration::Sample => spv::Decoration::DecorationSample,
-            Decoration::Invariant => spv::Decoration::DecorationInvariant,
-            Decoration::Restrict => spv::Decoration::DecorationRestrict,
-            Decoration::Aliased => spv::Decoration::DecorationAliased,
-            Decoration::Volatile => spv::Decoration::DecorationVolatile,
-            Decoration::Constant => spv::Decoration::DecorationConstant,
-            Decoration::Coherent => spv::Decoration::DecorationCoherent,
-            Decoration::NonWritable => spv::Decoration::DecorationNonWritable,
-            Decoration::NonReadable => spv::Decoration::DecorationNonReadable,
-            Decoration::Uniform => spv::Decoration::DecorationUniform,
-            Decoration::SaturatedConversion => spv::Decoration::DecorationSaturatedConversion,
-            Decoration::Stream => spv::Decoration::DecorationStream,
-            Decoration::Location => spv::Decoration::DecorationLocation,
-            Decoration::Component => spv::Decoration::DecorationComponent,
-            Decoration::Index => spv::Decoration::DecorationIndex,
-            Decoration::Binding => spv::Decoration::DecorationBinding,
-            Decoration::DescriptorSet => spv::Decoration::DecorationDescriptorSet,
-            Decoration::Offset => spv::Decoration::DecorationOffset,
-            Decoration::XfbBuffer => spv::Decoration::DecorationXfbBuffer,
-            Decoration::XfbStride => spv::Decoration::DecorationXfbStride,
-            Decoration::FuncParamAttr => spv::Decoration::DecorationFuncParamAttr,
-            Decoration::FpRoundingMode => spv::Decoration::DecorationFPRoundingMode,
-            Decoration::FpFastMathMode => spv::Decoration::DecorationFPFastMathMode,
-            Decoration::LinkageAttributes => spv::Decoration::DecorationLinkageAttributes,
-            Decoration::NoContraction => spv::Decoration::DecorationNoContraction,
-            Decoration::InputAttachmentIndex => spv::Decoration::DecorationInputAttachmentIndex,
-            Decoration::Alignment => spv::Decoration::DecorationAlignment,
-            Decoration::OverrideCoverageNv => spv::Decoration::DecorationOverrideCoverageNV,
-            Decoration::PassthroughNv => spv::Decoration::DecorationPassthroughNV,
-            Decoration::ViewportRelativeNv => spv::Decoration::DecorationViewportRelativeNV,
-            Decoration::SecondaryViewportRelativeNv => {
-                spv::Decoration::DecorationSecondaryViewportRelativeNV
-            }
+            Decoration::RelaxedPrecision => D::DecorationRelaxedPrecision,
+            Decoration::SpecId => D::DecorationSpecId,
+            Decoration::Block => D::DecorationBlock,
+            Decoration::BufferBlock => D::DecorationBufferBlock,
+            Decoration::RowMajor => D::DecorationRowMajor,
+            Decoration::ColMajor => D::DecorationColMajor,
+            Decoration::ArrayStride => D::DecorationArrayStride,
+            Decoration::MatrixStride => D::DecorationMatrixStride,
+            Decoration::GlslShared => D::DecorationGLSLShared,
+            Decoration::GlslPacked => D::DecorationGLSLPacked,
+            Decoration::CPacked => D::DecorationCPacked,
+            Decoration::BuiltIn => D::DecorationBuiltIn,
+            Decoration::NoPerspective => D::DecorationNoPerspective,
+            Decoration::Flat => D::DecorationFlat,
+            Decoration::Patch => D::DecorationPatch,
+            Decoration::Centroid => D::DecorationCentroid,
+            Decoration::Sample => D::DecorationSample,
+            Decoration::Invariant => D::DecorationInvariant,
+            Decoration::Restrict => D::DecorationRestrict,
+            Decoration::Aliased => D::DecorationAliased,
+            Decoration::Volatile => D::DecorationVolatile,
+            Decoration::Constant => D::DecorationConstant,
+            Decoration::Coherent => D::DecorationCoherent,
+            Decoration::NonWritable => D::DecorationNonWritable,
+            Decoration::NonReadable => D::DecorationNonReadable,
+            Decoration::Uniform => D::DecorationUniform,
+            Decoration::SaturatedConversion => D::DecorationSaturatedConversion,
+            Decoration::Stream => D::DecorationStream,
+            Decoration::Location => D::DecorationLocation,
+            Decoration::Component => D::DecorationComponent,
+            Decoration::Index => D::DecorationIndex,
+            Decoration::Binding => D::DecorationBinding,
+            Decoration::DescriptorSet => D::DecorationDescriptorSet,
+            Decoration::Offset => D::DecorationOffset,
+            Decoration::XfbBuffer => D::DecorationXfbBuffer,
+            Decoration::XfbStride => D::DecorationXfbStride,
+            Decoration::FuncParamAttr => D::DecorationFuncParamAttr,
+            Decoration::FpRoundingMode => D::DecorationFPRoundingMode,
+            Decoration::FpFastMathMode => D::DecorationFPFastMathMode,
+            Decoration::LinkageAttributes => D::DecorationLinkageAttributes,
+            Decoration::NoContraction => D::DecorationNoContraction,
+            Decoration::InputAttachmentIndex => D::DecorationInputAttachmentIndex,
+            Decoration::Alignment => D::DecorationAlignment,
+            Decoration::OverrideCoverageNv => D::DecorationOverrideCoverageNV,
+            Decoration::PassthroughNv => D::DecorationPassthroughNV,
+            Decoration::ViewportRelativeNv => D::DecorationViewportRelativeNV,
+            Decoration::SecondaryViewportRelativeNv => D::DecorationSecondaryViewportRelativeNV,
         }
     }
 }
 
 impl spirv::Type {
     pub(crate) fn from_raw(
-        ty: spirv_cross::SPIRType_BaseType,
+        ty: br::spirv_cross::SPIRType_BaseType,
         member_types: Vec<u32>,
         array: Vec<u32>,
     ) -> Type {
-        use bindings::root::spirv_cross::SPIRType_BaseType as b;
-        use spirv::Type::*;
+        use crate::bindings::root::spirv_cross::SPIRType_BaseType as B;
+        use crate::spirv::Type::*;
         match ty {
-            b::Unknown => Unknown,
-            b::Void => Void,
-            b::Boolean => Boolean { array },
-            b::Char => Char { array },
-            b::Int => Int { array },
-            b::UInt => UInt { array },
-            b::Int64 => Int64 { array },
-            b::UInt64 => UInt64 { array },
-            b::AtomicCounter => AtomicCounter { array },
-            b::Half => Half { array },
-            b::Float => Float { array },
-            b::Double => Double { array },
-            b::Struct => Struct {
+            B::Unknown => Unknown,
+            B::Void => Void,
+            B::Boolean => Boolean { array },
+            B::Char => Char { array },
+            B::Int => Int { array },
+            B::UInt => UInt { array },
+            B::Int64 => Int64 { array },
+            B::UInt64 => UInt64 { array },
+            B::AtomicCounter => AtomicCounter { array },
+            B::Half => Half { array },
+            B::Float => Float { array },
+            B::Double => Double { array },
+            B::Struct => Struct {
                 member_types,
                 array,
             },
-            b::Image => Image { array },
-            b::SampledImage => SampledImage { array },
-            b::Sampler => Sampler { array },
-            b::SByte => SByte { array },
-            b::UByte => UByte { array },
-            b::Short => Short { array },
-            b::UShort => UShort { array },
+            B::Image => Image { array },
+            B::SampledImage => SampledImage { array },
+            B::Sampler => Sampler { array },
+            B::SByte => SByte { array },
+            B::UByte => UByte { array },
+            B::Short => Short { array },
+            B::UShort => UShort { array },
         }
     }
 }
 
 #[derive(Debug, Clone)]
 pub struct Compiler<TTargetData> {
-    pub(crate) sc_compiler: *mut ScInternalCompilerBase,
+    pub(crate) sc_compiler: *mut br::ScInternalCompilerBase,
     pub(crate) target_data: TTargetData,
     pub(crate) has_been_compiled: bool,
 }
@@ -140,7 +138,7 @@ impl<TTargetData> Compiler<TTargetData> {
     pub fn compile(&mut self) -> Result<String, ErrorCode> {
         unsafe {
             let mut shader_ptr = ptr::null();
-            check!(sc_internal_compiler_compile(
+            check!(br::sc_internal_compiler_compile(
                 self.sc_compiler,
                 &mut shader_ptr,
             ));
@@ -148,7 +146,7 @@ impl<TTargetData> Compiler<TTargetData> {
                 Err(_) => return Err(ErrorCode::Unhandled),
                 Ok(v) => v,
             };
-            check!(sc_internal_free_pointer(shader_ptr as *mut c_void));
+            check!(br::sc_internal_free_pointer(shader_ptr as *mut c_void));
             Ok(shader)
         }
     }
@@ -156,7 +154,7 @@ impl<TTargetData> Compiler<TTargetData> {
     pub fn get_decoration(&self, id: u32, decoration: spirv::Decoration) -> Result<u32, ErrorCode> {
         let mut result = 0;
         unsafe {
-            check!(sc_internal_compiler_get_decoration(
+            check!(br::sc_internal_compiler_get_decoration(
                 self.sc_compiler,
                 &mut result,
                 id,
@@ -171,7 +169,7 @@ impl<TTargetData> Compiler<TTargetData> {
         unsafe {
             match name {
                 Ok(name) => {
-                    check!(sc_internal_compiler_set_name(
+                    check!(br::sc_internal_compiler_set_name(
                         self.sc_compiler,
                         id,
                         name.as_ptr(),
@@ -189,7 +187,7 @@ impl<TTargetData> Compiler<TTargetData> {
         decoration: spirv::Decoration,
     ) -> Result<(), ErrorCode> {
         unsafe {
-            check!(sc_internal_compiler_unset_decoration(
+            check!(br::sc_internal_compiler_unset_decoration(
                 self.sc_compiler,
                 id,
                 decoration.as_raw(),
@@ -206,7 +204,7 @@ impl<TTargetData> Compiler<TTargetData> {
         argument: u32,
     ) -> Result<(), ErrorCode> {
         unsafe {
-            check!(sc_internal_compiler_set_decoration(
+            check!(br::sc_internal_compiler_set_decoration(
                 self.sc_compiler,
                 id,
                 decoration.as_raw(),
@@ -222,7 +220,7 @@ impl<TTargetData> Compiler<TTargetData> {
         let mut entry_points_raw_length = 0 as usize;
 
         unsafe {
-            check!(sc_internal_compiler_get_entry_points(
+            check!(br::sc_internal_compiler_get_entry_points(
                 self.sc_compiler,
                 &mut entry_points_raw,
                 &mut entry_points_raw_length,
@@ -242,9 +240,9 @@ impl<TTargetData> Compiler<TTargetData> {
 
                     let entry_point = spirv::EntryPoint {
                         name,
-                        execution_model: try!(spirv::ExecutionModel::from_raw(
-                            entry_point_raw.execution_model
-                        )),
+                        execution_model: spirv::ExecutionModel::from_raw(
+                            entry_point_raw.execution_model,
+                        )?,
                         work_group_size: spirv::WorkGroupSize {
                             x: entry_point_raw.work_group_size_x,
                             y: entry_point_raw.work_group_size_y,
@@ -252,16 +250,18 @@ impl<TTargetData> Compiler<TTargetData> {
                         },
                     };
 
-                    check!(sc_internal_free_pointer(
+                    check!(br::sc_internal_free_pointer(
                         entry_point_raw.name as *mut c_void,
                     ));
-                    check!(sc_internal_free_pointer(entry_point_raw_ptr as *mut c_void));
+                    check!(br::sc_internal_free_pointer(
+                        entry_point_raw_ptr as *mut c_void
+                    ));
 
                     Ok(entry_point)
                 })
                 .collect::<Result<Vec<_>, _>>();
 
-            Ok(try!(entry_points))
+            Ok(entry_points?)
         }
     }
 
@@ -274,7 +274,7 @@ impl<TTargetData> Compiler<TTargetData> {
         let entry_point = CString::new(entry_point_name);
         match entry_point {
             Ok(ep) => unsafe {
-                check!(sc_internal_compiler_get_cleansed_entry_point_name(
+                check!(br::sc_internal_compiler_get_cleansed_entry_point_name(
                     self.sc_compiler,
                     ep.as_ptr(),
                     execution_model.as_raw(),
@@ -284,7 +284,7 @@ impl<TTargetData> Compiler<TTargetData> {
                     Ok(c) => c.to_owned(),
                     _ => return Err(ErrorCode::Unhandled),
                 };
-                check!(sc_internal_free_pointer(cleansed_ptr as *mut c_void));
+                check!(br::sc_internal_free_pointer(cleansed_ptr as *mut c_void));
                 Ok(cleansed)
             },
             _ => return Err(ErrorCode::Unhandled),
@@ -298,7 +298,7 @@ impl<TTargetData> Compiler<TTargetData> {
         let mut constants_raw_length = 0 as usize;
 
         unsafe {
-            check!(sc_internal_compiler_get_specialization_constants(
+            check!(br::sc_internal_compiler_get_specialization_constants(
                 self.sc_compiler,
                 &mut constants_raw,
                 &mut constants_raw_length,
@@ -318,15 +318,15 @@ impl<TTargetData> Compiler<TTargetData> {
                 })
                 .collect::<Result<Vec<_>, _>>();
 
-            check!(sc_internal_free_pointer(constants_raw as *mut c_void));
+            check!(br::sc_internal_free_pointer(constants_raw as *mut c_void));
 
-            Ok(try!(constants))
+            Ok(constants?)
         }
     }
 
     pub fn set_scalar_constant(&self, id: u32, value: u64) -> Result<(), ErrorCode> {
         unsafe {
-            check!(sc_internal_compiler_set_scalar_constant(
+            check!(br::sc_internal_compiler_set_scalar_constant(
                 self.sc_compiler,
                 id,
                 value,
@@ -340,7 +340,7 @@ impl<TTargetData> Compiler<TTargetData> {
         unsafe {
             let mut type_ptr = ptr::null();
 
-            check!(sc_internal_compiler_get_type(
+            check!(br::sc_internal_compiler_get_type(
                 self.sc_compiler,
                 id,
                 &mut type_ptr,
@@ -354,12 +354,14 @@ impl<TTargetData> Compiler<TTargetData> {
             let result = Type::from_raw(raw.type_, member_types, array);
 
             if raw.member_types_size > 0 {
-                check!(sc_internal_free_pointer(raw.member_types as *mut c_void));
+                check!(br::sc_internal_free_pointer(
+                    raw.member_types as *mut c_void
+                ));
             }
             if raw.array_size > 0 {
-                check!(sc_internal_free_pointer(raw.array as *mut c_void));
+                check!(br::sc_internal_free_pointer(raw.array as *mut c_void));
             }
-            check!(sc_internal_free_pointer(type_ptr as *mut c_void));
+            check!(br::sc_internal_free_pointer(type_ptr as *mut c_void));
 
             Ok(result)
         }
@@ -368,7 +370,7 @@ impl<TTargetData> Compiler<TTargetData> {
     pub fn get_member_name(&self, id: u32, index: u32) -> Result<String, ErrorCode> {
         unsafe {
             let mut name_ptr = ptr::null();
-            check!(sc_internal_compiler_get_member_name(
+            check!(br::sc_internal_compiler_get_member_name(
                 self.sc_compiler,
                 id,
                 index,
@@ -378,7 +380,7 @@ impl<TTargetData> Compiler<TTargetData> {
                 Err(_) => return Err(ErrorCode::Unhandled),
                 Ok(n) => n,
             };
-            check!(sc_internal_free_pointer(name_ptr as *mut c_void));
+            check!(br::sc_internal_free_pointer(name_ptr as *mut c_void));
             Ok(name)
         }
     }
@@ -391,7 +393,7 @@ impl<TTargetData> Compiler<TTargetData> {
     ) -> Result<u32, ErrorCode> {
         let mut result = 0;
         unsafe {
-            check!(sc_internal_compiler_get_member_decoration(
+            check!(br::sc_internal_compiler_get_member_decoration(
                 self.sc_compiler,
                 id,
                 index,
@@ -410,7 +412,7 @@ impl<TTargetData> Compiler<TTargetData> {
         argument: u32,
     ) -> Result<(), ErrorCode> {
         unsafe {
-            check!(sc_internal_compiler_set_member_decoration(
+            check!(br::sc_internal_compiler_set_member_decoration(
                 self.sc_compiler,
                 id,
                 index,
@@ -425,7 +427,7 @@ impl<TTargetData> Compiler<TTargetData> {
     pub fn get_declared_struct_size(&self, id: u32) -> Result<u32, ErrorCode> {
         let mut result = 0;
         unsafe {
-            check!(sc_internal_compiler_get_declared_struct_size(
+            check!(br::sc_internal_compiler_get_declared_struct_size(
                 self.sc_compiler,
                 id,
                 &mut result,
@@ -437,7 +439,7 @@ impl<TTargetData> Compiler<TTargetData> {
     pub fn get_declared_struct_member_size(&self, id: u32, index: u32) -> Result<u32, ErrorCode> {
         let mut result = 0;
         unsafe {
-            check!(sc_internal_compiler_get_declared_struct_member_size(
+            check!(br::sc_internal_compiler_get_declared_struct_member_size(
                 self.sc_compiler,
                 id,
                 index,
@@ -450,12 +452,12 @@ impl<TTargetData> Compiler<TTargetData> {
     pub fn get_shader_resources(&self) -> Result<spirv::ShaderResources, ErrorCode> {
         unsafe {
             let mut shader_resources_raw = mem::zeroed();
-            check!(sc_internal_compiler_get_shader_resources(
+            check!(br::sc_internal_compiler_get_shader_resources(
                 self.sc_compiler,
                 &mut shader_resources_raw,
             ));
 
-            let fill_resources = |array_raw: &ScResourceArray| {
+            let fill_resources = |array_raw: &br::ScResourceArray| {
                 let resources_raw = slice::from_raw_parts(array_raw.data, array_raw.num);
                 let resources = resources_raw
                     .iter()
@@ -466,7 +468,9 @@ impl<TTargetData> Compiler<TTargetData> {
                             _ => return Err(ErrorCode::Unhandled),
                         };
 
-                        check!(sc_internal_free_pointer(resource_raw.name as *mut c_void,));
+                        check!(br::sc_internal_free_pointer(
+                            resource_raw.name as *mut c_void,
+                        ));
 
                         Ok(spirv::Resource {
                             id: resource_raw.id,
@@ -477,7 +481,7 @@ impl<TTargetData> Compiler<TTargetData> {
                     })
                     .collect::<Result<Vec<_>, ErrorCode>>();
 
-                check!(sc_internal_free_pointer(array_raw.data as *mut c_void,));
+                check!(br::sc_internal_free_pointer(array_raw.data as *mut c_void,));
 
                 resources
             };
@@ -528,12 +532,12 @@ impl<TTargetData> Compiler<TTargetData> {
 
             match CString::new(new_name) {
                 Ok(n) => {
-                    check!(sc_internal_compiler_rename_interface_variable(
+                    check!(br::sc_internal_compiler_rename_interface_variable(
                         self.sc_compiler,
                         resources
                             .iter()
                             .enumerate()
-                            .map(|(i, r)| ScResource {
+                            .map(|(i, r)| br::ScResource {
                                 id: r.id,
                                 type_id: r.type_id,
                                 base_type_id: r.base_type_id,
@@ -560,7 +564,7 @@ impl<TTargetData> Compiler<TTargetData> {
 
         unsafe {
             check!(
-                sc_internal_compiler_get_work_group_size_specialization_constants(
+                br::sc_internal_compiler_get_work_group_size_specialization_constants(
                     self.sc_compiler,
                     &mut constants_raw,
                 )
@@ -585,7 +589,7 @@ impl<TTargetData> Compiler<TTargetData> {
                 },
             };
 
-            check!(sc_internal_free_pointer(constants_raw as *mut c_void));
+            check!(br::sc_internal_free_pointer(constants_raw as *mut c_void));
 
             Ok(constants)
         }
@@ -595,7 +599,7 @@ impl<TTargetData> Compiler<TTargetData> {
 impl<TTargetData> Drop for Compiler<TTargetData> {
     fn drop(&mut self) {
         unsafe {
-            sc_internal_compiler_delete(self.sc_compiler);
+            br::sc_internal_compiler_delete(self.sc_compiler);
         }
     }
 }

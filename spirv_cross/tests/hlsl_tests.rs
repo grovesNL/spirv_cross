@@ -1,8 +1,7 @@
-extern crate spirv_cross;
 use spirv_cross::{hlsl, spirv};
 
 mod common;
-use common::words_from_bytes;
+use crate::common::words_from_bytes;
 
 #[test]
 fn hlsl_compiler_options_has_default() {
@@ -92,14 +91,16 @@ fn ast_compiles_all_shader_models_to_hlsl() {
         hlsl::ShaderModel::V6_0,
     ];
     for &shader_model in shader_models.iter() {
-        match ast.set_compiler_options(&hlsl::CompilerOptions {
-            shader_model,
-            point_size_compat: false,
-            point_coord_compat: false,
-            vertex: hlsl::CompilerVertexOptions::default(),
-        }) {
-            Err(_) => panic!("Did not compile"),
-            _ => (),
+        if ast
+            .set_compiler_options(&hlsl::CompilerOptions {
+                shader_model,
+                point_size_compat: false,
+                point_coord_compat: false,
+                vertex: hlsl::CompilerVertexOptions::default(),
+            })
+            .is_err()
+        {
+            panic!("Did not compile");
         }
     }
 }

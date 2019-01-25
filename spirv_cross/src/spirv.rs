@@ -1,6 +1,5 @@
-use compiler;
+use crate::{compiler, ErrorCode};
 use std::marker::PhantomData;
-use ErrorCode;
 
 /// A stage or compute kernel.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
@@ -231,7 +230,10 @@ pub trait Parse<TTarget>: Sized {
 pub trait Compile<TTarget> {
     type CompilerOptions;
 
-    fn set_compiler_options(&mut self, &Self::CompilerOptions) -> Result<(), ErrorCode>;
+    fn set_compiler_options(
+        &mut self,
+        compiler_options: &Self::CompilerOptions,
+    ) -> Result<(), ErrorCode>;
     fn compile(&mut self) -> Result<String, ErrorCode>;
 }
 

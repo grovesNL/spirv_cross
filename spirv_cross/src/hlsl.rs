@@ -1,9 +1,9 @@
-use bindings::root::*;
+use crate::bindings::root as br;
+use crate::{compiler, spirv, ErrorCode};
 use std::marker::PhantomData;
 use std::ptr;
-use {compiler, spirv, ErrorCode};
 
-pub use bindings::root::ScHlslRootConstant as RootConstant;
+pub use crate::bindings::root::ScHlslRootConstant as RootConstant;
 
 /// A HLSL target.
 #[derive(Debug, Clone)]
@@ -73,8 +73,8 @@ pub struct CompilerOptions {
 }
 
 impl CompilerOptions {
-    fn as_raw(&self) -> ScHlslCompilerOptions {
-        ScHlslCompilerOptions {
+    fn as_raw(&self) -> br::ScHlslCompilerOptions {
+        br::ScHlslCompilerOptions {
             shader_model: self.shader_model.as_raw(),
             point_size_compat: self.point_size_compat,
             point_coord_compat: self.point_coord_compat,
@@ -100,7 +100,7 @@ impl spirv::Parse<Target> for spirv::Ast<Target> {
         let compiler = {
             let mut compiler = ptr::null_mut();
             unsafe {
-                check!(sc_internal_compiler_hlsl_new(
+                check!(br::sc_internal_compiler_hlsl_new(
                     &mut compiler,
                     module.words.as_ptr() as *const u32,
                     module.words.len() as usize,
@@ -128,7 +128,7 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
     fn set_compiler_options(&mut self, options: &CompilerOptions) -> Result<(), ErrorCode> {
         let raw_options = options.as_raw();
         unsafe {
-            check!(sc_internal_compiler_hlsl_set_options(
+            check!(br::sc_internal_compiler_hlsl_set_options(
                 self.compiler.sc_compiler,
                 &raw_options,
             ));
@@ -147,7 +147,7 @@ impl spirv::Ast<Target> {
     ///
     pub fn set_root_constant_layout(&mut self, layout: Vec<RootConstant>) -> Result<(), ErrorCode> {
         unsafe {
-            check!(sc_internal_compiler_hlsl_set_root_constant_layout(
+            check!(br::sc_internal_compiler_hlsl_set_root_constant_layout(
                 self.compiler.sc_compiler,
                 layout.as_ptr(),
                 layout.len() as _,

@@ -9,6 +9,7 @@ repository = "https://github.com/grovesNL/spirv_cross"
 readme = "../README.md"
 keywords = ["spirv", "cross"]
 build = "build.rs"
+edition = "2018"
 
 [build-dependencies]
 cc = "1.0.4"

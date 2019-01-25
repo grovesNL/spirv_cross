@@ -1,15 +1,15 @@
 macro_rules! check {
     ($check:expr) => {{
-        use std::ffi::CStr;
-        use std::os::raw::c_void;
+        use ::std::ffi::CStr;
+        use ::std::os::raw::c_void;
 
         let result = $check;
-        if ScInternalResult::Success != result {
-            if ScInternalResult::CompilationError == result {
+        if br::ScInternalResult::Success != result {
+            if br::ScInternalResult::CompilationError == result {
                 let mut message_ptr = ptr::null();
 
-                if ScInternalResult::Success
-                    != sc_internal_get_latest_exception_message(&mut message_ptr)
+                if br::ScInternalResult::Success
+                    != br::sc_internal_get_latest_exception_message(&mut message_ptr)
                 {
                     return Err(ErrorCode::Unhandled);
                 }
@@ -19,7 +19,8 @@ macro_rules! check {
                     Ok(v) => v,
                 };
 
-                if ScInternalResult::Success != sc_internal_free_pointer(message_ptr as *mut c_void)
+                if br::ScInternalResult::Success
+                    != br::sc_internal_free_pointer(message_ptr as *mut c_void)
                 {
                     return Err(ErrorCode::Unhandled);
                 }

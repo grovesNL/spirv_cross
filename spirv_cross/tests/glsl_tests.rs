@@ -1,8 +1,7 @@
-extern crate spirv_cross;
 use spirv_cross::{glsl, spirv};
 
 mod common;
-use common::words_from_bytes;
+use crate::common::words_from_bytes;
 
 #[test]
 fn glsl_compiler_options_has_default() {
@@ -50,7 +49,7 @@ void main()
 
 #[test]
 fn ast_compiles_all_versions_to_glsl() {
-    use glsl::Version::*;
+    use spirv_cross::glsl::Version::*;
 
     let module =
         spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
@@ -61,12 +60,14 @@ fn ast_compiles_all_versions_to_glsl() {
         V1_00Es, V3_00Es,
     ];
     for &version in versions.iter() {
-        match ast.set_compiler_options(&glsl::CompilerOptions {
-            version,
-            vertex: glsl::CompilerVertexOptions::default(),
-        }) {
-            Err(_) => panic!("Did not compile"),
-            _ => (),
+        if ast
+            .set_compiler_options(&glsl::CompilerOptions {
+                version,
+                vertex: glsl::CompilerVertexOptions::default(),
+            })
+            .is_err()
+        {
+            panic!("Did not compile");
         }
     }
 }

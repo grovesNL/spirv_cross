@@ -1,8 +1,7 @@
-extern crate spirv_cross;
 use spirv_cross::{msl, spirv};
 
 mod common;
-use common::words_from_bytes;
+use crate::common::words_from_bytes;
 
 #[test]
 fn msl_compiler_options_has_default() {

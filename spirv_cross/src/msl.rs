@@ -1,17 +1,17 @@
-use bindings::root::*;
+use crate::bindings::root as br;
+use crate::{compiler, spirv, ErrorCode};
 use std::collections::BTreeMap;
 use std::ffi::CStr;
 use std::marker::PhantomData;
 use std::ptr;
-use {compiler, spirv, ErrorCode};
 
 /// A MSL target.
 #[derive(Debug, Clone)]
 pub enum Target {}
 
 pub struct TargetData {
-    vertex_attribute_overrides: Vec<spirv_cross::MSLVertexAttr>,
-    resource_binding_overrides: Vec<spirv_cross::MSLResourceBinding>,
+    vertex_attribute_overrides: Vec<br::spirv_cross::MSLVertexAttr>,
+    resource_binding_overrides: Vec<br::spirv_cross::MSLResourceBinding>,
 }
 
 impl spirv::Target for Target {
@@ -31,9 +31,9 @@ pub enum Format {
 }
 
 impl Format {
-    fn as_raw(&self) -> spirv_cross::MSLVertexFormat {
-        use self::spirv_cross::MSLVertexFormat as R;
+    fn as_raw(&self) -> br::spirv_cross::MSLVertexFormat {
         use self::Format::*;
+        use crate::bindings::root::spirv_cross::MSLVertexFormat as R;
         match self {
             Other => R::MSL_VERTEX_FORMAT_OTHER,
             Uint8 => R::MSL_VERTEX_FORMAT_UINT8,
@@ -137,8 +137,8 @@ pub struct CompilerOptions {
 }
 
 impl CompilerOptions {
-    fn as_raw(&self) -> ScMslCompilerOptions {
-        ScMslCompilerOptions {
+    fn as_raw(&self) -> br::ScMslCompilerOptions {
+        br::ScMslCompilerOptions {
             vertex_invert_y: self.vertex.invert_y,
             vertex_transform_clip_space: self.vertex.transform_clip_space,
             platform: self.platform as _,
@@ -167,7 +167,7 @@ impl<'a> spirv::Parse<Target> for spirv::Ast<Target> {
     fn parse(module: &spirv::Module) -> Result<Self, ErrorCode> {
         let mut sc_compiler = ptr::null_mut();
         unsafe {
-            check!(sc_internal_compiler_msl_new(
+            check!(br::sc_internal_compiler_msl_new(
                 &mut sc_compiler,
                 module.words.as_ptr(),
                 module.words.len(),
@@ -195,7 +195,7 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
     fn set_compiler_options(&mut self, options: &CompilerOptions) -> Result<(), ErrorCode> {
         let raw_options = options.as_raw();
         unsafe {
-            check!(sc_internal_compiler_msl_set_options(
+            check!(br::sc_internal_compiler_msl_set_options(
                 self.compiler.sc_compiler,
                 &raw_options,
             ));
@@ -204,7 +204,7 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
         self.compiler.target_data.resource_binding_overrides.clear();
         self.compiler.target_data.resource_binding_overrides.extend(
             options.resource_binding_overrides.iter().map(|(loc, res)| {
-                spirv_cross::MSLResourceBinding {
+                br::spirv_cross::MSLResourceBinding {
                     stage: loc.stage.as_raw(),
                     desc_set: loc.desc_set,
                     binding: loc.binding,
@@ -219,7 +219,7 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
         self.compiler.target_data.vertex_attribute_overrides.clear();
         self.compiler.target_data.vertex_attribute_overrides.extend(
             options.vertex_attribute_overrides.iter().map(|(loc, vat)| {
-                spirv_cross::MSLVertexAttr {
+                br::spirv_cross::MSLVertexAttr {
                     location: loc.0,
                     msl_buffer: vat.buffer_id,
                     msl_offset: vat.offset,
@@ -249,7 +249,7 @@ impl spirv::Ast<Target> {
         let res_overrides = &self.compiler.target_data.resource_binding_overrides;
         unsafe {
             let mut shader_ptr = ptr::null();
-            check!(sc_internal_compiler_msl_compile(
+            check!(br::sc_internal_compiler_msl_compile(
                 self.compiler.sc_compiler,
                 &mut shader_ptr,
                 vat_overrides.as_ptr(),
@@ -261,7 +261,7 @@ impl spirv::Ast<Target> {
                 Ok(v) => v.to_owned(),
                 Err(_) => return Err(ErrorCode::Unhandled),
             };
-            check!(sc_internal_free_pointer(shader_ptr as *mut c_void));
+            check!(br::sc_internal_free_pointer(shader_ptr as *mut c_void));
             Ok(shader)
         }
     }
@@ -269,7 +269,7 @@ impl spirv::Ast<Target> {
     pub fn is_rasterization_enabled(&self) -> Result<bool, ErrorCode> {
         unsafe {
             let mut is_disabled = false;
-            check!(sc_internal_compiler_msl_get_is_rasterization_disabled(
+            check!(br::sc_internal_compiler_msl_get_is_rasterization_disabled(
                 self.compiler.sc_compiler,
                 &mut is_disabled
             ));
