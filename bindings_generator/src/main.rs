@@ -1,10 +1,9 @@
 extern crate bindgen;
 
 use std::env;
-use std::path::PathBuf;
 
 fn main() {
-    let out_path = PathBuf::from(env::current_dir().unwrap());
+    let out_path = env::current_dir().unwrap();
     bindgen::Builder::default()
         .header(
             out_path

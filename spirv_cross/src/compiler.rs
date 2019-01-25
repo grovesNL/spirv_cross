@@ -21,10 +21,10 @@ impl spirv::ExecutionModel {
         }
     }
 
-    pub(crate) fn as_raw(&self) -> br::spv::ExecutionModel {
+    pub(crate) fn as_raw(self) -> br::spv::ExecutionModel {
         use crate::bindings::root::spv::ExecutionModel as Em;
         use crate::spirv::ExecutionModel::*;
-        match *self {
+        match self {
             Vertex => Em::ExecutionModelVertex,
             TessellationControl => Em::ExecutionModelTessellationControl,
             TessellationEvaluation => Em::ExecutionModelTessellationEvaluation,
@@ -37,9 +37,9 @@ impl spirv::ExecutionModel {
 }
 
 impl spirv::Decoration {
-    fn as_raw(&self) -> br::spv::Decoration {
+    fn as_raw(self) -> br::spv::Decoration {
         use crate::bindings::root::spv::Decoration as D;
-        match *self {
+        match self {
             Decoration::RelaxedPrecision => D::DecorationRelaxedPrecision,
             Decoration::SpecId => D::DecorationSpecId,
             Decoration::Block => D::DecorationBlock,
@@ -228,7 +228,7 @@ impl<TTargetData> Compiler<TTargetData> {
 
             let entry_points = (0..entry_points_raw_length)
                 .map(|offset| {
-                    let entry_point_raw_ptr = entry_points_raw.offset(offset as isize);
+                    let entry_point_raw_ptr = entry_points_raw.add(offset);
                     let entry_point_raw = *entry_point_raw_ptr;
                     let name = match CStr::from_ptr(entry_point_raw.name)
                         .to_owned()
@@ -287,7 +287,7 @@ impl<TTargetData> Compiler<TTargetData> {
                 check!(br::sc_internal_free_pointer(cleansed_ptr as *mut c_void));
                 Ok(cleansed)
             },
-            _ => return Err(ErrorCode::Unhandled),
+            _ => Err(ErrorCode::Unhandled),
         }
     }
 
@@ -306,7 +306,7 @@ impl<TTargetData> Compiler<TTargetData> {
 
             let constants = (0..constants_raw_length)
                 .map(|offset| {
-                    let constant_raw_ptr = constants_raw.offset(offset as isize);
+                    let constant_raw_ptr = constants_raw.add(offset);
                     let constant_raw = *constant_raw_ptr;
 
                     let constant = spirv::SpecializationConstant {

@@ -90,9 +90,9 @@ pub enum Version {
 }
 
 impl Version {
-    fn as_raw(&self) -> u32 {
+    fn as_raw(self) -> u32 {
         use self::Version::*;
-        match *self {
+        match self {
             V1_0 => 10000,
             V1_1 => 10100,
             V1_2 => 10200,

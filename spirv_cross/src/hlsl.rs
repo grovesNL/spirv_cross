@@ -30,9 +30,9 @@ pub enum ShaderModel {
 
 #[allow(non_snake_case, non_camel_case_types)]
 impl ShaderModel {
-    fn as_raw(&self) -> i32 {
+    fn as_raw(self) -> i32 {
         use self::ShaderModel::*;
-        match *self {
+        match self {
             V3_0 => 30,
             V4_0 => 40,
             V4_0L9_0 => 40,
