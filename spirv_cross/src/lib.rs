@@ -35,9 +35,13 @@ macro_rules! check {
 
 mod compiler;
 
+#[cfg(feature = "glsl")]
 pub mod glsl;
+#[cfg(feature = "hlsl")]
 pub mod hlsl;
+#[cfg(feature = "msl")]
 pub mod msl;
+
 pub mod spirv;
 
 mod bindings {

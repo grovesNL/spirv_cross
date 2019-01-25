@@ -11,5 +11,11 @@ keywords = ["spirv", "cross"]
 build = "build.rs"
 edition = "2018"
 
+[features]
+default = ["glsl", "hlsl", "msl"]
+glsl = []
+hlsl = []
+msl = []
+
 [build-dependencies]
 cc = "1.0.4"
