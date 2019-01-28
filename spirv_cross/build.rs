@@ -22,9 +22,16 @@ fn main() {
         .file("src/vendor/SPIRV-Cross/spirv_cross.cpp")
         .file("src/vendor/SPIRV-Cross/spirv_cross_parsed_ir.cpp")
         .file("src/vendor/SPIRV-Cross/spirv_parser.cpp")
-        .file("src/vendor/SPIRV-Cross/spirv_cross_util.cpp")
-        .file("src/vendor/SPIRV-Cross/spirv_glsl.cpp")
-        .file("src/vendor/SPIRV-Cross/spirv_hlsl.cpp")
-        .file("src/vendor/SPIRV-Cross/spirv_msl.cpp")
-        .compile("spirv-cross-rust-wrapper");
+        .file("src/vendor/SPIRV-Cross/spirv_cross_util.cpp");
+    
+    #[cfg(feature = "glsl")]
+    build.file("src/vendor/SPIRV-Cross/spirv_glsl.cpp");
+
+    #[cfg(feature = "hlsl")]
+    build.file("src/vendor/SPIRV-Cross/spirv_hlsl.cpp");
+
+    #[cfg(feature = "msl")]
+    build.file("src/vendor/SPIRV-Cross/spirv_msl.cpp");
+
+    build.compile("spirv-cross-rust-wrapper");
 }
