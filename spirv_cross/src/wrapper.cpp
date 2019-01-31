@@ -9,6 +9,16 @@
 
 static const char *latest_exception_message;
 
+#ifdef SPIRV_CROSS_WRAPPER_NO_EXCEPTIONS
+#define INTERNAL_RESULT(block_to_attempt)                 \
+    do                                                    \
+    {                                                     \
+        {                                                 \
+            block_to_attempt                              \
+        }                                                 \
+        return ScInternalResult::Success;                 \
+    } while (0);
+#else
 #define INTERNAL_RESULT(block_to_attempt)                 \
     do                                                    \
     {                                                     \
@@ -34,6 +44,7 @@ static const char *latest_exception_message;
         }                                                 \
         return ScInternalResult::Unhandled;               \
     } while (0);
+#endif
 
 extern "C"
 {

@@ -11,6 +11,9 @@ keywords = ["spirv", "cross"]
 build = "build.rs"
 edition = "2018"
 
+[lib]
+crate-type = ["cdylib", "rlib"]
+
 [features]
 default = ["glsl", "hlsl", "msl"]
 glsl = []

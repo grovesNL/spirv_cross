@@ -261,7 +261,7 @@ impl spirv::Ast<Target> {
                 Ok(v) => v.to_owned(),
                 Err(_) => return Err(ErrorCode::Unhandled),
             };
-            check!(br::sc_internal_free_pointer(shader_ptr as *mut c_void));
+            check!(br::sc_internal_free_pointer(shader_ptr as *mut std::os::raw::c_void));
             Ok(shader)
         }
     }

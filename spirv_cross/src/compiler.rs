@@ -4,6 +4,7 @@ use crate::spirv::{self, Decoration, Type};
 use crate::ErrorCode;
 use std::ffi::{CStr, CString};
 use std::{mem, ptr, slice};
+use std::os::raw::c_void;
 
 impl spirv::ExecutionModel {
     fn from_raw(raw: br::spv::ExecutionModel) -> Result<Self, ErrorCode> {

@@ -1,11 +1,8 @@
 [package]
-name = "bindings_generator"
+name = "wasm"
 version = "0.1.0"
 authors = ["Joshua Groves <josh@joshgroves.com>"]
 
-[dependencies]
-bindgen = "0.30.0"
-
 [[bin]]
-name = "bindings_generator"
+name = "wasm"
 path = "src/main.rs"
