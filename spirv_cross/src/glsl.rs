@@ -1,7 +1,9 @@
-use crate::bindings::root as br;
+use crate::bindings as br;
 use crate::{compiler, spirv, ErrorCode};
+use crate::ptr_util::{read_into_vec_from_ptr, read_from_ptr};
 use std::marker::PhantomData;
 use std::ptr;
+use std::ffi::c_void;
 
 /// A GLSL target.
 #[derive(Debug, Clone)]
@@ -166,23 +168,29 @@ impl spirv::Ast<Target> {
         self.build_combined_image_samplers()?;
         unsafe {
             use std::{ptr, slice};
-            let mut samplers: *const br::ScCombinedImageSampler = ptr::null();
-            let mut size: usize = 0;
+            let mut samplers_raw: *const br::ScCombinedImageSampler = ptr::null();
+            let mut samplers_raw_length: usize = 0;
 
             check!(br::sc_internal_compiler_glsl_get_combined_image_samplers(
                 self.compiler.sc_compiler,
-                &mut samplers as _,
-                &mut size as _,
+                &mut samplers_raw as _,
+                &mut samplers_raw_length as _,
             ));
 
-            Ok(slice::from_raw_parts(samplers, size)
+            let samplers = read_into_vec_from_ptr(samplers_raw, samplers_raw_length)
                 .iter()
                 .map(|sc| spirv::CombinedImageSampler {
                     combined_id: sc.combined_id,
                     image_id: sc.image_id,
                     sampler_id: sc.sampler_id,
                 })
-                .collect())
+                .collect();
+
+            if samplers_raw_length > 0 {
+                check!(br::sc_internal_free_pointer(samplers_raw as *mut c_void));
+            }
+            
+            Ok(samplers)
         }
     }
 }

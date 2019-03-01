@@ -50,12 +50,21 @@ pub mod msl;
 pub mod spirv;
 
 #[cfg(target_arch = "wasm32")]
+pub(crate) mod emscripten;
+pub(crate) mod ptr_util;
+
+#[cfg(target_arch = "wasm32")]
+mod bindings_wasm_functions;
+
+#[cfg(target_arch = "wasm32")]
 mod bindings {
     #![allow(dead_code)]
     #![allow(non_upper_case_globals)]
     #![allow(non_camel_case_types)]
     #![allow(non_snake_case)]
     include!(concat!("bindings_wasm.rs"));
+    pub use root::*;
+    pub use crate::bindings_wasm_functions::*;
 }
 
 #[cfg(not(target_arch = "wasm32"))]
@@ -65,6 +74,7 @@ mod bindings {
     #![allow(non_camel_case_types)]
     #![allow(non_snake_case)]
     include!(concat!("bindings_native.rs"));
+    pub use root::*;
 }
 
 #[derive(Clone, Debug, Hash, Eq, PartialEq)]

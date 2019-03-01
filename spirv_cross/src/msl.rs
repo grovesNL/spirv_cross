@@ -1,4 +1,4 @@
-use crate::bindings::root as br;
+use crate::bindings as br;
 use crate::{compiler, spirv, ErrorCode};
 use std::collections::BTreeMap;
 use std::ffi::CStr;
@@ -261,7 +261,9 @@ impl spirv::Ast<Target> {
                 Ok(v) => v.to_owned(),
                 Err(_) => return Err(ErrorCode::Unhandled),
             };
-            check!(br::sc_internal_free_pointer(shader_ptr as *mut std::os::raw::c_void));
+            check!(br::sc_internal_free_pointer(
+                shader_ptr as *mut std::os::raw::c_void
+            ));
             Ok(shader)
         }
     }

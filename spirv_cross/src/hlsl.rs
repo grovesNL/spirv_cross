@@ -1,4 +1,4 @@
-use crate::bindings::root as br;
+use crate::bindings as br;
 use crate::{compiler, spirv, ErrorCode};
 use std::marker::PhantomData;
 use std::ptr;

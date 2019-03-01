@@ -1843,7 +1843,10 @@ pub mod root {
         pub fn sc_internal_compiler_set_scalar_constant(compiler:
                                                             *const root::ScInternalCompilerBase,
                                                         id: u32,
-                                                        constant: u64)
+                                                        constant_high_bits:
+                                                            u32,
+                                                        constant_low_bits:
+                                                            u32)
          -> root::ScInternalResult;
     }
     extern "C" {

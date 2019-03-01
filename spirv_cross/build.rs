@@ -1,6 +1,12 @@
-extern crate cc;
-
 fn main() {
+    // Prevent building SPIRV-Cross on wasm32 target
+    let target_arch = std::env::var("CARGO_CFG_TARGET_ARCH");
+    if let Ok(arch) = target_arch {
+        if "wasm32" == arch {
+            return; 
+        }
+    }
+
     let target_os = std::env::var("CARGO_CFG_TARGET_OS");
     let is_macos = target_os.is_ok() && target_os.unwrap() == "macos";
 

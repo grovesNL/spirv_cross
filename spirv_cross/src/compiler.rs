@@ -1,10 +1,11 @@
 //! Raw compiler bindings for SPIRV-Cross.
-use crate::bindings::root as br;
+use crate::bindings as br;
 use crate::spirv::{self, Decoration, Type};
 use crate::ErrorCode;
+use crate::ptr_util::{read_string_from_ptr, ptr_at_offset, read_from_ptr, read_into_vec_from_ptr};
 use std::ffi::{CStr, CString};
-use std::{mem, ptr, slice};
 use std::os::raw::c_void;
+use std::{mem, ptr, slice};
 
 impl spirv::ExecutionModel {
     fn from_raw(raw: br::spv::ExecutionModel) -> Result<Self, ErrorCode> {
@@ -143,10 +144,7 @@ impl<TTargetData> Compiler<TTargetData> {
                 self.sc_compiler,
                 &mut shader_ptr,
             ));
-            let shader = match CStr::from_ptr(shader_ptr).to_owned().into_string() {
-                Err(_) => return Err(ErrorCode::Unhandled),
-                Ok(v) => v,
-            };
+            let shader = read_string_from_ptr(shader_ptr)?;
             check!(br::sc_internal_free_pointer(shader_ptr as *mut c_void));
             Ok(shader)
         }
@@ -230,15 +228,8 @@ impl<TTargetData> Compiler<TTargetData> {
             let entry_points = (0..entry_points_raw_length)
                 .map(|offset| {
                     let entry_point_raw_ptr = entry_points_raw.add(offset);
-                    let entry_point_raw = *entry_point_raw_ptr;
-                    let name = match CStr::from_ptr(entry_point_raw.name)
-                        .to_owned()
-                        .into_string()
-                    {
-                        Ok(n) => n,
-                        _ => return Err(ErrorCode::Unhandled),
-                    };
-
+                    let entry_point_raw = read_from_ptr::<br::ScEntryPoint>(entry_point_raw_ptr);
+                    let name = read_string_from_ptr(entry_point_raw.name)?;
                     let entry_point = spirv::EntryPoint {
                         name,
                         execution_model: spirv::ExecutionModel::from_raw(
@@ -281,10 +272,7 @@ impl<TTargetData> Compiler<TTargetData> {
                     execution_model.as_raw(),
                     &mut cleansed_ptr
                 ));
-                let cleansed = match CStr::from_ptr(cleansed_ptr).to_str() {
-                    Ok(c) => c.to_owned(),
-                    _ => return Err(ErrorCode::Unhandled),
-                };
+                let cleansed = read_string_from_ptr(cleansed_ptr)?;
                 check!(br::sc_internal_free_pointer(cleansed_ptr as *mut c_void));
                 Ok(cleansed)
             },
@@ -308,7 +296,7 @@ impl<TTargetData> Compiler<TTargetData> {
             let constants = (0..constants_raw_length)
                 .map(|offset| {
                     let constant_raw_ptr = constants_raw.add(offset);
-                    let constant_raw = *constant_raw_ptr;
+                    let constant_raw = read_from_ptr::<br::ScSpecializationConstant>(constant_raw_ptr);
 
                     let constant = spirv::SpecializationConstant {
                         id: constant_raw.id,
@@ -326,11 +314,14 @@ impl<TTargetData> Compiler<TTargetData> {
     }
 
     pub fn set_scalar_constant(&self, id: u32, value: u64) -> Result<(), ErrorCode> {
+        let high_bits = (value >> 32) as u32;
+        let low_bits = value as u32;
         unsafe {
             check!(br::sc_internal_compiler_set_scalar_constant(
                 self.sc_compiler,
                 id,
-                value,
+                high_bits,
+                low_bits,
             ));
         }
 
@@ -339,7 +330,7 @@ impl<TTargetData> Compiler<TTargetData> {
 
     pub fn get_type(&self, id: u32) -> Result<spirv::Type, ErrorCode> {
         unsafe {
-            let mut type_ptr = ptr::null();
+            let mut type_ptr = std::mem::zeroed();
 
             check!(br::sc_internal_compiler_get_type(
                 self.sc_compiler,
@@ -347,11 +338,9 @@ impl<TTargetData> Compiler<TTargetData> {
                 &mut type_ptr,
             ));
 
-            let raw = *type_ptr;
-
-            let member_types =
-                slice::from_raw_parts(raw.member_types, raw.member_types_size).to_vec();
-            let array = slice::from_raw_parts(raw.array, raw.array_size).to_vec();
+            let raw = read_from_ptr::<br::ScType>(type_ptr);
+            let member_types = read_into_vec_from_ptr(raw.member_types, raw.member_types_size);
+            let array = read_into_vec_from_ptr(raw.array, raw.array_size);
             let result = Type::from_raw(raw.type_, member_types, array);
 
             if raw.member_types_size > 0 {
@@ -377,10 +366,7 @@ impl<TTargetData> Compiler<TTargetData> {
                 index,
                 &mut name_ptr,
             ));
-            let name = match CStr::from_ptr(name_ptr).to_owned().into_string() {
-                Err(_) => return Err(ErrorCode::Unhandled),
-                Ok(n) => n,
-            };
+            let name = read_string_from_ptr(name_ptr)?;
             check!(br::sc_internal_free_pointer(name_ptr as *mut c_void));
             Ok(name)
         }
@@ -452,23 +438,17 @@ impl<TTargetData> Compiler<TTargetData> {
 
     pub fn get_shader_resources(&self) -> Result<spirv::ShaderResources, ErrorCode> {
         unsafe {
-            let mut shader_resources_raw = mem::zeroed();
+            let mut shader_resources_raw = mem::uninitialized();
             check!(br::sc_internal_compiler_get_shader_resources(
                 self.sc_compiler,
                 &mut shader_resources_raw,
             ));
 
             let fill_resources = |array_raw: &br::ScResourceArray| {
-                let resources_raw = slice::from_raw_parts(array_raw.data, array_raw.num);
-                let resources = resources_raw
-                    .iter()
-                    .map(|resource_raw| {
-                        let name = match CStr::from_ptr(resource_raw.name).to_owned().into_string()
-                        {
-                            Ok(n) => n,
-                            _ => return Err(ErrorCode::Unhandled),
-                        };
-
+                let resources = (0..array_raw.num as usize)
+                    .map(|i| {
+                        let resource_raw = read_from_ptr::<br::ScResource>(array_raw.data.add(i));
+                        let name = read_string_from_ptr(resource_raw.name)?;
                         check!(br::sc_internal_free_pointer(
                             resource_raw.name as *mut c_void,
                         ));
@@ -482,7 +462,7 @@ impl<TTargetData> Compiler<TTargetData> {
                     })
                     .collect::<Result<Vec<_>, ErrorCode>>();
 
-                check!(br::sc_internal_free_pointer(array_raw.data as *mut c_void,));
+                check!(br::sc_internal_free_pointer(array_raw.data as *mut c_void));
 
                 resources
             };
@@ -531,28 +511,28 @@ impl<TTargetData> Compiler<TTargetData> {
                 }
             }
 
-            match CString::new(new_name) {
-                Ok(n) => {
-                    check!(br::sc_internal_compiler_rename_interface_variable(
-                        self.sc_compiler,
-                        resources
-                            .iter()
-                            .enumerate()
-                            .map(|(i, r)| br::ScResource {
-                                id: r.id,
-                                type_id: r.type_id,
-                                base_type_id: r.base_type_id,
-                                name: resources_names[i].as_ptr() as _,
-                            })
-                            .collect::<Vec<_>>()
-                            .as_ptr(),
-                        resources_names.len(),
-                        location,
-                        n.as_ptr()
-                    ));
-                }
-                Err(_) => return Err(ErrorCode::Unhandled),
-            }
+            let new_name_ptr = CString::new(new_name)
+                .map_err(|_| ErrorCode::Unhandled)?
+                .as_ptr();
+            let resources_ptr = resources
+                .iter()
+                .enumerate()
+                .map(|(i, r)| br::ScResource {
+                    id: r.id,
+                    type_id: r.type_id,
+                    base_type_id: r.base_type_id,
+                    name: resources_names[i].as_ptr() as _,
+                })
+                .collect::<Vec<_>>()
+                .as_ptr();
+
+            check!(br::sc_internal_compiler_rename_interface_variable(
+                self.sc_compiler,
+                resources_ptr,
+                resources_names.len(),
+                location,
+                new_name_ptr,
+            ));
 
             Ok(())
         }
@@ -571,9 +551,9 @@ impl<TTargetData> Compiler<TTargetData> {
                 )
             );
 
-            let x = *constants_raw.offset(0);
-            let y = *constants_raw.offset(1);
-            let z = *constants_raw.offset(2);
+            let x = read_from_ptr::<br::ScSpecializationConstant>(constants_raw.offset(0));
+            let y = read_from_ptr::<br::ScSpecializationConstant>(constants_raw.offset(1));
+            let z = read_from_ptr::<br::ScSpecializationConstant>(constants_raw.offset(2));
 
             let constants = spirv::WorkGroupSizeSpecializationConstants {
                 x: spirv::SpecializationConstant {

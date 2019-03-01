@@ -278,12 +278,12 @@ where
         entry_point_name: &str,
         execution_model: ExecutionModel,
     ) -> Result<String, ErrorCode> {
-        assert!(
-            self.compiler.has_been_compiled,
-            "`compile` must be called first"
-        );
-        self.compiler
-            .get_cleansed_entry_point_name(entry_point_name, execution_model)
+        if self.compiler.has_been_compiled {
+            self.compiler
+                .get_cleansed_entry_point_name(entry_point_name, execution_model)
+        } else  {
+            Err(ErrorCode::CompilationError(String::from("`compile` must be called first")))
+        }
     }
 
     /// Gets all specialization constants.
