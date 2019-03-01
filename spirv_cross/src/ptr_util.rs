@@ -22,15 +22,6 @@ pub unsafe fn read_string_from_ptr(ptr: *const std::os::raw::c_char) -> Result<S
     string
 }
 
-// TODO: Is this necessary? Check implementation of `add`
-pub unsafe fn ptr_at_offset<T>(ptr: *const T, offset: usize) -> *const T {
-    #[cfg(not(target_arch = "wasm32"))]
-    let value = ptr.add(offset);
-    #[cfg(target_arch = "wasm32")]
-    let value = (ptr as usize + offset * std::mem::size_of::<T>()) as *const T;
-    value
-}
-
 pub unsafe fn read_from_ptr<T>(ptr: *const T) -> T {
     #[cfg(not(target_arch = "wasm32"))]
     let value = ptr.read();
@@ -52,6 +43,6 @@ pub unsafe fn read_into_vec_from_ptr<T: Clone>(ptr: *const T, size: usize) -> Ve
     #[cfg(not(target_arch = "wasm32"))]
     let values = slice::from_raw_parts(ptr, size).to_vec();
     #[cfg(target_arch = "wasm32")]
-    let values = (0..size).map(|offset| read_from_ptr(ptr_at_offset(ptr, offset))).collect();
+    let values = (0..size).map(|offset| read_from_ptr(ptr.add(offset))).collect();
     values
 }

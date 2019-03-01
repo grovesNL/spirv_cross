@@ -2,7 +2,7 @@
 use crate::bindings as br;
 use crate::spirv::{self, Decoration, Type};
 use crate::ErrorCode;
-use crate::ptr_util::{read_string_from_ptr, ptr_at_offset, read_from_ptr, read_into_vec_from_ptr};
+use crate::ptr_util::{read_string_from_ptr, read_from_ptr, read_into_vec_from_ptr};
 use std::ffi::{CStr, CString};
 use std::os::raw::c_void;
 use std::{mem, ptr, slice};
