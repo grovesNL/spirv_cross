@@ -511,9 +511,9 @@ impl<TTargetData> Compiler<TTargetData> {
                 }
             }
 
-            let new_name_ptr = CString::new(new_name)
-                .map_err(|_| ErrorCode::Unhandled)?
-                .as_ptr();
+            let new_name = CString::new(new_name)
+                .map_err(|_| ErrorCode::Unhandled)?;
+            let new_name_ptr = new_name.as_ptr();
             let resources_ptr = resources
                 .iter()
                 .enumerate()
