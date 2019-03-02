@@ -11,7 +11,7 @@ fn main() {
             "--closure",
             "1",
             "-o",
-            "spirv_cross_wrapper.js",
+            "spirv_cross_wrapper_glsl.js",
             "-s",
             "MODULARIZE=1",
             "-s",
