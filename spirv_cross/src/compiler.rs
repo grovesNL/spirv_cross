@@ -514,7 +514,7 @@ impl<TTargetData> Compiler<TTargetData> {
             let new_name = CString::new(new_name)
                 .map_err(|_| ErrorCode::Unhandled)?;
             let new_name_ptr = new_name.as_ptr();
-            let resources_ptr = resources
+            let resources = resources
                 .iter()
                 .enumerate()
                 .map(|(i, r)| br::ScResource {
@@ -523,8 +523,8 @@ impl<TTargetData> Compiler<TTargetData> {
                     base_type_id: r.base_type_id,
                     name: resources_names[i].as_ptr() as _,
                 })
-                .collect::<Vec<_>>()
-                .as_ptr();
+                .collect::<Vec<_>>();
+            let resources_ptr = resources.as_ptr();
 
             check!(br::sc_internal_compiler_rename_interface_variable(
                 self.sc_compiler,
