@@ -15,7 +15,7 @@ edition = "2018"
 crate-type = ["cdylib", "rlib"]
 
 [features]
-default = ["glsl", "hlsl", "msl"]
+default = []
 glsl = []
 hlsl = []
 msl = []

@@ -17,10 +17,10 @@ install:
   - git submodule update --init --recursive
 
 build_script:
-  - cargo build --verbose --all --target %TARGET%
+  - cargo build --verbose --all --target %TARGET% --all-features
 
 test_script:
-  - cargo test --verbose --all --target %TARGET%
+  - cargo test --verbose --all --target %TARGET% --all-features
 
 branches:
   only:
