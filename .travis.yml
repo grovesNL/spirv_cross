@@ -12,16 +12,16 @@ branches:
     - staging.tmp
 matrix:
   include:
-    - os: linux
-      language: android
-      compiler: gcc
-      env:
-        - JOB="android_gcc"
-      android:
-        components:
-          - build-tools-26.0.1
-          - android-18
-      jdk: openjdk8
+    #- os: linux
+    #  language: android
+    #  compiler: gcc
+    #  env:
+    #    - JOB="android_gcc"
+    #  android:
+    #    components:
+    #      - build-tools-26.0.1
+    #      - android-18
+    #  jdk: openjdk8
     - os: osx
       osx_image: xcode9
       compiler: clang
