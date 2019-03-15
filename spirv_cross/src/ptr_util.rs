@@ -1,7 +1,7 @@
 //! Pointer utilities to abstract over native pointer access (i.e. `*const T`)
 //! and Emscripten pointer access (i.e. `u32` offset into the Emscripten heap).
 
-use std::ffi::{CStr, CString};
+use std::ffi::CStr;
 use std::slice;
 use crate::ErrorCode;
 
