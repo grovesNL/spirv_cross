@@ -169,3 +169,48 @@ void main()
 "
     );
 }
+
+
+#[test]
+fn ast_can_rename_combined_image_samplers() {
+    let mut ast = spirv::Ast::<glsl::Target>::parse(&spirv::Module::from_words(words_from_bytes(
+        include_bytes!("shaders/sampler.frag.spv"),
+    )))
+    .unwrap();
+    ast.set_compiler_options(&glsl::CompilerOptions {
+        version: glsl::Version::V4_10,
+        vertex: glsl::CompilerVertexOptions::default(),
+    })
+    .unwrap();
+    for cis in ast.get_combined_image_samplers().unwrap() {
+        let new_name = "combined_sampler".to_string()
+            + "_"
+            + &cis.sampler_id.to_string()
+            + "_"
+            + &cis.image_id.to_string()
+            + "_"
+            + &cis.combined_id.to_string();
+        ast.set_name(cis.combined_id, &new_name).unwrap();
+    }
+
+    assert_eq!(
+        ast.compile().unwrap(),
+        "\
+#version 410
+#ifdef GL_ARB_shading_language_420pack
+#extension GL_ARB_shading_language_420pack : require
+#endif
+
+uniform sampler2D combined_sampler_16_12_26;
+
+layout(location = 0) out vec4 target0;
+layout(location = 0) in vec2 v_uv;
+
+void main()
+{
+    target0 = texture(combined_sampler_16_12_26, v_uv);
+}
+
+"
+    );
+}
