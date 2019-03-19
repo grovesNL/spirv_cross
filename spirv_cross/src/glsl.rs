@@ -184,10 +184,6 @@ impl spirv::Ast<Target> {
                     sampler_id: sc.sampler_id,
                 })
                 .collect();
-
-            if samplers_raw_length > 0 {
-                check!(br::sc_internal_free_pointer(samplers_raw as *mut c_void));
-            }
             
             Ok(samplers)
         }
