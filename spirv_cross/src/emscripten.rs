@@ -5,13 +5,13 @@ use crate::{bindings, ErrorCode};
 use wasm_bindgen::prelude::*;
 use js_sys::{global, Object, Uint8Array, Uint32Array, Reflect};
 
-#[wasm_bindgen(js_namespace = sc_internal)]
+#[wasm_bindgen]
 extern "C" {
     // Raw Emscripten bindings
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _malloc(size: u32) -> u32;
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _free(offset: u32);
 }
 

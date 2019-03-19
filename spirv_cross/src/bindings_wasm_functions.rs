@@ -13,80 +13,80 @@ use std::ffi::CStr;
 
 const U32_SIZE: u32 = std::mem::size_of::<u32>() as u32;
 
-#[wasm_bindgen(js_namespace = sc_internal)]
+#[wasm_bindgen]
 extern "C" {
     // Raw SPIRV-Cross bindings
     // Pointers and the result type are replaced with `u32`
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_glsl_new(compiler: u32, ir: u32, size: u32) -> u32;
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_glsl_set_options(compiler: u32, options: u32) -> u32;
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_glsl_build_combined_image_samplers(compiler: u32) -> u32;
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_glsl_get_combined_image_samplers(compiler: u32, samplers: u32, size: u32) -> u32;
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_get_decoration(compiler: u32, result: u32, id: u32, decoration: u32) -> u32;
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_set_decoration(compiler: u32, id: u32, decoration: u32, argument: u32) -> u32;
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_unset_decoration(compiler: u32, id: u32, decoration: u32) -> u32;
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_set_name(compiler: u32, id: u32, name: u32) -> u32;
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_get_entry_points(compiler: u32, entry_points: u32, size: u32) -> u32;
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_get_cleansed_entry_point_name(compiler: u32, original_entry_point_name: u32, execution_model: u32, compiled_entry_point_name: u32) -> u32;
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_get_shader_resources(compiler: u32, shader_resources: u32) -> u32;
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_get_specialization_constants(compiler: u32, constants: u32, size: u32) -> u32;
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_set_scalar_constant(compiler: u32, id: u32, constant_high_bits: u32, constant_low_bits: u32) -> u32;
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_get_type(compiler: u32, id: u32, spirv_type: u32) -> u32;
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_get_member_name(compiler: u32, id: u32, index: u32, name: u32) -> u32;
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_get_member_decoration(compiler: u32, id: u32, index: u32, decoration: u32, result: u32) -> u32;
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_set_member_decoration(compiler: u32, id: u32, index: u32, decoration: u32, argument: u32) -> u32;
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_get_declared_struct_size(compiler: u32, id: u32, result: u32) -> u32;
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_get_declared_struct_member_size(compiler: u32, id: u32, index: u32, result: u32) -> u32;
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_rename_interface_variable(compiler: u32, resources: u32, resources_size: u32, location: u32, name: u32) -> u32;
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_get_work_group_size_specialization_constants(compiler: u32, constants: u32) -> u32;
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_compile(compiler: u32, shader: u32) -> u32;
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_delete(compiler: u32) -> u32;
 
-    #[wasm_bindgen]
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_free_pointer(pointer: u32) -> u32;
 }
 
