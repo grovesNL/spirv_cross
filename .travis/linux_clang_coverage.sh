@@ -2,7 +2,7 @@
 export RUSTFLAGS="-C link-dead-code"
 export CXX=clang++
 
-cargo test --verbose --no-run
+cargo test --verbose --no-run --all-features
 wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz
 tar xzf master.tar.gz
 cd kcov-master

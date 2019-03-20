@@ -1,7 +1,9 @@
-use bindings::root::*;
+use crate::bindings as br;
+use crate::{compiler, spirv, ErrorCode};
+use crate::ptr_util::read_into_vec_from_ptr;
 use std::marker::PhantomData;
 use std::ptr;
-use {compiler, spirv, ErrorCode};
+use std::ffi::c_void;
 
 /// A GLSL target.
 #[derive(Debug, Clone)]
@@ -58,7 +60,7 @@ pub struct CompilerOptions {
 }
 
 impl CompilerOptions {
-    fn as_raw(&self) -> ScGlslCompilerOptions {
+    fn as_raw(&self) -> br::ScGlslCompilerOptions {
         use self::Version::*;
         let (version, es) = match self.version {
             V1_10 => (1_10, false),
@@ -77,7 +79,7 @@ impl CompilerOptions {
             V1_00Es => (1_00, true),
             V3_00Es => (3_00, true),
         };
-        ScGlslCompilerOptions {
+        br::ScGlslCompilerOptions {
             vertex_invert_y: self.vertex.invert_y,
             vertex_transform_clip_space: self.vertex.transform_clip_space,
             version,
@@ -100,7 +102,7 @@ impl spirv::Parse<Target> for spirv::Ast<Target> {
         let compiler = {
             let mut compiler = ptr::null_mut();
             unsafe {
-                check!(sc_internal_compiler_glsl_new(
+                check!(br::sc_internal_compiler_glsl_new(
                     &mut compiler,
                     module.words.as_ptr() as *const u32,
                     module.words.len() as usize,
@@ -130,7 +132,7 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
     fn set_compiler_options(&mut self, options: &CompilerOptions) -> Result<(), ErrorCode> {
         let raw_options = options.as_raw();
         unsafe {
-            check!(sc_internal_compiler_glsl_set_options(
+            check!(br::sc_internal_compiler_glsl_set_options(
                 self.compiler.sc_compiler,
                 &raw_options,
             ));
@@ -150,7 +152,7 @@ impl spirv::Ast<Target> {
     pub fn build_combined_image_samplers(&mut self) -> Result<(), ErrorCode> {
         unsafe {
             if !self.compiler.target_data.combined_image_samplers_built {
-                check!(sc_internal_compiler_glsl_build_combined_image_samplers(
+                check!(br::sc_internal_compiler_glsl_build_combined_image_samplers(
                     self.compiler.sc_compiler
                 ));
                 self.compiler.target_data.combined_image_samplers_built = true
@@ -165,24 +167,25 @@ impl spirv::Ast<Target> {
     ) -> Result<Vec<spirv::CombinedImageSampler>, ErrorCode> {
         self.build_combined_image_samplers()?;
         unsafe {
-            use std::{ptr, slice};
-            let mut samplers: *const ScCombinedImageSampler = ptr::null();
-            let mut size: usize = 0;
+            let mut samplers_raw: *const br::ScCombinedImageSampler = std::ptr::null();
+            let mut samplers_raw_length: usize = 0;
 
-            check!(sc_internal_compiler_glsl_get_combined_image_samplers(
+            check!(br::sc_internal_compiler_glsl_get_combined_image_samplers(
                 self.compiler.sc_compiler,
-                &mut samplers as _,
-                &mut size as _,
+                &mut samplers_raw as _,
+                &mut samplers_raw_length as _,
             ));
 
-            Ok(slice::from_raw_parts(samplers, size)
+            let samplers = read_into_vec_from_ptr(samplers_raw, samplers_raw_length)
                 .iter()
                 .map(|sc| spirv::CombinedImageSampler {
                     combined_id: sc.combined_id,
                     image_id: sc.image_id,
                     sampler_id: sc.sampler_id,
                 })
-                .collect())
+                .collect();
+            
+            Ok(samplers)
         }
     }
 }

@@ -9,6 +9,20 @@ repository = "https://github.com/grovesNL/spirv_cross"
 readme = "../README.md"
 keywords = ["spirv", "cross"]
 build = "build.rs"
+edition = "2018"
 
-[build-dependencies]
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = []
+glsl = []
+hlsl = []
+msl = []
+
+[target.'cfg(not(target_arch = "wasm32"))'.build-dependencies]
 cc = "1.0.4"
+
+[target.wasm32-unknown-unknown.dependencies]
+wasm-bindgen = "0.2.33"
+js-sys = "0.3.10"

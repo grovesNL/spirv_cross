@@ -1,6 +1,5 @@
-use compiler;
+use crate::{compiler, ErrorCode};
 use std::marker::PhantomData;
-use ErrorCode;
 
 /// A stage or compute kernel.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
@@ -231,7 +230,10 @@ pub trait Parse<TTarget>: Sized {
 pub trait Compile<TTarget> {
     type CompilerOptions;
 
-    fn set_compiler_options(&mut self, &Self::CompilerOptions) -> Result<(), ErrorCode>;
+    fn set_compiler_options(
+        &mut self,
+        compiler_options: &Self::CompilerOptions,
+    ) -> Result<(), ErrorCode>;
     fn compile(&mut self) -> Result<String, ErrorCode>;
 }
 
@@ -276,12 +278,12 @@ where
         entry_point_name: &str,
         execution_model: ExecutionModel,
     ) -> Result<String, ErrorCode> {
-        assert!(
-            self.compiler.has_been_compiled,
-            "`compile` must be called first"
-        );
-        self.compiler
-            .get_cleansed_entry_point_name(entry_point_name, execution_model)
+        if self.compiler.has_been_compiled {
+            self.compiler
+                .get_cleansed_entry_point_name(entry_point_name, execution_model)
+        } else  {
+            Err(ErrorCode::CompilationError(String::from("`compile` must be called first")))
+        }
     }
 
     /// Gets all specialization constants.

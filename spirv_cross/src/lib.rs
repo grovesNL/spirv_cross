@@ -1,25 +1,31 @@
+#[cfg(target_arch = "wasm32")]
 macro_rules! check {
     ($check:expr) => {{
-        use std::ffi::CStr;
-        use std::os::raw::c_void;
+        $check
+    }};
+}
 
+#[cfg(not(target_arch = "wasm32"))]
+macro_rules! check {
+    ($check:expr) => {{
         let result = $check;
-        if ScInternalResult::Success != result {
-            if ScInternalResult::CompilationError == result {
+        if br::ScInternalResult::Success != result {
+            if br::ScInternalResult::CompilationError == result {
                 let mut message_ptr = ptr::null();
 
-                if ScInternalResult::Success
-                    != sc_internal_get_latest_exception_message(&mut message_ptr)
+                if br::ScInternalResult::Success
+                    != br::sc_internal_get_latest_exception_message(&mut message_ptr)
                 {
                     return Err(ErrorCode::Unhandled);
                 }
 
-                let message = match CStr::from_ptr(message_ptr).to_owned().into_string() {
+                let message = match std::ffi::CStr::from_ptr(message_ptr).to_owned().into_string() {
                     Err(_) => return Err(ErrorCode::Unhandled),
                     Ok(v) => v,
                 };
 
-                if ScInternalResult::Success != sc_internal_free_pointer(message_ptr as *mut c_void)
+                if br::ScInternalResult::Success
+                    != br::sc_internal_free_pointer(message_ptr as *mut std::os::raw::c_void)
                 {
                     return Err(ErrorCode::Unhandled);
                 }
@@ -34,17 +40,41 @@ macro_rules! check {
 
 mod compiler;
 
+#[cfg(feature = "glsl")]
 pub mod glsl;
+#[cfg(feature = "hlsl")]
 pub mod hlsl;
+#[cfg(feature = "msl")]
 pub mod msl;
+
 pub mod spirv;
 
+#[cfg(target_arch = "wasm32")]
+pub(crate) mod emscripten;
+pub(crate) mod ptr_util;
+
+#[cfg(target_arch = "wasm32")]
+mod bindings_wasm_functions;
+
+#[cfg(target_arch = "wasm32")]
 mod bindings {
     #![allow(dead_code)]
     #![allow(non_upper_case_globals)]
     #![allow(non_camel_case_types)]
     #![allow(non_snake_case)]
-    include!(concat!("bindings.rs"));
+    include!(concat!("bindings_wasm.rs"));
+    pub use root::*;
+    pub use crate::bindings_wasm_functions::*;
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+mod bindings {
+    #![allow(dead_code)]
+    #![allow(non_upper_case_globals)]
+    #![allow(non_camel_case_types)]
+    #![allow(non_snake_case)]
+    include!(concat!("bindings_native.rs"));
+    pub use root::*;
 }
 
 #[derive(Clone, Debug, Hash, Eq, PartialEq)]

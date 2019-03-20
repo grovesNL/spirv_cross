@@ -2,5 +2,6 @@
 members = [
     "spirv_cross",
     "examples",
-    "bindings_generator"
+    "bindings_generator",
+    "wasm"
 ]

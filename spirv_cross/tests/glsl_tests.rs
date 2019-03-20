@@ -1,8 +1,7 @@
-extern crate spirv_cross;
 use spirv_cross::{glsl, spirv};
 
 mod common;
-use common::words_from_bytes;
+use crate::common::words_from_bytes;
 
 #[test]
 fn glsl_compiler_options_has_default() {
@@ -50,7 +49,7 @@ void main()
 
 #[test]
 fn ast_compiles_all_versions_to_glsl() {
-    use glsl::Version::*;
+    use spirv_cross::glsl::Version::*;
 
     let module =
         spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
@@ -61,12 +60,14 @@ fn ast_compiles_all_versions_to_glsl() {
         V1_00Es, V3_00Es,
     ];
     for &version in versions.iter() {
-        match ast.set_compiler_options(&glsl::CompilerOptions {
-            version,
-            vertex: glsl::CompilerVertexOptions::default(),
-        }) {
-            Err(_) => panic!("Did not compile"),
-            _ => (),
+        if ast
+            .set_compiler_options(&glsl::CompilerOptions {
+                version,
+                vertex: glsl::CompilerVertexOptions::default(),
+            })
+            .is_err()
+        {
+            panic!("Did not compile");
         }
     }
 }
@@ -163,6 +164,51 @@ varying vec4 renamed_InterfaceMember3;
 void main()
 {
     gl_FragData[0] = vec4(renamed_InterfaceMember0.x, renamed_InterfaceMember1.y, renamed_InterfaceMember2.z, renamed_InterfaceMember3.w);
+}
+
+"
+    );
+}
+
+
+#[test]
+fn ast_can_rename_combined_image_samplers() {
+    let mut ast = spirv::Ast::<glsl::Target>::parse(&spirv::Module::from_words(words_from_bytes(
+        include_bytes!("shaders/sampler.frag.spv"),
+    )))
+    .unwrap();
+    ast.set_compiler_options(&glsl::CompilerOptions {
+        version: glsl::Version::V4_10,
+        vertex: glsl::CompilerVertexOptions::default(),
+    })
+    .unwrap();
+    for cis in ast.get_combined_image_samplers().unwrap() {
+        let new_name = "combined_sampler".to_string()
+            + "_"
+            + &cis.sampler_id.to_string()
+            + "_"
+            + &cis.image_id.to_string()
+            + "_"
+            + &cis.combined_id.to_string();
+        ast.set_name(cis.combined_id, &new_name).unwrap();
+    }
+
+    assert_eq!(
+        ast.compile().unwrap(),
+        "\
+#version 410
+#ifdef GL_ARB_shading_language_420pack
+#extension GL_ARB_shading_language_420pack : require
+#endif
+
+uniform sampler2D combined_sampler_16_12_26;
+
+layout(location = 0) out vec4 target0;
+layout(location = 0) in vec2 v_uv;
+
+void main()
+{
+    target0 = texture(combined_sampler_16_12_26, v_uv);
 }
 
 "

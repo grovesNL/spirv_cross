@@ -1,4 +1,6 @@
+#pragma GCC diagnostic ignored "-Wunknown-pragmas"
 #pragma warning(disable : 4996 4101)
+
 #include "vendor/SPIRV-Cross/spirv_cross_util.hpp"
 #include "vendor/SPIRV-Cross/spirv_hlsl.hpp"
 #include "vendor/SPIRV-Cross/spirv_msl.hpp"
@@ -7,6 +9,16 @@
 
 static const char *latest_exception_message;
 
+#ifdef SPIRV_CROSS_WRAPPER_NO_EXCEPTIONS
+#define INTERNAL_RESULT(block_to_attempt)                 \
+    do                                                    \
+    {                                                     \
+        {                                                 \
+            block_to_attempt                              \
+        }                                                 \
+        return ScInternalResult::Success;                 \
+    } while (0);
+#else
 #define INTERNAL_RESULT(block_to_attempt)                 \
     do                                                    \
     {                                                     \
@@ -32,6 +44,7 @@ static const char *latest_exception_message;
         }                                                 \
         return ScInternalResult::Unhandled;               \
     } while (0);
+#endif
 
 extern "C"
 {
@@ -295,12 +308,12 @@ extern "C"
             } while (0);)
     }
 
-    ScInternalResult sc_internal_compiler_set_scalar_constant(const ScInternalCompilerBase *compiler, const uint32_t id, const uint64_t constant)
+    ScInternalResult sc_internal_compiler_set_scalar_constant(const ScInternalCompilerBase *compiler, const uint32_t id, const uint32_t constant_high_bits, const uint32_t constant_low_bits)
     {
         INTERNAL_RESULT(
             do {
                 auto &sc_constant = ((spirv_cross::Compiler *)compiler)->get_constant(id);
-                sc_constant.m.c[0].r[0].u64 = constant;
+                sc_constant.m.c[0].r[0].u64 = (((uint64_t)constant_high_bits) << 32) | constant_low_bits;
             } while (0);)
     }
 

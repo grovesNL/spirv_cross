@@ -1,8 +1,7 @@
-extern crate spirv_cross;
 use spirv_cross::{hlsl as lang, spirv};
 
 mod common;
-use common::words_from_bytes;
+use crate::common::words_from_bytes;
 
 #[test]
 fn ast_gets_entry_points() {
