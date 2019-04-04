@@ -31,13 +31,19 @@ fn main() {
         .file("src/vendor/SPIRV-Cross/spirv_cross_util.cpp");
     
     #[cfg(feature = "glsl")]
-    build.file("src/vendor/SPIRV-Cross/spirv_glsl.cpp");
+    build
+        .file("src/vendor/SPIRV-Cross/spirv_glsl.cpp")
+        .flag("-DSPIRV_CROSS_WRAPPER_GLSL");
 
     #[cfg(feature = "hlsl")]
-    build.file("src/vendor/SPIRV-Cross/spirv_hlsl.cpp");
+    build
+        .file("src/vendor/SPIRV-Cross/spirv_hlsl.cpp")
+        .flag("-DSPIRV_CROSS_WRAPPER_HLSL");
 
     #[cfg(feature = "msl")]
-    build.file("src/vendor/SPIRV-Cross/spirv_msl.cpp");
+    build
+        .file("src/vendor/SPIRV-Cross/spirv_msl.cpp")
+        .flag("-DSPIRV_CROSS_WRAPPER_MSL");
 
     build.compile("spirv-cross-rust-wrapper");
 }

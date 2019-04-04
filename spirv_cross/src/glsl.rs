@@ -3,7 +3,6 @@ use crate::{compiler, spirv, ErrorCode};
 use crate::ptr_util::read_into_vec_from_ptr;
 use std::marker::PhantomData;
 use std::ptr;
-use std::ffi::c_void;
 
 /// A GLSL target.
 #[derive(Debug, Clone)]
