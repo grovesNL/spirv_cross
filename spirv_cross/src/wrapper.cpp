@@ -53,6 +53,7 @@ extern "C"
         INTERNAL_RESULT(*message = latest_exception_message;)
     }
 
+#ifdef SPIRV_CROSS_WRAPPER_HLSL
     ScInternalResult sc_internal_compiler_hlsl_new(ScInternalCompilerHlsl **compiler, const uint32_t *ir, const size_t size)
     {
         INTERNAL_RESULT(*compiler = new spirv_cross::CompilerHLSL(ir, size);)
@@ -97,7 +98,9 @@ extern "C"
                 compiler_hlsl->set_root_constant_layouts(root_constants);
             } while (0);)
     }
+#endif
 
+#ifdef SPIRV_CROSS_WRAPPER_MSL
     ScInternalResult sc_internal_compiler_msl_new(ScInternalCompilerMsl **compiler, const uint32_t *ir, const size_t size)
     {
         INTERNAL_RESULT(*compiler = new spirv_cross::CompilerMSL(ir, size);)
@@ -149,7 +152,9 @@ extern "C"
     {
         INTERNAL_RESULT(*is_rasterization_disabled = ((spirv_cross::CompilerMSL *)compiler)->get_is_rasterization_disabled();)
     }
+#endif
 
+#ifdef SPIRV_CROSS_WRAPPER_GLSL
     ScInternalResult sc_internal_compiler_glsl_new(ScInternalCompilerGlsl **compiler, const uint32_t *ir, const size_t size)
     {
         INTERNAL_RESULT(*compiler = new spirv_cross::CompilerGLSL(ir, size);)
@@ -186,6 +191,7 @@ extern "C"
                 *size = ret.size();
             } while (0);)
     }
+#endif
 
     ScInternalResult sc_internal_compiler_get_decoration(const ScInternalCompilerBase *compiler, uint32_t *result, const uint32_t id, const spv::Decoration decoration)
     {
