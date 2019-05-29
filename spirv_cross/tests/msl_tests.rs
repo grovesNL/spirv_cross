@@ -51,7 +51,6 @@ fn ast_compiles_to_msl() {
             buffer_id: 5,
             texture_id: 6,
             sampler_id: 7,
-            force_used: false,
         },
     );
 

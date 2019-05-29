@@ -95,11 +95,11 @@ impl spirv::Decoration {
 
 impl spirv::Type {
     pub(crate) fn from_raw(
-        ty: br::spirv_cross::SPIRType_BaseType,
+        ty: br::SPIRV_CROSS_NAMESPACE::SPIRType_BaseType,
         member_types: Vec<u32>,
         array: Vec<u32>,
     ) -> Type {
-        use crate::bindings::root::spirv_cross::SPIRType_BaseType as B;
+        use crate::bindings::root::SPIRV_CROSS_NAMESPACE::SPIRType_BaseType as B;
         use crate::spirv::Type::*;
         match ty {
             B::Unknown => Unknown,
@@ -125,6 +125,8 @@ impl spirv::Type {
             B::UByte => UByte { array },
             B::Short => Short { array },
             B::UShort => UShort { array },
+            B::ControlPointArray => ControlPointArray,
+            B::AccelerationStructureNV => AccelerationStructureNv,
         }
     }
 }

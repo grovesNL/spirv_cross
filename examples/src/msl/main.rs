@@ -22,7 +22,6 @@ fn main() {
             buffer_id: 5,
             texture_id: 6,
             sampler_id: 7,
-            force_used: false,
         },
     );
 
@@ -33,8 +32,8 @@ fn main() {
             offset: 2,
             stride: 3,
             step: spirv::VertexAttributeStep::Instance,
-            force_used: true,
             format: msl::Format::Other,
+            built_in: None,
         },
     );
 

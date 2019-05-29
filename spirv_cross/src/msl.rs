@@ -10,8 +10,8 @@ use std::ptr;
 pub enum Target {}
 
 pub struct TargetData {
-    vertex_attribute_overrides: Vec<br::spirv_cross::MSLVertexAttr>,
-    resource_binding_overrides: Vec<br::spirv_cross::MSLResourceBinding>,
+    vertex_attribute_overrides: Vec<br::SPIRV_CROSS_NAMESPACE::MSLVertexAttr>,
+    resource_binding_overrides: Vec<br::SPIRV_CROSS_NAMESPACE::MSLResourceBinding>,
 }
 
 impl spirv::Target for Target {
@@ -31,9 +31,9 @@ pub enum Format {
 }
 
 impl Format {
-    fn as_raw(&self) -> br::spirv_cross::MSLVertexFormat {
+    fn as_raw(&self) -> br::SPIRV_CROSS_NAMESPACE::MSLVertexFormat {
         use self::Format::*;
-        use crate::bindings::root::spirv_cross::MSLVertexFormat as R;
+        use crate::bindings::root::SPIRV_CROSS_NAMESPACE::MSLVertexFormat as R;
         match self {
             Other => R::MSL_VERTEX_FORMAT_OTHER,
             Uint8 => R::MSL_VERTEX_FORMAT_UINT8,
@@ -49,8 +49,8 @@ pub struct VertexAttribute {
     pub offset: u32,
     pub stride: u32,
     pub step: spirv::VertexAttributeStep,
-    pub force_used: bool,
     pub format: Format,
+    pub built_in: Option<spirv::BuiltIn>,
 }
 
 /// Location of a resource binding to override
@@ -67,7 +67,6 @@ pub struct ResourceBinding {
     pub buffer_id: u32,
     pub texture_id: u32,
     pub sampler_id: u32,
-    pub force_used: bool,
 }
 
 /// A MSL shader platform.
@@ -204,14 +203,13 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
         self.compiler.target_data.resource_binding_overrides.clear();
         self.compiler.target_data.resource_binding_overrides.extend(
             options.resource_binding_overrides.iter().map(|(loc, res)| {
-                br::spirv_cross::MSLResourceBinding {
+                br::SPIRV_CROSS_NAMESPACE::MSLResourceBinding {
                     stage: loc.stage.as_raw(),
                     desc_set: loc.desc_set,
                     binding: loc.binding,
                     msl_buffer: res.buffer_id,
                     msl_texture: res.texture_id,
                     msl_sampler: res.sampler_id,
-                    used_by_shader: res.force_used,
                 }
             }),
         );
@@ -219,7 +217,7 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
         self.compiler.target_data.vertex_attribute_overrides.clear();
         self.compiler.target_data.vertex_attribute_overrides.extend(
             options.vertex_attribute_overrides.iter().map(|(loc, vat)| {
-                br::spirv_cross::MSLVertexAttr {
+                br::SPIRV_CROSS_NAMESPACE::MSLVertexAttr {
                     location: loc.0,
                     msl_buffer: vat.buffer_id,
                     msl_offset: vat.offset,
@@ -228,8 +226,8 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
                         spirv::VertexAttributeStep::Vertex => false,
                         spirv::VertexAttributeStep::Instance => true,
                     },
-                    used_by_shader: vat.force_used,
                     format: vat.format.as_raw(),
+                    builtin: spirv::built_in_as_raw(vat.built_in),
                 }
             }),
         );
