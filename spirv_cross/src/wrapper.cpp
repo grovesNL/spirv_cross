@@ -112,19 +112,19 @@ extern "C"
     {
         INTERNAL_RESULT(
             do {
-                std::vector<spirv_cross::MSLVertexAttr> vat_overrides;
-                if (p_vat_overrides)
+                auto compiler_msl = ((spirv_cross::CompilerMSL *)compiler);
+
+                for (size_t i = 0; i < vat_override_count; i++)
                 {
-                    vat_overrides.insert(vat_overrides.end(), &p_vat_overrides[0], &p_vat_overrides[vat_override_count]);
+                    compiler_msl->add_msl_vertex_attribute(p_vat_overrides[i]);
                 }
 
-                std::vector<spirv_cross::MSLResourceBinding> res_overrides;
-                if (p_res_overrides)
+                for (size_t i = 0; i < res_override_count; i++)
                 {
-                    res_overrides.insert(res_overrides.end(), &p_res_overrides[0], &p_res_overrides[res_override_count]);
+                    compiler_msl->add_msl_resource_binding(p_res_overrides[i]);
                 }
 
-                *shader = strdup(((spirv_cross::CompilerMSL *)compiler)->compile(&vat_overrides, &res_overrides).c_str());
+                *shader = strdup(compiler_msl->compile().c_str());
             } while (0);)
     }
 
@@ -186,7 +186,7 @@ extern "C"
     {
         INTERNAL_RESULT(
             do {
-                const std::vector<spirv_cross::CombinedImageSampler>& ret = ((spirv_cross::CompilerGLSL *)compiler)->get_combined_image_samplers();
+                const spirv_cross::SmallVector<spirv_cross::CombinedImageSampler>& ret = ((spirv_cross::CompilerGLSL *)compiler)->get_combined_image_samplers();
                 *samplers = (const ScCombinedImageSampler *)ret.data();
                 *size = ret.size();
             } while (0);)
@@ -252,7 +252,7 @@ extern "C"
             } while (0);)
     }
 
-    void fill_resource_array(ScResourceArray *resources, const std::vector<spirv_cross::Resource> &sc_resources)
+    void fill_resource_array(ScResourceArray *resources, const spirv_cross::SmallVector<spirv_cross::Resource> &sc_resources)
     {
         auto const sc_size = sc_resources.size();
 
@@ -402,7 +402,7 @@ extern "C"
     ScInternalResult sc_internal_compiler_rename_interface_variable(const ScInternalCompilerBase *compiler, const ScResource *resources, const size_t resources_size, uint32_t location, const char *name)
     {
         INTERNAL_RESULT(do {
-            std::vector<spirv_cross::Resource> sc_resources;
+            spirv_cross::SmallVector<spirv_cross::Resource> sc_resources;
             for (size_t i = 0; i < resources_size; i++)
             {
                 auto const &resource = resources[i];
