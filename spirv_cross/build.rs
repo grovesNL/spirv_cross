@@ -30,7 +30,8 @@ fn main() {
         .file("src/vendor/SPIRV-Cross/spirv_parser.cpp")
         .file("src/vendor/SPIRV-Cross/spirv_cross_util.cpp");
 
-    #[cfg(feature = "glsl")]
+    // Ideally the GLSL compiler would be omitted here, but the HLSL and MSL compiler
+    // currently inherit from it. So it's necessary to unconditionally include it here.
     build
         .file("src/vendor/SPIRV-Cross/spirv_glsl.cpp")
         .flag("-DSPIRV_CROSS_WRAPPER_GLSL");
