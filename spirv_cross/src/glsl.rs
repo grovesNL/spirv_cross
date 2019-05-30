@@ -1,6 +1,6 @@
 use crate::bindings as br;
-use crate::{compiler, spirv, ErrorCode};
 use crate::ptr_util::read_into_vec_from_ptr;
+use crate::{compiler, spirv, ErrorCode};
 use std::marker::PhantomData;
 use std::ptr;
 
@@ -183,7 +183,7 @@ impl spirv::Ast<Target> {
                     sampler_id: sc.sampler_id,
                 })
                 .collect();
-            
+
             Ok(samplers)
         }
     }

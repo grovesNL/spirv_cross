@@ -19,7 +19,10 @@ macro_rules! check {
                     return Err(ErrorCode::Unhandled);
                 }
 
-                let message = match std::ffi::CStr::from_ptr(message_ptr).to_owned().into_string() {
+                let message = match std::ffi::CStr::from_ptr(message_ptr)
+                    .to_owned()
+                    .into_string()
+                {
                     Err(_) => return Err(ErrorCode::Unhandled),
                     Ok(v) => v,
                 };
@@ -63,8 +66,8 @@ mod bindings {
     #![allow(non_camel_case_types)]
     #![allow(non_snake_case)]
     include!(concat!("bindings_wasm.rs"));
-    pub use root::*;
     pub use crate::bindings_wasm_functions::*;
+    pub use root::*;
 }
 
 #[cfg(not(target_arch = "wasm32"))]

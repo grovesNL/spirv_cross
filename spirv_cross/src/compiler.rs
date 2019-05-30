@@ -1,8 +1,8 @@
 //! Raw compiler bindings for SPIRV-Cross.
 use crate::bindings as br;
+use crate::ptr_util::{read_from_ptr, read_into_vec_from_ptr, read_string_from_ptr};
 use crate::spirv::{self, Decoration, Type};
 use crate::ErrorCode;
-use crate::ptr_util::{read_string_from_ptr, read_from_ptr, read_into_vec_from_ptr};
 use std::ffi::CString;
 use std::os::raw::c_void;
 use std::{mem, ptr};
@@ -95,11 +95,11 @@ impl spirv::Decoration {
 
 impl spirv::Type {
     pub(crate) fn from_raw(
-        ty: br::spirv_cross::SPIRType_BaseType,
+        ty: br::SPIRV_CROSS_NAMESPACE::SPIRType_BaseType,
         member_types: Vec<u32>,
         array: Vec<u32>,
     ) -> Type {
-        use crate::bindings::root::spirv_cross::SPIRType_BaseType as B;
+        use crate::bindings::root::SPIRV_CROSS_NAMESPACE::SPIRType_BaseType as B;
         use crate::spirv::Type::*;
         match ty {
             B::Unknown => Unknown,
@@ -125,6 +125,8 @@ impl spirv::Type {
             B::UByte => UByte { array },
             B::Short => Short { array },
             B::UShort => UShort { array },
+            B::ControlPointArray => ControlPointArray,
+            B::AccelerationStructureNV => AccelerationStructureNv,
         }
     }
 }
@@ -296,7 +298,8 @@ impl<TTargetData> Compiler<TTargetData> {
             let constants = (0..constants_raw_length)
                 .map(|offset| {
                     let constant_raw_ptr = constants_raw.add(offset);
-                    let constant_raw = read_from_ptr::<br::ScSpecializationConstant>(constant_raw_ptr);
+                    let constant_raw =
+                        read_from_ptr::<br::ScSpecializationConstant>(constant_raw_ptr);
 
                     let constant = spirv::SpecializationConstant {
                         id: constant_raw.id,
@@ -511,8 +514,7 @@ impl<TTargetData> Compiler<TTargetData> {
                 }
             }
 
-            let new_name = CString::new(new_name)
-                .map_err(|_| ErrorCode::Unhandled)?;
+            let new_name = CString::new(new_name).map_err(|_| ErrorCode::Unhandled)?;
             let new_name_ptr = new_name.as_ptr();
             let resources = resources
                 .iter()

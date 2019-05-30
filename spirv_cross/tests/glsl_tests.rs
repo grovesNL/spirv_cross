@@ -170,7 +170,6 @@ void main()
     );
 }
 
-
 #[test]
 fn ast_can_rename_combined_image_samplers() {
     let mut ast = spirv::Ast::<glsl::Target>::parse(&spirv::Module::from_words(words_from_bytes(

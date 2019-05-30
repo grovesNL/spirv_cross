@@ -29,6 +29,14 @@ pub mod root {
             ExecutionModelFragment = 4,
             ExecutionModelGLCompute = 5,
             ExecutionModelKernel = 6,
+            ExecutionModelTaskNV = 5267,
+            ExecutionModelMeshNV = 5268,
+            ExecutionModelRayGenerationNV = 5313,
+            ExecutionModelIntersectionNV = 5314,
+            ExecutionModelAnyHitNV = 5315,
+            ExecutionModelClosestHitNV = 5316,
+            ExecutionModelMissNV = 5317,
+            ExecutionModelCallableNV = 5318,
             ExecutionModelMax = 2147483647,
         }
         #[repr(u32)]
@@ -37,6 +45,7 @@ pub mod root {
             AddressingModelLogical = 0,
             AddressingModelPhysical32 = 1,
             AddressingModelPhysical64 = 2,
+            AddressingModelPhysicalStorageBuffer64EXT = 5348,
             AddressingModelMax = 2147483647,
         }
         #[repr(u32)]
@@ -45,6 +54,7 @@ pub mod root {
             MemoryModelSimple = 0,
             MemoryModelGLSL450 = 1,
             MemoryModelOpenCL = 2,
+            MemoryModelVulkanKHR = 3,
             MemoryModelMax = 2147483647,
         }
         #[repr(u32)]
@@ -89,7 +99,17 @@ pub mod root {
             ExecutionModeLocalSizeId = 38,
             ExecutionModeLocalSizeHintId = 39,
             ExecutionModePostDepthCoverage = 4446,
+            ExecutionModeDenormPreserve = 4459,
+            ExecutionModeDenormFlushToZero = 4460,
+            ExecutionModeSignedZeroInfNanPreserve = 4461,
+            ExecutionModeRoundingModeRTE = 4462,
+            ExecutionModeRoundingModeRTZ = 4463,
             ExecutionModeStencilRefReplacingEXT = 5027,
+            ExecutionModeOutputLinesNV = 5269,
+            ExecutionModeOutputPrimitivesNV = 5270,
+            ExecutionModeDerivativeGroupQuadsNV = 5289,
+            ExecutionModeDerivativeGroupLinearNV = 5290,
+            ExecutionModeOutputTrianglesNV = 5298,
             ExecutionModeMax = 2147483647,
         }
         #[repr(u32)]
@@ -108,6 +128,13 @@ pub mod root {
             StorageClassAtomicCounter = 10,
             StorageClassImage = 11,
             StorageClassStorageBuffer = 12,
+            StorageClassCallableDataNV = 5328,
+            StorageClassIncomingCallableDataNV = 5329,
+            StorageClassRayPayloadNV = 5338,
+            StorageClassHitAttributeNV = 5339,
+            StorageClassIncomingRayPayloadNV = 5342,
+            StorageClassShaderRecordBufferNV = 5343,
+            StorageClassPhysicalStorageBufferEXT = 5349,
             StorageClassMax = 2147483647,
         }
         #[repr(u32)]
@@ -242,6 +269,10 @@ pub mod root {
             ImageOperandsConstOffsetsShift = 5,
             ImageOperandsSampleShift = 6,
             ImageOperandsMinLodShift = 7,
+            ImageOperandsMakeTexelAvailableKHRShift = 8,
+            ImageOperandsMakeTexelVisibleKHRShift = 9,
+            ImageOperandsNonPrivateTexelKHRShift = 10,
+            ImageOperandsVolatileTexelKHRShift = 11,
             ImageOperandsMax = 2147483647,
         }
         pub const ImageOperandsMask_ImageOperandsMaskNone:
@@ -271,6 +302,18 @@ pub mod root {
         pub const ImageOperandsMask_ImageOperandsMinLodMask:
                   root::spv::ImageOperandsMask =
             ImageOperandsMask(128);
+        pub const ImageOperandsMask_ImageOperandsMakeTexelAvailableKHRMask:
+                  root::spv::ImageOperandsMask =
+            ImageOperandsMask(256);
+        pub const ImageOperandsMask_ImageOperandsMakeTexelVisibleKHRMask:
+                  root::spv::ImageOperandsMask =
+            ImageOperandsMask(512);
+        pub const ImageOperandsMask_ImageOperandsNonPrivateTexelKHRMask:
+                  root::spv::ImageOperandsMask =
+            ImageOperandsMask(1024);
+        pub const ImageOperandsMask_ImageOperandsVolatileTexelKHRMask:
+                  root::spv::ImageOperandsMask =
+            ImageOperandsMask(2048);
         impl ::std::ops::BitOr<root::spv::ImageOperandsMask> for
          root::spv::ImageOperandsMask {
             type
@@ -459,11 +502,20 @@ pub mod root {
             DecorationMaxByteOffset = 45,
             DecorationAlignmentId = 46,
             DecorationMaxByteOffsetId = 47,
+            DecorationNoSignedWrap = 4469,
+            DecorationNoUnsignedWrap = 4470,
             DecorationExplicitInterpAMD = 4999,
             DecorationOverrideCoverageNV = 5248,
             DecorationPassthroughNV = 5250,
             DecorationViewportRelativeNV = 5252,
             DecorationSecondaryViewportRelativeNV = 5256,
+            DecorationPerPrimitiveNV = 5271,
+            DecorationPerViewNV = 5272,
+            DecorationPerTaskNV = 5273,
+            DecorationPerVertexNV = 5285,
+            DecorationNonUniformEXT = 5300,
+            DecorationRestrictPointerEXT = 5355,
+            DecorationAliasedPointerEXT = 5356,
             DecorationHlslCounterBufferGOOGLE = 5634,
             DecorationHlslSemanticGOOGLE = 5635,
             DecorationMax = 2147483647,
@@ -478,6 +530,10 @@ pub mod root {
             BuiltIn::BuiltInSubgroupLeMask;
         pub const BuiltIn_BuiltInSubgroupLtMaskKHR: root::spv::BuiltIn =
             BuiltIn::BuiltInSubgroupLtMask;
+        pub const BuiltIn_BuiltInFragmentSizeNV: root::spv::BuiltIn =
+            BuiltIn::BuiltInFragSizeEXT;
+        pub const BuiltIn_BuiltInInvocationsPerPixelNV: root::spv::BuiltIn =
+            BuiltIn::BuiltInFragInvocationCountEXT;
         #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum BuiltIn {
@@ -546,6 +602,32 @@ pub mod root {
             BuiltInPositionPerViewNV = 5261,
             BuiltInViewportMaskPerViewNV = 5262,
             BuiltInFullyCoveredEXT = 5264,
+            BuiltInTaskCountNV = 5274,
+            BuiltInPrimitiveCountNV = 5275,
+            BuiltInPrimitiveIndicesNV = 5276,
+            BuiltInClipDistancePerViewNV = 5277,
+            BuiltInCullDistancePerViewNV = 5278,
+            BuiltInLayerPerViewNV = 5279,
+            BuiltInMeshViewCountNV = 5280,
+            BuiltInMeshViewIndicesNV = 5281,
+            BuiltInBaryCoordNV = 5286,
+            BuiltInBaryCoordNoPerspNV = 5287,
+            BuiltInFragSizeEXT = 5292,
+            BuiltInFragInvocationCountEXT = 5293,
+            BuiltInLaunchIdNV = 5319,
+            BuiltInLaunchSizeNV = 5320,
+            BuiltInWorldRayOriginNV = 5321,
+            BuiltInWorldRayDirectionNV = 5322,
+            BuiltInObjectRayOriginNV = 5323,
+            BuiltInObjectRayDirectionNV = 5324,
+            BuiltInRayTminNV = 5325,
+            BuiltInRayTmaxNV = 5326,
+            BuiltInInstanceCustomIndexNV = 5327,
+            BuiltInObjectToWorldNV = 5330,
+            BuiltInWorldToObjectNV = 5331,
+            BuiltInHitTNV = 5332,
+            BuiltInHitKindNV = 5333,
+            BuiltInIncomingRayFlagsNV = 5351,
             BuiltInMax = 2147483647,
         }
         #[repr(u32)]
@@ -737,6 +819,9 @@ pub mod root {
             MemorySemanticsCrossWorkgroupMemoryShift = 9,
             MemorySemanticsAtomicCounterMemoryShift = 10,
             MemorySemanticsImageMemoryShift = 11,
+            MemorySemanticsOutputMemoryKHRShift = 12,
+            MemorySemanticsMakeAvailableKHRShift = 13,
+            MemorySemanticsMakeVisibleKHRShift = 14,
             MemorySemanticsMax = 2147483647,
         }
         pub const MemorySemanticsMask_MemorySemanticsMaskNone:
@@ -772,6 +857,15 @@ pub mod root {
         pub const MemorySemanticsMask_MemorySemanticsImageMemoryMask:
                   root::spv::MemorySemanticsMask =
             MemorySemanticsMask(2048);
+        pub const MemorySemanticsMask_MemorySemanticsOutputMemoryKHRMask:
+                  root::spv::MemorySemanticsMask =
+            MemorySemanticsMask(4096);
+        pub const MemorySemanticsMask_MemorySemanticsMakeAvailableKHRMask:
+                  root::spv::MemorySemanticsMask =
+            MemorySemanticsMask(8192);
+        pub const MemorySemanticsMask_MemorySemanticsMakeVisibleKHRMask:
+                  root::spv::MemorySemanticsMask =
+            MemorySemanticsMask(16384);
         impl ::std::ops::BitOr<root::spv::MemorySemanticsMask> for
          root::spv::MemorySemanticsMask {
             type
@@ -815,6 +909,9 @@ pub mod root {
             MemoryAccessVolatileShift = 0,
             MemoryAccessAlignedShift = 1,
             MemoryAccessNontemporalShift = 2,
+            MemoryAccessMakePointerAvailableKHRShift = 3,
+            MemoryAccessMakePointerVisibleKHRShift = 4,
+            MemoryAccessNonPrivatePointerKHRShift = 5,
             MemoryAccessMax = 2147483647,
         }
         pub const MemoryAccessMask_MemoryAccessMaskNone:
@@ -829,6 +926,15 @@ pub mod root {
         pub const MemoryAccessMask_MemoryAccessNontemporalMask:
                   root::spv::MemoryAccessMask =
             MemoryAccessMask(4);
+        pub const MemoryAccessMask_MemoryAccessMakePointerAvailableKHRMask:
+                  root::spv::MemoryAccessMask =
+            MemoryAccessMask(8);
+        pub const MemoryAccessMask_MemoryAccessMakePointerVisibleKHRMask:
+                  root::spv::MemoryAccessMask =
+            MemoryAccessMask(16);
+        pub const MemoryAccessMask_MemoryAccessNonPrivatePointerKHRMask:
+                  root::spv::MemoryAccessMask =
+            MemoryAccessMask(32);
         impl ::std::ops::BitOr<root::spv::MemoryAccessMask> for
          root::spv::MemoryAccessMask {
             type
@@ -874,6 +980,7 @@ pub mod root {
             ScopeWorkgroup = 2,
             ScopeSubgroup = 3,
             ScopeInvocation = 4,
+            ScopeQueueFamilyKHR = 5,
             ScopeMax = 2147483647,
         }
         #[repr(u32)]
@@ -883,6 +990,9 @@ pub mod root {
             GroupOperationInclusiveScan = 1,
             GroupOperationExclusiveScan = 2,
             GroupOperationClusteredReduce = 3,
+            GroupOperationPartitionedReduceNV = 6,
+            GroupOperationPartitionedInclusiveScanNV = 7,
+            GroupOperationPartitionedExclusiveScanNV = 8,
             GroupOperationMax = 2147483647,
         }
         pub const KernelEnqueueFlags_KernelEnqueueFlagsNoWait:
@@ -994,6 +1104,8 @@ pub mod root {
         pub const Capability_CapabilityShaderViewportIndexLayerNV:
                   root::spv::Capability =
             Capability::CapabilityShaderViewportIndexLayerEXT;
+        pub const Capability_CapabilityShadingRateNV: root::spv::Capability =
+            Capability::CapabilityFragmentDensityEXT;
         #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum Capability {
@@ -1077,6 +1189,14 @@ pub mod root {
             CapabilityVariablePointers = 4442,
             CapabilityAtomicStorageOps = 4445,
             CapabilitySampleMaskPostDepthCoverage = 4447,
+            CapabilityStorageBuffer8BitAccess = 4448,
+            CapabilityUniformAndStorageBuffer8BitAccess = 4449,
+            CapabilityStoragePushConstant8 = 4450,
+            CapabilityDenormPreserve = 4464,
+            CapabilityDenormFlushToZero = 4465,
+            CapabilitySignedZeroInfNanPreserve = 4466,
+            CapabilityRoundingModeRTE = 4467,
+            CapabilityRoundingModeRTZ = 4468,
             CapabilityFloat16ImageAMD = 5008,
             CapabilityImageGatherBiasLodAMD = 5009,
             CapabilityFragmentMaskAMD = 5010,
@@ -1089,9 +1209,33 @@ pub mod root {
             CapabilityShaderStereoViewNV = 5259,
             CapabilityPerViewAttributesNV = 5260,
             CapabilityFragmentFullyCoveredEXT = 5265,
+            CapabilityMeshShadingNV = 5266,
+            CapabilityImageFootprintNV = 5282,
+            CapabilityFragmentBarycentricNV = 5284,
+            CapabilityComputeDerivativeGroupQuadsNV = 5288,
+            CapabilityFragmentDensityEXT = 5291,
+            CapabilityGroupNonUniformPartitionedNV = 5297,
+            CapabilityShaderNonUniformEXT = 5301,
+            CapabilityRuntimeDescriptorArrayEXT = 5302,
+            CapabilityInputAttachmentArrayDynamicIndexingEXT = 5303,
+            CapabilityUniformTexelBufferArrayDynamicIndexingEXT = 5304,
+            CapabilityStorageTexelBufferArrayDynamicIndexingEXT = 5305,
+            CapabilityUniformBufferArrayNonUniformIndexingEXT = 5306,
+            CapabilitySampledImageArrayNonUniformIndexingEXT = 5307,
+            CapabilityStorageBufferArrayNonUniformIndexingEXT = 5308,
+            CapabilityStorageImageArrayNonUniformIndexingEXT = 5309,
+            CapabilityInputAttachmentArrayNonUniformIndexingEXT = 5310,
+            CapabilityUniformTexelBufferArrayNonUniformIndexingEXT = 5311,
+            CapabilityStorageTexelBufferArrayNonUniformIndexingEXT = 5312,
+            CapabilityRayTracingNV = 5340,
+            CapabilityVulkanMemoryModelKHR = 5345,
+            CapabilityVulkanMemoryModelDeviceScopeKHR = 5346,
+            CapabilityPhysicalStorageBufferAddressesEXT = 5347,
+            CapabilityComputeDerivativeGroupLinearNV = 5350,
             CapabilitySubgroupShuffleINTEL = 5568,
             CapabilitySubgroupBufferBlockIOINTEL = 5569,
             CapabilitySubgroupImageBlockIOINTEL = 5570,
+            CapabilitySubgroupImageMediaBlockIOINTEL = 5579,
             CapabilityMax = 2147483647,
         }
         #[repr(u32)]
@@ -1453,6 +1597,15 @@ pub mod root {
             OpGroupSMaxNonUniformAMD = 5007,
             OpFragmentMaskFetchAMD = 5011,
             OpFragmentFetchAMD = 5012,
+            OpImageSampleFootprintNV = 5283,
+            OpGroupNonUniformPartitionNV = 5296,
+            OpWritePackedPrimitiveIndices4x8NV = 5299,
+            OpReportIntersectionNV = 5334,
+            OpIgnoreIntersectionNV = 5335,
+            OpTerminateRayNV = 5336,
+            OpTraceNV = 5337,
+            OpTypeAccelerationStructureNV = 5341,
+            OpExecuteCallableNV = 5344,
             OpSubgroupShuffleINTEL = 5571,
             OpSubgroupShuffleDownINTEL = 5572,
             OpSubgroupShuffleUpINTEL = 5573,
@@ -1461,6 +1614,8 @@ pub mod root {
             OpSubgroupBlockWriteINTEL = 5576,
             OpSubgroupImageBlockReadINTEL = 5577,
             OpSubgroupImageBlockWriteINTEL = 5578,
+            OpSubgroupImageMediaBlockReadINTEL = 5580,
+            OpSubgroupImageMediaBlockWriteINTEL = 5581,
             OpDecorateStringGOOGLE = 5632,
             OpMemberDecorateStringGOOGLE = 5633,
             OpMax = 2147483647,
@@ -1471,7 +1626,7 @@ pub mod root {
         use self::super::super::root;
         pub type string = [u64; 3usize];
     }
-    pub mod spirv_cross {
+    pub mod SPIRV_CROSS_NAMESPACE {
         #[allow(unused_imports)]
         use self::super::super::root;
         #[repr(u32)]
@@ -1480,23 +1635,25 @@ pub mod root {
             Unknown = 0,
             Void = 1,
             Boolean = 2,
-            Char = 3,
-            SByte = 4,
-            UByte = 5,
-            Short = 6,
-            UShort = 7,
-            Int = 8,
-            UInt = 9,
-            Int64 = 10,
-            UInt64 = 11,
-            AtomicCounter = 12,
-            Half = 13,
-            Float = 14,
-            Double = 15,
-            Struct = 16,
-            Image = 17,
-            SampledImage = 18,
-            Sampler = 19,
+            SByte = 3,
+            UByte = 4,
+            Short = 5,
+            UShort = 6,
+            Int = 7,
+            UInt = 8,
+            Int64 = 9,
+            UInt64 = 10,
+            AtomicCounter = 11,
+            Half = 12,
+            Float = 13,
+            Double = 14,
+            Struct = 15,
+            Image = 16,
+            SampledImage = 17,
+            Sampler = 18,
+            AccelerationStructureNV = 19,
+            ControlPointArray = 20,
+            Char = 21,
         }
         #[repr(C)]
         #[derive(Debug, Copy)]
@@ -1515,6 +1672,7 @@ pub mod root {
             MSL_VERTEX_FORMAT_OTHER = 0,
             MSL_VERTEX_FORMAT_UINT8 = 1,
             MSL_VERTEX_FORMAT_UINT16 = 2,
+            MSL_VERTEX_FORMAT_INT_MAX = 2147483647,
         }
         #[repr(C)]
         #[derive(Debug, Copy)]
@@ -1524,8 +1682,8 @@ pub mod root {
             pub msl_offset: u32,
             pub msl_stride: u32,
             pub per_instance: bool,
-            pub format: root::spirv_cross::MSLVertexFormat,
-            pub used_by_shader: bool,
+            pub format: root::SPIRV_CROSS_NAMESPACE::MSLVertexFormat,
+            pub builtin: root::spv::BuiltIn,
         }
         impl Clone for MSLVertexAttr {
             fn clone(&self) -> Self { *self }
@@ -1539,7 +1697,6 @@ pub mod root {
             pub msl_buffer: u32,
             pub msl_texture: u32,
             pub msl_sampler: u32,
-            pub used_by_shader: bool,
         }
         impl Clone for MSLResourceBinding {
             fn clone(&self) -> Self { *self }
@@ -1675,7 +1832,7 @@ pub mod root {
     #[repr(C)]
     #[derive(Debug, Copy)]
     pub struct ScType {
-        pub type_: root::spirv_cross::SPIRType_BaseType,
+        pub type_: root::SPIRV_CROSS_NAMESPACE::SPIRType_BaseType,
         pub member_types: *mut u32,
         pub member_types_size: usize,
         pub array: *mut u32,
@@ -1737,10 +1894,10 @@ pub mod root {
                                                 shader:
                                                     *mut *const ::std::os::raw::c_char,
                                                 p_vat_overrides:
-                                                    *const root::spirv_cross::MSLVertexAttr,
+                                                    *const root::SPIRV_CROSS_NAMESPACE::MSLVertexAttr,
                                                 vat_override_count: usize,
                                                 p_res_overrides:
-                                                    *const root::spirv_cross::MSLResourceBinding,
+                                                    *const root::SPIRV_CROSS_NAMESPACE::MSLResourceBinding,
                                                 res_override_count: usize)
          -> root::ScInternalResult;
     }
