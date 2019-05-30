@@ -8,6 +8,7 @@ fn main() {
             "-fno-exceptions",
             "-DSPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS=1",
             "-DSPIRV_CROSS_WRAPPER_NO_EXCEPTIONS=1",
+            "-DSPIRV_CROSS_WRAPPER_GLSL",
             "--closure",
             "1",
             "-o",
