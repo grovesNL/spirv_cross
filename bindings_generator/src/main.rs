@@ -38,7 +38,11 @@ fn main() {
         .whitelisted_type("ScSpecializationConstant")
         .whitelisted_type("ScType")
         .opaque_type("std::.*")
-        .clang_args(vec!["-DSPIRV_CROSS_WRAPPER_GLSL", "-DSPIRV_CROSS_WRAPPER_MSL", "-DSPIRV_CROSS_WRAPPER_HLSL"])
+        .clang_args(vec![
+            "-DSPIRV_CROSS_WRAPPER_GLSL",
+            "-DSPIRV_CROSS_WRAPPER_MSL",
+            "-DSPIRV_CROSS_WRAPPER_HLSL",
+        ])
         .layout_tests(false)
         .generate()
         .expect("Unable to generate bindings")
@@ -77,7 +81,11 @@ fn main() {
         .whitelisted_type("ScSpecializationConstant")
         .whitelisted_type("ScType")
         .opaque_type("std::.*")
-        .clang_args(vec!["-DSPIRV_CROSS_WRAPPER_GLSL", "-DSPIRV_CROSS_WRAPPER_MSL", "-DSPIRV_CROSS_WRAPPER_HLSL"])
+        .clang_args(vec![
+            "-DSPIRV_CROSS_WRAPPER_GLSL",
+            "-DSPIRV_CROSS_WRAPPER_MSL",
+            "-DSPIRV_CROSS_WRAPPER_HLSL",
+        ])
         .layout_tests(false)
         .generate()
         .expect("Unable to generate bindings")

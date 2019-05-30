@@ -5,11 +5,11 @@
 //! would consumed directly (i.e. reading a string from a pointer), so `ptr_util` is provided for
 //! those cases.
 
-use crate::{bindings, ErrorCode};
-use wasm_bindgen::prelude::*;
-use js_sys::{global, Object, Uint8Array, Uint32Array, Reflect};
 use crate::emscripten;
+use crate::{bindings, ErrorCode};
+use js_sys::{global, Object, Reflect, Uint32Array, Uint8Array};
 use std::ffi::CStr;
+use wasm_bindgen::prelude::*;
 
 const U32_SIZE: u32 = std::mem::size_of::<u32>() as u32;
 
@@ -27,13 +27,27 @@ extern "C" {
     fn _sc_internal_compiler_glsl_build_combined_image_samplers(compiler: u32) -> u32;
 
     #[wasm_bindgen(js_namespace = sc_internal)]
-    fn _sc_internal_compiler_glsl_get_combined_image_samplers(compiler: u32, samplers: u32, size: u32) -> u32;
+    fn _sc_internal_compiler_glsl_get_combined_image_samplers(
+        compiler: u32,
+        samplers: u32,
+        size: u32,
+    ) -> u32;
 
     #[wasm_bindgen(js_namespace = sc_internal)]
-    fn _sc_internal_compiler_get_decoration(compiler: u32, result: u32, id: u32, decoration: u32) -> u32;
+    fn _sc_internal_compiler_get_decoration(
+        compiler: u32,
+        result: u32,
+        id: u32,
+        decoration: u32,
+    ) -> u32;
 
     #[wasm_bindgen(js_namespace = sc_internal)]
-    fn _sc_internal_compiler_set_decoration(compiler: u32, id: u32, decoration: u32, argument: u32) -> u32;
+    fn _sc_internal_compiler_set_decoration(
+        compiler: u32,
+        id: u32,
+        decoration: u32,
+        argument: u32,
+    ) -> u32;
 
     #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_unset_decoration(compiler: u32, id: u32, decoration: u32) -> u32;
@@ -45,16 +59,30 @@ extern "C" {
     fn _sc_internal_compiler_get_entry_points(compiler: u32, entry_points: u32, size: u32) -> u32;
 
     #[wasm_bindgen(js_namespace = sc_internal)]
-    fn _sc_internal_compiler_get_cleansed_entry_point_name(compiler: u32, original_entry_point_name: u32, execution_model: u32, compiled_entry_point_name: u32) -> u32;
+    fn _sc_internal_compiler_get_cleansed_entry_point_name(
+        compiler: u32,
+        original_entry_point_name: u32,
+        execution_model: u32,
+        compiled_entry_point_name: u32,
+    ) -> u32;
 
     #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_get_shader_resources(compiler: u32, shader_resources: u32) -> u32;
 
     #[wasm_bindgen(js_namespace = sc_internal)]
-    fn _sc_internal_compiler_get_specialization_constants(compiler: u32, constants: u32, size: u32) -> u32;
+    fn _sc_internal_compiler_get_specialization_constants(
+        compiler: u32,
+        constants: u32,
+        size: u32,
+    ) -> u32;
 
     #[wasm_bindgen(js_namespace = sc_internal)]
-    fn _sc_internal_compiler_set_scalar_constant(compiler: u32, id: u32, constant_high_bits: u32, constant_low_bits: u32) -> u32;
+    fn _sc_internal_compiler_set_scalar_constant(
+        compiler: u32,
+        id: u32,
+        constant_high_bits: u32,
+        constant_low_bits: u32,
+    ) -> u32;
 
     #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_get_type(compiler: u32, id: u32, spirv_type: u32) -> u32;
@@ -63,22 +91,48 @@ extern "C" {
     fn _sc_internal_compiler_get_member_name(compiler: u32, id: u32, index: u32, name: u32) -> u32;
 
     #[wasm_bindgen(js_namespace = sc_internal)]
-    fn _sc_internal_compiler_get_member_decoration(compiler: u32, id: u32, index: u32, decoration: u32, result: u32) -> u32;
+    fn _sc_internal_compiler_get_member_decoration(
+        compiler: u32,
+        id: u32,
+        index: u32,
+        decoration: u32,
+        result: u32,
+    ) -> u32;
 
     #[wasm_bindgen(js_namespace = sc_internal)]
-    fn _sc_internal_compiler_set_member_decoration(compiler: u32, id: u32, index: u32, decoration: u32, argument: u32) -> u32;
+    fn _sc_internal_compiler_set_member_decoration(
+        compiler: u32,
+        id: u32,
+        index: u32,
+        decoration: u32,
+        argument: u32,
+    ) -> u32;
 
     #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_get_declared_struct_size(compiler: u32, id: u32, result: u32) -> u32;
 
     #[wasm_bindgen(js_namespace = sc_internal)]
-    fn _sc_internal_compiler_get_declared_struct_member_size(compiler: u32, id: u32, index: u32, result: u32) -> u32;
+    fn _sc_internal_compiler_get_declared_struct_member_size(
+        compiler: u32,
+        id: u32,
+        index: u32,
+        result: u32,
+    ) -> u32;
 
     #[wasm_bindgen(js_namespace = sc_internal)]
-    fn _sc_internal_compiler_rename_interface_variable(compiler: u32, resources: u32, resources_size: u32, location: u32, name: u32) -> u32;
+    fn _sc_internal_compiler_rename_interface_variable(
+        compiler: u32,
+        resources: u32,
+        resources_size: u32,
+        location: u32,
+        name: u32,
+    ) -> u32;
 
     #[wasm_bindgen(js_namespace = sc_internal)]
-    fn _sc_internal_compiler_get_work_group_size_specialization_constants(compiler: u32, constants: u32) -> u32;
+    fn _sc_internal_compiler_get_work_group_size_specialization_constants(
+        compiler: u32,
+        constants: u32,
+    ) -> u32;
 
     #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_compile(compiler: u32, shader: u32) -> u32;
@@ -95,7 +149,7 @@ fn map_internal_result(result: u32) -> bindings::ScInternalResult {
         0 => bindings::ScInternalResult::Success,
         1 => bindings::ScInternalResult::Unhandled,
         2 => bindings::ScInternalResult::CompilationError,
-        _ => unreachable!()
+        _ => unreachable!(),
     }
 }
 
@@ -119,7 +173,11 @@ pub fn sc_internal_compiler_glsl_new(
         let spirv_ptr = module.allocate(spirv_bytes as u32);
         module.set_from_u8_slice(spirv_ptr, spirv);
         let compiler_ptr_to_ptr = module.allocate(U32_SIZE);
-        let result = map_internal_result(_sc_internal_compiler_glsl_new(compiler_ptr_to_ptr.as_offset(), spirv_ptr.as_offset(), size as u32));
+        let result = map_internal_result(_sc_internal_compiler_glsl_new(
+            compiler_ptr_to_ptr.as_offset(),
+            spirv_ptr.as_offset(),
+            size as u32,
+        ));
         *compiler = module.get_u32(compiler_ptr_to_ptr) as *mut bindings::ScInternalCompilerGlsl;
         module.free(compiler_ptr_to_ptr);
         module.free(spirv_ptr);
@@ -142,7 +200,10 @@ pub fn sc_internal_compiler_glsl_set_options(
         let bytes = std::slice::from_raw_parts(options as *const u8, compiler_options_size);
         let copied_options_ptr = module.allocate(compiler_options_size as u32);
         module.set_from_u8_slice(copied_options_ptr, bytes);
-        let result = map_internal_result(_sc_internal_compiler_glsl_set_options(compiler as u32, copied_options_ptr.as_offset()));
+        let result = map_internal_result(_sc_internal_compiler_glsl_set_options(
+            compiler as u32,
+            copied_options_ptr.as_offset(),
+        ));
         module.free(copied_options_ptr);
         result
     }
@@ -151,7 +212,9 @@ pub fn sc_internal_compiler_glsl_set_options(
 pub fn sc_internal_compiler_glsl_build_combined_image_samplers(
     compiler: *const bindings::ScInternalCompilerBase,
 ) -> bindings::ScInternalResult {
-    map_internal_result(_sc_internal_compiler_glsl_build_combined_image_samplers(compiler as u32))
+    map_internal_result(_sc_internal_compiler_glsl_build_combined_image_samplers(
+        compiler as u32,
+    ))
 }
 
 pub fn sc_internal_compiler_glsl_get_combined_image_samplers(
@@ -163,7 +226,11 @@ pub fn sc_internal_compiler_glsl_get_combined_image_samplers(
     unsafe {
         let samplers_ptr_to_ptr = module.allocate(U32_SIZE);
         let size_ptr = module.allocate(U32_SIZE);
-        let result = map_internal_result(_sc_internal_compiler_glsl_get_combined_image_samplers(compiler as u32, samplers_ptr_to_ptr.as_offset(), size_ptr.as_offset()));
+        let result = map_internal_result(_sc_internal_compiler_glsl_get_combined_image_samplers(
+            compiler as u32,
+            samplers_ptr_to_ptr.as_offset(),
+            size_ptr.as_offset(),
+        ));
 
         *samplers = module.get_u32(samplers_ptr_to_ptr) as *const bindings::ScCombinedImageSampler;
         *size = module.get_u32(size_ptr) as usize;
@@ -184,7 +251,12 @@ pub fn sc_internal_compiler_get_decoration(
     let module = emscripten::get_module();
     unsafe {
         let result_ptr = module.allocate(U32_SIZE);
-        let ret = map_internal_result(_sc_internal_compiler_get_decoration(compiler as u32, result_ptr.as_offset(), id, decoration as u32));
+        let ret = map_internal_result(_sc_internal_compiler_get_decoration(
+            compiler as u32,
+            result_ptr.as_offset(),
+            id,
+            decoration as u32,
+        ));
         *result = module.get_u32(result_ptr) as u32;
         module.free(result_ptr);
         ret
@@ -197,7 +269,12 @@ pub fn sc_internal_compiler_set_decoration(
     decoration: bindings::spv::Decoration,
     argument: u32,
 ) -> bindings::ScInternalResult {
-    map_internal_result(_sc_internal_compiler_set_decoration(compiler as u32, id, decoration as u32, argument))
+    map_internal_result(_sc_internal_compiler_set_decoration(
+        compiler as u32,
+        id,
+        decoration as u32,
+        argument,
+    ))
 }
 
 pub fn sc_internal_compiler_unset_decoration(
@@ -205,7 +282,11 @@ pub fn sc_internal_compiler_unset_decoration(
     id: u32,
     decoration: bindings::spv::Decoration,
 ) -> bindings::ScInternalResult {
-    map_internal_result(_sc_internal_compiler_unset_decoration(compiler as u32, id, decoration as u32))
+    map_internal_result(_sc_internal_compiler_unset_decoration(
+        compiler as u32,
+        id,
+        decoration as u32,
+    ))
 }
 
 pub fn sc_internal_compiler_set_name(
@@ -218,7 +299,11 @@ pub fn sc_internal_compiler_set_name(
         let name_bytes = CStr::from_ptr(name).to_bytes();
         let name_ptr = module.allocate(name_bytes.len() as u32);
         module.set_from_u8_slice(name_ptr, name_bytes);
-        let result = map_internal_result(_sc_internal_compiler_set_name(compiler as u32, id, name_ptr.as_offset()));
+        let result = map_internal_result(_sc_internal_compiler_set_name(
+            compiler as u32,
+            id,
+            name_ptr.as_offset(),
+        ));
         module.free(name_ptr);
         result
     }
@@ -234,7 +319,11 @@ pub fn sc_internal_compiler_get_entry_points(
         let entry_points_ptr_to_ptr = module.allocate(U32_SIZE);
         let size_ptr = module.allocate(U32_SIZE);
 
-        let result = map_internal_result(_sc_internal_compiler_get_entry_points(compiler as u32, entry_points_ptr_to_ptr.as_offset(), size_ptr.as_offset()));
+        let result = map_internal_result(_sc_internal_compiler_get_entry_points(
+            compiler as u32,
+            entry_points_ptr_to_ptr.as_offset(),
+            size_ptr.as_offset(),
+        ));
 
         *entry_points = module.get_u32(entry_points_ptr_to_ptr) as *mut bindings::ScEntryPoint;
         *size = module.get_u32(size_ptr) as usize;
@@ -259,7 +348,12 @@ pub fn sc_internal_compiler_get_cleansed_entry_point_name(
         module.set_from_u8_slice(original_name_ptr, original_name_bytes);
 
         let compiled_name_ptr_to_ptr = module.allocate(U32_SIZE);
-        let result = map_internal_result(_sc_internal_compiler_get_cleansed_entry_point_name(compiler as u32, original_name_ptr.as_offset(), execution_model as u32, compiled_name_ptr_to_ptr.as_offset()));
+        let result = map_internal_result(_sc_internal_compiler_get_cleansed_entry_point_name(
+            compiler as u32,
+            original_name_ptr.as_offset(),
+            execution_model as u32,
+            compiled_name_ptr_to_ptr.as_offset(),
+        ));
         let compiled_name_ptr = module.get_u32(compiled_name_ptr_to_ptr);
         *compiled_entry_point_name = compiled_name_ptr as *const ::std::os::raw::c_char;
 
@@ -278,8 +372,16 @@ pub fn sc_internal_compiler_get_shader_resources(
     unsafe {
         let num_bytes = std::mem::size_of::<bindings::ScShaderResources>();
         let shader_resources_ptr = module.allocate(num_bytes as u32);
-        let result = map_internal_result(_sc_internal_compiler_get_shader_resources(compiler as u32, shader_resources_ptr.as_offset()));
-        module.read_bytes_into_pointer_while(shader_resources_ptr, |byte, bytes_read| bytes_read < num_bytes, false, shader_resources as *mut u8);
+        let result = map_internal_result(_sc_internal_compiler_get_shader_resources(
+            compiler as u32,
+            shader_resources_ptr.as_offset(),
+        ));
+        module.read_bytes_into_pointer_while(
+            shader_resources_ptr,
+            |byte, bytes_read| bytes_read < num_bytes,
+            false,
+            shader_resources as *mut u8,
+        );
         module.free(shader_resources_ptr);
         result
     }
@@ -294,8 +396,13 @@ pub fn sc_internal_compiler_get_specialization_constants(
     unsafe {
         let constants_ptr_to_ptr = module.allocate(U32_SIZE);
         let constants_size_ptr = module.allocate(U32_SIZE);
-        let result = map_internal_result(_sc_internal_compiler_get_specialization_constants(compiler as u32, constants_ptr_to_ptr.as_offset(), constants_size_ptr.as_offset() as u32));
-        *constants = module.get_u32(constants_ptr_to_ptr) as *mut bindings::ScSpecializationConstant;
+        let result = map_internal_result(_sc_internal_compiler_get_specialization_constants(
+            compiler as u32,
+            constants_ptr_to_ptr.as_offset(),
+            constants_size_ptr.as_offset() as u32,
+        ));
+        *constants =
+            module.get_u32(constants_ptr_to_ptr) as *mut bindings::ScSpecializationConstant;
         *size = module.get_u32(constants_size_ptr) as usize;
         module.free(constants_size_ptr);
         module.free(constants_ptr_to_ptr);
@@ -309,7 +416,12 @@ pub fn sc_internal_compiler_set_scalar_constant(
     constant_high_bits: u32,
     constant_low_bits: u32,
 ) -> bindings::ScInternalResult {
-    map_internal_result(_sc_internal_compiler_set_scalar_constant(compiler as u32, id, constant_high_bits, constant_low_bits))
+    map_internal_result(_sc_internal_compiler_set_scalar_constant(
+        compiler as u32,
+        id,
+        constant_high_bits,
+        constant_low_bits,
+    ))
 }
 
 pub fn sc_internal_compiler_get_type(
@@ -320,7 +432,11 @@ pub fn sc_internal_compiler_get_type(
     let module = emscripten::get_module();
     unsafe {
         let type_ptr_to_ptr = module.allocate(U32_SIZE);
-        let result = map_internal_result(_sc_internal_compiler_get_type(compiler as u32, id, type_ptr_to_ptr.as_offset()));
+        let result = map_internal_result(_sc_internal_compiler_get_type(
+            compiler as u32,
+            id,
+            type_ptr_to_ptr.as_offset(),
+        ));
         let type_ptr = module.get_u32(type_ptr_to_ptr);
         *spirv_type = type_ptr as *const bindings::ScType;
         module.free(type_ptr_to_ptr);
@@ -337,7 +453,12 @@ pub fn sc_internal_compiler_get_member_name(
     let module = emscripten::get_module();
     unsafe {
         let name_ptr_to_ptr = module.allocate(U32_SIZE);
-        let result = map_internal_result(_sc_internal_compiler_get_member_name(compiler as u32, id, index, name_ptr_to_ptr.as_offset()));
+        let result = map_internal_result(_sc_internal_compiler_get_member_name(
+            compiler as u32,
+            id,
+            index,
+            name_ptr_to_ptr.as_offset(),
+        ));
         let name_ptr = module.get_u32(name_ptr_to_ptr);
         *name = name_ptr as *const ::std::os::raw::c_char;
         module.free(name_ptr_to_ptr);
@@ -355,7 +476,13 @@ pub fn sc_internal_compiler_get_member_decoration(
     let module = emscripten::get_module();
     unsafe {
         let result_ptr = module.allocate(U32_SIZE);
-        let ret = map_internal_result(_sc_internal_compiler_get_member_decoration(compiler as u32, id, index, decoration as u32, result_ptr.as_offset()));
+        let ret = map_internal_result(_sc_internal_compiler_get_member_decoration(
+            compiler as u32,
+            id,
+            index,
+            decoration as u32,
+            result_ptr.as_offset(),
+        ));
         *result = module.get_u32(result_ptr) as u32;
         module.free(result_ptr);
         ret
@@ -369,7 +496,13 @@ pub fn sc_internal_compiler_set_member_decoration(
     decoration: bindings::spv::Decoration,
     argument: u32,
 ) -> bindings::ScInternalResult {
-    map_internal_result(_sc_internal_compiler_set_member_decoration(compiler as u32, id, index, decoration as u32, argument))
+    map_internal_result(_sc_internal_compiler_set_member_decoration(
+        compiler as u32,
+        id,
+        index,
+        decoration as u32,
+        argument,
+    ))
 }
 
 pub fn sc_internal_compiler_get_declared_struct_size(
@@ -380,7 +513,11 @@ pub fn sc_internal_compiler_get_declared_struct_size(
     let module = emscripten::get_module();
     unsafe {
         let result_ptr = module.allocate(U32_SIZE);
-        let ret = map_internal_result(_sc_internal_compiler_get_declared_struct_size(compiler as u32, id, result_ptr.as_offset()));
+        let ret = map_internal_result(_sc_internal_compiler_get_declared_struct_size(
+            compiler as u32,
+            id,
+            result_ptr.as_offset(),
+        ));
         *result = module.get_u32(result_ptr) as u32;
         module.free(result_ptr);
         ret
@@ -396,7 +533,12 @@ pub fn sc_internal_compiler_get_declared_struct_member_size(
     let module = emscripten::get_module();
     unsafe {
         let result_ptr = module.allocate(U32_SIZE);
-        let ret = map_internal_result(_sc_internal_compiler_get_declared_struct_member_size(compiler as u32, id, index, result_ptr.as_offset()));
+        let ret = map_internal_result(_sc_internal_compiler_get_declared_struct_member_size(
+            compiler as u32,
+            id,
+            index,
+            result_ptr.as_offset(),
+        ));
         *result = module.get_u32(result_ptr) as u32;
         module.free(result_ptr);
         ret
@@ -423,11 +565,23 @@ pub fn sc_internal_compiler_rename_interface_variable(
         }
 
         let resources_ptr = module.allocate(std::mem::size_of::<bindings::ScResource>() as u32);
-        module.set_from_u8_slice(resources_ptr, std::slice::from_raw_parts(resources_copied.as_ptr() as *const u8, resources_size * std::mem::size_of::<bindings::ScResource>()));
+        module.set_from_u8_slice(
+            resources_ptr,
+            std::slice::from_raw_parts(
+                resources_copied.as_ptr() as *const u8,
+                resources_size * std::mem::size_of::<bindings::ScResource>(),
+            ),
+        );
         let name_bytes = CStr::from_ptr(name).to_bytes();
         let name_ptr = module.allocate(name_bytes.len() as u32);
         module.set_from_u8_slice(name_ptr, name_bytes);
-        let result = map_internal_result(_sc_internal_compiler_rename_interface_variable(compiler as u32, resources_ptr.as_offset(), resources_size as u32, location, name_ptr.as_offset()));
+        let result = map_internal_result(_sc_internal_compiler_rename_interface_variable(
+            compiler as u32,
+            resources_ptr.as_offset(),
+            resources_size as u32,
+            location,
+            name_ptr.as_offset(),
+        ));
 
         for resource in resources_copied {
             module.free(emscripten::Pointer::from_offset(resource.name as u32));
@@ -445,8 +599,15 @@ pub fn sc_internal_compiler_get_work_group_size_specialization_constants(
     let module = emscripten::get_module();
     let constants_length = 3; // x, y, z
     unsafe {
-        let constants_ptr_to_ptr = module.allocate(std::mem::size_of::<bindings::ScSpecializationConstant>() as u32 * constants_length);
-        let result = map_internal_result(_sc_internal_compiler_get_work_group_size_specialization_constants(compiler as u32, constants_ptr_to_ptr.as_offset()));
+        let constants_ptr_to_ptr = module.allocate(
+            std::mem::size_of::<bindings::ScSpecializationConstant>() as u32 * constants_length,
+        );
+        let result = map_internal_result(
+            _sc_internal_compiler_get_work_group_size_specialization_constants(
+                compiler as u32,
+                constants_ptr_to_ptr.as_offset(),
+            ),
+        );
         let constants_ptr = module.get_u32(constants_ptr_to_ptr);
         *constants = constants_ptr as *mut bindings::ScSpecializationConstant;
         module.free(constants_ptr_to_ptr);
@@ -461,7 +622,10 @@ pub fn sc_internal_compiler_compile(
     let module = emscripten::get_module();
     unsafe {
         let shader_ptr_to_ptr = module.allocate(U32_SIZE);
-        let result = map_internal_result(_sc_internal_compiler_compile(compiler as u32, shader_ptr_to_ptr.as_offset()));
+        let result = map_internal_result(_sc_internal_compiler_compile(
+            compiler as u32,
+            shader_ptr_to_ptr.as_offset(),
+        ));
         let shader_ptr = module.get_u32(shader_ptr_to_ptr);
         *shader = shader_ptr as *const ::std::os::raw::c_char;
         module.free(shader_ptr_to_ptr);
@@ -475,7 +639,8 @@ pub fn sc_internal_compiler_delete(
     map_internal_result(_sc_internal_compiler_delete(compiler as u32))
 }
 
-pub fn sc_internal_free_pointer(pointer: *mut ::std::os::raw::c_void)
-    -> bindings::ScInternalResult {
+pub fn sc_internal_free_pointer(
+    pointer: *mut ::std::os::raw::c_void,
+) -> bindings::ScInternalResult {
     map_internal_result(_sc_internal_free_pointer(pointer as u32))
 }

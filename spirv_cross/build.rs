@@ -3,7 +3,7 @@ fn main() {
     let target_arch = std::env::var("CARGO_CFG_TARGET_ARCH");
     if let Ok(arch) = target_arch {
         if "wasm32" == arch {
-            return; 
+            return;
         }
     }
 
@@ -29,7 +29,7 @@ fn main() {
         .file("src/vendor/SPIRV-Cross/spirv_cross_parsed_ir.cpp")
         .file("src/vendor/SPIRV-Cross/spirv_parser.cpp")
         .file("src/vendor/SPIRV-Cross/spirv_cross_util.cpp");
-    
+
     #[cfg(feature = "glsl")]
     build
         .file("src/vendor/SPIRV-Cross/spirv_glsl.cpp")

@@ -1,5 +1,5 @@
-use crate::{compiler, ErrorCode};
 use crate::bindings as br;
+use crate::{compiler, ErrorCode};
 use std::marker::PhantomData;
 
 /// A stage or compute kernel.
@@ -477,8 +477,10 @@ where
         if self.compiler.has_been_compiled {
             self.compiler
                 .get_cleansed_entry_point_name(entry_point_name, execution_model)
-        } else  {
-            Err(ErrorCode::CompilationError(String::from("`compile` must be called first")))
+        } else {
+            Err(ErrorCode::CompilationError(String::from(
+                "`compile` must be called first",
+            )))
         }
     }
 

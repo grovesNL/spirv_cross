@@ -2,8 +2,8 @@
 //! Most functionality is generalized, but some functionality is specific to SPIRV-Cross.
 
 use crate::{bindings, ErrorCode};
+use js_sys::{global, Object, Reflect, Uint32Array, Uint8Array};
 use wasm_bindgen::prelude::*;
-use js_sys::{global, Object, Uint8Array, Uint32Array, Reflect};
 
 #[wasm_bindgen]
 extern "C" {
@@ -17,17 +17,21 @@ extern "C" {
 
 pub fn get_module() -> Module {
     const MODULE_NAME: &'static str = "sc_internal";
-    let module = Reflect::get(&global(), &JsValue::from_str(MODULE_NAME)).unwrap().into();
-    Module {
-        module
-    }
+    let module = Reflect::get(&global(), &JsValue::from_str(MODULE_NAME))
+        .unwrap()
+        .into();
+    Module { module }
 }
 
 const U32_SIZE: u32 = std::mem::size_of::<u32>() as u32;
 
-fn get_value<T>(object: &Object, key: &str) -> T 
-where T: std::convert::From<wasm_bindgen::JsValue> {
-    Reflect::get(object, &JsValue::from_str(key)).unwrap().into()
+fn get_value<T>(object: &Object, key: &str) -> T
+where
+    T: std::convert::From<wasm_bindgen::JsValue>,
+{
+    Reflect::get(object, &JsValue::from_str(key))
+        .unwrap()
+        .into()
 }
 
 /// An Emscripten pointer.
@@ -39,9 +43,7 @@ pub struct Pointer {
 
 impl Pointer {
     pub fn from_offset(offset: u32) -> Self {
-        Pointer {
-            offset,
-        }
+        Pointer { offset }
     }
 
     pub fn as_offset(&self) -> u32 {
@@ -69,13 +71,17 @@ impl Module {
     pub unsafe fn get_u32(&self, pointer: Pointer) -> u32 {
         let offset = &JsValue::from_f64((pointer.offset / U32_SIZE) as f64);
         // TODO: Remove Reflect
-        Reflect::get(&self.heap_u32(), offset).unwrap().as_f64().unwrap() as u32
+        Reflect::get(&self.heap_u32(), offset)
+            .unwrap()
+            .as_f64()
+            .unwrap() as u32
     }
 
     /// Set memory on the heap to `bytes`.
     pub unsafe fn set_from_u8_typed_array(&self, pointer: Pointer, bytes: Uint8Array) {
         let buffer: JsValue = self.heap_u8().buffer().into();
-        let memory = Uint8Array::new_with_byte_offset_and_length(&buffer, pointer.offset, bytes.length());
+        let memory =
+            Uint8Array::new_with_byte_offset_and_length(&buffer, pointer.offset, bytes.length());
         memory.set(&bytes, 0);
     }
 
@@ -96,8 +102,15 @@ impl Module {
 
     /// Clones all bytes from the heap into a `Vec<u8>` while `should_continue` returns `true`.
     /// Optionally include the last byte (i.e. to support peeking the final byte for nul-terminated strings).
-    pub unsafe fn read_bytes_into_vec_while<F>(&self, pointer: Pointer, should_continue: F, include_last_byte: bool) -> Vec<u8>
-    where F: Fn(u8, usize) -> bool {
+    pub unsafe fn read_bytes_into_vec_while<F>(
+        &self,
+        pointer: Pointer,
+        should_continue: F,
+        include_last_byte: bool,
+    ) -> Vec<u8>
+    where
+        F: Fn(u8, usize) -> bool,
+    {
         let mut bytes = Vec::new();
         let heap = &self.heap_u8();
         let start_offset = pointer.offset as usize;
@@ -120,8 +133,15 @@ impl Module {
     /// Clones all bytes from the heap into the pointer provided while `should_continue` returns `true`.
     /// Optionally include the last byte (i.e. to support peeking the final byte for nul-terminated strings).
     /// Assumes the memory at the pointer is large enough to hold all bytes read (based on when `should_continue` terminates).
-    pub unsafe fn read_bytes_into_pointer_while<F>(&self, pointer: Pointer, should_continue: F, include_last_byte: bool, into_pointer: *mut u8)
-    where F: Fn(u8, usize) -> bool {
+    pub unsafe fn read_bytes_into_pointer_while<F>(
+        &self,
+        pointer: Pointer,
+        should_continue: F,
+        include_last_byte: bool,
+        into_pointer: *mut u8,
+    ) where
+        F: Fn(u8, usize) -> bool,
+    {
         let heap = &self.heap_u8();
         let start_offset = pointer.offset as usize;
         let mut bytes_read = 0;

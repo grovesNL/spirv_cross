@@ -49,14 +49,14 @@ fn main() {
 		        "_sc_internal_compiler_delete",
 		        "_sc_internal_free_pointer"
             ]"#,
-	        "-s",
+            "-s",
             "../spirv_cross/src/wrapper.cpp",
             "../spirv_cross/src/vendor/SPIRV-Cross/spirv_cfg.cpp",
             "../spirv_cross/src/vendor/SPIRV-Cross/spirv_cross.cpp",
             "../spirv_cross/src/vendor/SPIRV-Cross/spirv_cross_parsed_ir.cpp",
             "../spirv_cross/src/vendor/SPIRV-Cross/spirv_parser.cpp",
             "../spirv_cross/src/vendor/SPIRV-Cross/spirv_cross_util.cpp",
-            "../spirv_cross/src/vendor/SPIRV-Cross/spirv_glsl.cpp"
+            "../spirv_cross/src/vendor/SPIRV-Cross/spirv_glsl.cpp",
         ])
         .output()
         .expect("Failed to run emcc");
