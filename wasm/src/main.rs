@@ -22,7 +22,11 @@ fn main() {
             "-s",
             "ALLOW_MEMORY_GROWTH=1",
             "-s",
+            // Force inclusion of `malloc` and `free` because they may not
+            // always be included automatically
             r#"EXPORTED_FUNCTIONS=[
+                "_malloc",
+                "_free",
 		        "_sc_internal_get_latest_exception_message",
                 "_sc_internal_compiler_glsl_new",
 		        "_sc_internal_compiler_glsl_set_options",
