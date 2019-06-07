@@ -97,3 +97,214 @@ vertex main0_out main0(main0_in in [[stage_in]], constant uniform_buffer_object&
         "main0"
     );
 }
+
+#[test]
+fn captures_output_to_buffer() {
+    let module =
+        spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
+    let mut ast = spirv::Ast::<msl::Target>::parse(&module).unwrap();
+    let compiler_options = msl::CompilerOptions {
+        capture_output_to_buffer: true,
+        output_buffer_index: 456,
+        ..Default::default()
+    };
+    ast.set_compiler_options(&compiler_options).unwrap();
+    assert_eq!(
+        ast.compile().unwrap(),
+        "\
+#include <metal_stdlib>
+#include <simd/simd.h>
+
+using namespace metal;
+
+struct uniform_buffer_object
+{
+    float4x4 u_model_view_projection;
+    float u_scale;
+};
+
+struct main0_out
+{
+    float3 v_normal [[user(locn0)]];
+    float4 gl_Position [[position]];
+};
+
+struct main0_in
+{
+    float4 a_position [[attribute(0)]];
+    float3 a_normal [[attribute(1)]];
+};
+
+vertex void main0(main0_in in [[stage_in]], constant uniform_buffer_object& _22 [[buffer(0)]], uint gl_VertexIndex [[vertex_id]], uint gl_BaseVertex [[base_vertex]], uint gl_InstanceIndex [[instance_id]], uint gl_BaseInstance [[base_instance]], device main0_out* spvOut [[buffer(456)]], device uint* spvIndirectParams [[buffer(29)]])
+{
+    device main0_out& out = spvOut[(gl_InstanceIndex - gl_BaseInstance) * spvIndirectParams[0] + gl_VertexIndex - gl_BaseVertex];
+    out.v_normal = in.a_normal;
+    out.gl_Position = (_22.u_model_view_projection * in.a_position) * _22.u_scale;
+}
+
+"
+    );
+}
+
+#[test]
+fn swizzles_texture_samples() {
+    let module =
+        spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/sampler.frag.spv")));
+    let mut ast = spirv::Ast::<msl::Target>::parse(&module).unwrap();
+    let compiler_options = msl::CompilerOptions {
+        swizzle_texture_samples: true,
+        swizzle_buffer_index: 123,
+        ..Default::default()
+    };
+    ast.set_compiler_options(&compiler_options).unwrap();
+    assert_eq!(
+        ast.compile().unwrap(),
+        "\
+#pragma clang diagnostic ignored \"-Wmissing-prototypes\"
+
+#include <metal_stdlib>
+#include <simd/simd.h>
+
+using namespace metal;
+
+struct main0_out
+{
+    float4 target0 [[color(0)]];
+};
+
+struct main0_in
+{
+    float2 v_uv [[user(locn0)]];
+};
+
+enum class spvSwizzle : uint
+{
+    none = 0,
+    zero,
+    one,
+    red,
+    green,
+    blue,
+    alpha
+};
+
+template<typename T> struct spvRemoveReference { typedef T type; };
+template<typename T> struct spvRemoveReference<thread T&> { typedef T type; };
+template<typename T> struct spvRemoveReference<thread T&&> { typedef T type; };
+template<typename T> inline constexpr thread T&& spvForward(thread typename spvRemoveReference<T>::type& x)
+{
+    return static_cast<thread T&&>(x);
+}
+template<typename T> inline constexpr thread T&& spvForward(thread typename spvRemoveReference<T>::type&& x)
+{
+    return static_cast<thread T&&>(x);
+}
+
+template<typename T>
+inline T spvGetSwizzle(vec<T, 4> x, T c, spvSwizzle s)
+{
+    switch (s)
+    {
+        case spvSwizzle::none:
+            return c;
+        case spvSwizzle::zero:
+            return 0;
+        case spvSwizzle::one:
+            return 1;
+        case spvSwizzle::red:
+            return x.r;
+        case spvSwizzle::green:
+            return x.g;
+        case spvSwizzle::blue:
+            return x.b;
+        case spvSwizzle::alpha:
+            return x.a;
+    }
+}
+
+// Wrapper function that swizzles texture samples and fetches.
+template<typename T>
+inline vec<T, 4> spvTextureSwizzle(vec<T, 4> x, uint s)
+{
+    if (!s)
+        return x;
+    return vec<T, 4>(spvGetSwizzle(x, x.r, spvSwizzle((s >> 0) & 0xFF)), spvGetSwizzle(x, x.g, spvSwizzle((s >> 8) & 0xFF)), spvGetSwizzle(x, x.b, spvSwizzle((s >> 16) & 0xFF)), spvGetSwizzle(x, x.a, spvSwizzle((s >> 24) & 0xFF)));
+}
+
+template<typename T>
+inline T spvTextureSwizzle(T x, uint s)
+{
+    return spvTextureSwizzle(vec<T, 4>(x, 0, 0, 1), s).x;
+}
+
+// Wrapper function that swizzles texture gathers.
+template<typename T, typename Tex, typename... Ts>
+inline vec<T, 4> spvGatherSwizzle(sampler s, const thread Tex& t, Ts... params, component c, uint sw) METAL_CONST_ARG(c)
+{
+    if (sw)
+    {
+        switch (spvSwizzle((sw >> (uint(c) * 8)) & 0xFF))
+        {
+            case spvSwizzle::none:
+                break;
+            case spvSwizzle::zero:
+                return vec<T, 4>(0, 0, 0, 0);
+            case spvSwizzle::one:
+                return vec<T, 4>(1, 1, 1, 1);
+            case spvSwizzle::red:
+                return t.gather(s, spvForward<Ts>(params)..., component::x);
+            case spvSwizzle::green:
+                return t.gather(s, spvForward<Ts>(params)..., component::y);
+            case spvSwizzle::blue:
+                return t.gather(s, spvForward<Ts>(params)..., component::z);
+            case spvSwizzle::alpha:
+                return t.gather(s, spvForward<Ts>(params)..., component::w);
+        }
+    }
+    switch (c)
+    {
+        case component::x:
+            return t.gather(s, spvForward<Ts>(params)..., component::x);
+        case component::y:
+            return t.gather(s, spvForward<Ts>(params)..., component::y);
+        case component::z:
+            return t.gather(s, spvForward<Ts>(params)..., component::z);
+        case component::w:
+            return t.gather(s, spvForward<Ts>(params)..., component::w);
+    }
+}
+
+// Wrapper function that swizzles depth texture gathers.
+template<typename T, typename Tex, typename... Ts>
+inline vec<T, 4> spvGatherCompareSwizzle(sampler s, const thread Tex& t, Ts... params, uint sw) 
+{
+    if (sw)
+    {
+        switch (spvSwizzle(sw & 0xFF))
+        {
+            case spvSwizzle::none:
+            case spvSwizzle::red:
+                break;
+            case spvSwizzle::zero:
+            case spvSwizzle::green:
+            case spvSwizzle::blue:
+            case spvSwizzle::alpha:
+                return vec<T, 4>(0, 0, 0, 0);
+            case spvSwizzle::one:
+                return vec<T, 4>(1, 1, 1, 1);
+        }
+    }
+    return t.gather_compare(s, spvForward<Ts>(params)...);
+}
+
+fragment main0_out main0(main0_in in [[stage_in]], constant uint* spvSwizzleConstants [[buffer(123)]], texture2d<float> u_texture [[texture(0)]], sampler u_sampler [[sampler(1)]])
+{
+    main0_out out = {};
+    constant uint& u_textureSwzl = spvSwizzleConstants[0];
+    out.target0 = spvTextureSwizzle(u_texture.sample(u_sampler, in.v_uv), u_textureSwzl);
+    return out;
+}
+
+"
+    );
+}

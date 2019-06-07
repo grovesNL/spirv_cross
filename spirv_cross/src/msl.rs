@@ -125,14 +125,37 @@ pub struct CompilerOptions {
     pub version: Version,
     /// Vertex compiler options.
     pub vertex: CompilerVertexOptions,
+    /// The buffer index to use for swizzle.
+    pub swizzle_buffer_index: u32,
+    // The buffer index to use for indirect params.
+    pub indirect_params_buffer_index: u32,
+    /// The buffer index to use for output.
+    pub output_buffer_index: u32,
+    /// The buffer index to use for patch output.
+    pub patch_output_buffer_index: u32,
+    /// The buffer index to use for tessellation factor.
+    pub tessellation_factor_buffer_index: u32,
+    /// The buffer index to use for buffer size.
+    pub buffer_size_buffer_index: u32,
     /// Whether the built-in point size should be enabled.
     pub enable_point_size_builtin: bool,
     /// Whether rasterization should be enabled.
     pub enable_rasterization: bool,
+    /// Whether to capture output to buffer.
+    pub capture_output_to_buffer: bool,
+    /// Whether to swizzle texture samples.
+    pub swizzle_texture_samples: bool,
+    /// Whether to place the origin of tessellation domain shaders in the lower left.
+    pub tessellation_domain_origin_lower_left: bool,
+    /// Whether to enable use of argument buffers (only compatible with MSL 2.0).
+    pub enable_argument_buffers: bool,
+    /// Whether to pad fragment output to have at least the number of components as the render pass.
+    pub pad_fragment_output_components: bool,
     /// MSL resource bindings overrides.
     pub resource_binding_overrides: BTreeMap<ResourceBindingLocation, ResourceBinding>,
     /// MSL vertex attribute overrides.
     pub vertex_attribute_overrides: BTreeMap<VertexAttributeLocation, VertexAttribute>,
+    
 }
 
 impl CompilerOptions {
@@ -144,6 +167,17 @@ impl CompilerOptions {
             version: self.version.as_raw(),
             enable_point_size_builtin: self.enable_point_size_builtin,
             disable_rasterization: !self.enable_rasterization,
+            swizzle_buffer_index: self.swizzle_buffer_index,
+            indirect_params_buffer_index: self.indirect_params_buffer_index,
+            shader_output_buffer_index: self.output_buffer_index,
+            shader_patch_output_buffer_index: self.patch_output_buffer_index,
+            shader_tess_factor_buffer_index: self.tessellation_factor_buffer_index,
+            buffer_size_buffer_index: self.buffer_size_buffer_index,
+            capture_output_to_buffer: self.capture_output_to_buffer,
+            swizzle_texture_samples: self.swizzle_texture_samples,
+            tess_domain_origin_lower_left: self.tessellation_domain_origin_lower_left,
+            argument_buffers: self.enable_argument_buffers,
+            pad_fragment_output_components: self.pad_fragment_output_components,
         }
     }
 }
@@ -154,8 +188,19 @@ impl Default for CompilerOptions {
             platform: Platform::macOS,
             version: Version::V1_2,
             vertex: CompilerVertexOptions::default(),
+            swizzle_buffer_index: 30,
+            indirect_params_buffer_index: 29,
+            output_buffer_index: 28,
+            patch_output_buffer_index: 27,
+            tessellation_factor_buffer_index: 26,
+            buffer_size_buffer_index: 25,
             enable_point_size_builtin: true,
             enable_rasterization: true,
+            capture_output_to_buffer: false,
+            swizzle_texture_samples: false,
+            tessellation_domain_origin_lower_left: false,
+            enable_argument_buffers: false,
+            pad_fragment_output_components: false,
             resource_binding_overrides: Default::default(),
             vertex_attribute_overrides: Default::default(),
         }

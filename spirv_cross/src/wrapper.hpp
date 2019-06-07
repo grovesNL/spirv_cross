@@ -11,7 +11,6 @@ typedef void ScInternalCompilerGlsl;
 
 extern "C"
 {
-
     enum ScInternalResult
     {
         Success,
@@ -60,6 +59,17 @@ extern "C"
         uint32_t version;
         bool enable_point_size_builtin;
         bool disable_rasterization;
+        uint32_t swizzle_buffer_index;
+        uint32_t indirect_params_buffer_index;
+        uint32_t shader_output_buffer_index;
+        uint32_t shader_patch_output_buffer_index;
+        uint32_t shader_tess_factor_buffer_index;
+        uint32_t buffer_size_buffer_index;
+        bool capture_output_to_buffer;
+        bool swizzle_texture_samples;
+        bool tess_domain_origin_lower_left;
+        bool argument_buffers;
+        bool pad_fragment_output_components;
     } ScMslCompilerOptions;
 
     typedef struct ScGlslCompilerOptions

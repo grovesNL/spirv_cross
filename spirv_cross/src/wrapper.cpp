@@ -142,8 +142,19 @@ extern "C"
                 auto msl_options = compiler_msl->get_msl_options();
                 msl_options.platform = static_cast<spirv_cross::CompilerMSL::Options::Platform>(options->platform);
                 msl_options.msl_version = options->version;
+                msl_options.swizzle_buffer_index = options->swizzle_buffer_index;
+                msl_options.indirect_params_buffer_index = options->indirect_params_buffer_index;
+                msl_options.shader_output_buffer_index = options->shader_output_buffer_index;
+                msl_options.shader_patch_output_buffer_index = options->shader_patch_output_buffer_index;
+                msl_options.shader_tess_factor_buffer_index = options->shader_tess_factor_buffer_index;
+                msl_options.buffer_size_buffer_index = options->buffer_size_buffer_index;
                 msl_options.enable_point_size_builtin = options->enable_point_size_builtin;
                 msl_options.disable_rasterization = options->disable_rasterization;
+                msl_options.capture_output_to_buffer = options->capture_output_to_buffer;
+                msl_options.swizzle_texture_samples = options->swizzle_texture_samples;
+                msl_options.tess_domain_origin_lower_left = options->tess_domain_origin_lower_left;
+                msl_options.argument_buffers = options->argument_buffers;
+                msl_options.pad_fragment_output_components = options->pad_fragment_output_components;
                 compiler_msl->set_msl_options(msl_options);
             } while (0);)
     }
