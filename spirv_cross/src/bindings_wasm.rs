@@ -1767,6 +1767,17 @@ pub mod root {
         pub version: u32,
         pub enable_point_size_builtin: bool,
         pub disable_rasterization: bool,
+        pub swizzle_buffer_index: u32,
+        pub indirect_params_buffer_index: u32,
+        pub shader_output_buffer_index: u32,
+        pub shader_patch_output_buffer_index: u32,
+        pub shader_tess_factor_buffer_index: u32,
+        pub buffer_size_buffer_index: u32,
+        pub capture_output_to_buffer: bool,
+        pub swizzle_texture_samples: bool,
+        pub tess_domain_origin_lower_left: bool,
+        pub argument_buffers: bool,
+        pub pad_fragment_output_components: bool,
     }
     impl Clone for ScMslCompilerOptions {
         fn clone(&self) -> Self { *self }
