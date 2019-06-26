@@ -322,3 +322,6 @@ impl spirv::Ast<Target> {
         }
     }
 }
+
+// TODO: Generate with bindgen
+pub const ARGUMENT_BUFFER_BINDING: u32 = !3;

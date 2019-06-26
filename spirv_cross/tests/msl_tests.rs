@@ -1,5 +1,7 @@
 use spirv_cross::{msl, spirv};
 
+use std::collections::BTreeMap;
+
 mod common;
 use crate::common::words_from_bytes;
 
@@ -297,7 +299,7 @@ inline vec<T, 4> spvGatherCompareSwizzle(sampler s, const thread Tex& t, Ts... p
     return t.gather_compare(s, spvForward<Ts>(params)...);
 }
 
-fragment main0_out main0(main0_in in [[stage_in]], constant uint* spvSwizzleConstants [[buffer(123)]], texture2d<float> u_texture [[texture(0)]], sampler u_sampler [[sampler(1)]])
+fragment main0_out main0(main0_in in [[stage_in]], constant uint* spvSwizzleConstants [[buffer(123)]], texture2d<float> u_texture [[texture(0)]], sampler u_sampler [[sampler(0)]])
 {
     main0_out out = {};
     constant uint& u_textureSwzl = spvSwizzleConstants[0];
@@ -306,5 +308,62 @@ fragment main0_out main0(main0_in in [[stage_in]], constant uint* spvSwizzleCons
 }
 
 "
+    );
+}
+
+#[test]
+fn sets_argument_buffer_index() {
+    let module =
+        spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/sampler.frag.spv")));
+    let mut ast = spirv::Ast::<msl::Target>::parse(&module).unwrap();
+    let mut resource_binding_overrides = BTreeMap::new();
+    resource_binding_overrides.insert(spirv_cross::msl::ResourceBindingLocation {
+        stage: spirv::ExecutionModel::Fragment,
+        desc_set: 0,
+        binding: msl::ARGUMENT_BUFFER_BINDING,
+    }, spirv_cross::msl::ResourceBinding {
+        buffer_id: 2,
+        texture_id: 0,
+        sampler_id: 0,
+    });
+    let compiler_options = msl::CompilerOptions {
+        resource_binding_overrides,
+        version: spirv_cross::msl::Version::V2_0,
+        enable_argument_buffers: true,
+        ..Default::default()
+    };
+    ast.set_compiler_options(&compiler_options).unwrap();
+    assert_eq!(
+        ast.compile().unwrap(),
+        "\
+#include <metal_stdlib>
+#include <simd/simd.h>
+
+using namespace metal;
+
+struct spvDescriptorSetBuffer0
+{
+    texture2d<float> u_texture [[id(0)]];
+    sampler u_sampler [[id(1)]];
+};
+
+struct main0_out
+{
+    float4 target0 [[color(0)]];
+};
+
+struct main0_in
+{
+    float2 v_uv [[user(locn0)]];
+};
+
+fragment main0_out main0(main0_in in [[stage_in]], constant spvDescriptorSetBuffer0& spvDescriptorSet0 [[buffer(2)]])
+{
+    main0_out out = {};
+    out.target0 = spvDescriptorSet0.u_texture.sample(spvDescriptorSet0.u_sampler, in.v_uv);
+    return out;
+}
+
+",
     );
 }
