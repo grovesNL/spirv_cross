@@ -297,7 +297,7 @@ inline vec<T, 4> spvGatherCompareSwizzle(sampler s, const thread Tex& t, Ts... p
     return t.gather_compare(s, spvForward<Ts>(params)...);
 }
 
-fragment main0_out main0(main0_in in [[stage_in]], constant uint* spvSwizzleConstants [[buffer(123)]], texture2d<float> u_texture [[texture(0)]], sampler u_sampler [[sampler(1)]])
+fragment main0_out main0(main0_in in [[stage_in]], constant uint* spvSwizzleConstants [[buffer(123)]], texture2d<float> u_texture [[texture(0)]], sampler u_sampler [[sampler(0)]])
 {
     main0_out out = {};
     constant uint& u_textureSwzl = spvSwizzleConstants[0];
