@@ -7,8 +7,11 @@ fn main() {
         }
     }
 
+    let target_vendor = std::env::var("CARGO_CFG_TARGET_VENDOR");
+    let is_apple = target_vendor.is_ok() && target_vendor.unwrap() == "apple";
+
     let target_os = std::env::var("CARGO_CFG_TARGET_OS");
-    let is_macos = target_os.is_ok() && target_os.unwrap() == "macos";
+    let is_ios = target_os.is_ok() && target_os.unwrap() == "ios";
 
     let mut build = cc::Build::new();
     build.cpp(true);
@@ -16,7 +19,7 @@ fn main() {
     let compiler = build.try_get_compiler();
     let is_clang = compiler.is_ok() && compiler.unwrap().is_like_clang();
 
-    if is_macos && is_clang {
+    if is_apple && (is_clang || is_ios) {
         build.flag("-std=c++14").cpp_set_stdlib("c++");
     } else {
         build.flag_if_supported("-std=c++14");
