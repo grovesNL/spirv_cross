@@ -1,9 +1,11 @@
 use crate::bindings as br;
 use crate::{compiler, spirv, ErrorCode};
+
 use std::collections::BTreeMap;
 use std::ffi::CStr;
 use std::marker::PhantomData;
 use std::ptr;
+use std::u8;
 
 /// A MSL target.
 #[derive(Debug, Clone)]
@@ -12,6 +14,7 @@ pub enum Target {}
 pub struct TargetData {
     vertex_attribute_overrides: Vec<br::SPIRV_CROSS_NAMESPACE::MSLVertexAttr>,
     resource_binding_overrides: Vec<br::SPIRV_CROSS_NAMESPACE::MSLResourceBinding>,
+    const_samplers: Vec<br::MslConstSamplerMapping>,
 }
 
 impl spirv::Target for Target {
@@ -67,6 +70,102 @@ pub struct ResourceBinding {
     pub buffer_id: u32,
     pub texture_id: u32,
     pub sampler_id: u32,
+}
+
+/// Location of a sampler binding to override
+#[derive(Debug, Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]
+pub struct SamplerLocation {
+    pub desc_set: u32,
+    pub binding: u32,
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
+pub enum SamplerCoord {
+    Normalized = 0,
+    Pixel = 1,
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
+pub enum SamplerFilter {
+    Nearest = 0,
+    Linear = 1,
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
+pub enum SamplerMipFilter {
+    None = 0,
+    Nearest = 1,
+    Linear = 2,
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
+pub enum SamplerAddress {
+    ClampToZero = 0,
+    ClampToEdge = 1,
+    ClampToBorder = 2,
+    Repeat = 3,
+    MirroredRepeat = 4,
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
+pub enum SamplerCompareFunc {
+    Never = 0,
+    Less = 1,
+    LessEqual = 2,
+    Greater = 3,
+    GreaterEqual = 4,
+    Equal = 5,
+    NotEqual = 6,
+    Always = 7,
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
+pub enum SamplerBorderColor {
+    TransparentBlack = 0,
+    OpaqueBlack = 1,
+    OpaqueWhite = 2,
+}
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
+pub struct LodBase16(u8);
+
+impl LodBase16 {
+    pub const ZERO: Self = LodBase16(0);
+    pub const MAX: Self = LodBase16(!0);
+}
+impl From<f32> for LodBase16 {
+    fn from(v: f32) -> Self {
+        LodBase16((v * 16.0).max(0.0).min(u8::MAX as f32) as u8)
+    }
+}
+impl Into<f32> for LodBase16 {
+    fn into(self) -> f32 {
+        self.0 as f32 / 16.0
+    }
+}
+
+/// Data fully defining a constant sampler.
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
+pub struct SamplerData {
+    pub coord: SamplerCoord,
+    pub min_filter: SamplerFilter,
+    pub mag_filter: SamplerFilter,
+    pub mip_filter: SamplerMipFilter,
+    pub s_address: SamplerAddress,
+    pub t_address: SamplerAddress,
+    pub r_address: SamplerAddress,
+    pub compare_func: SamplerCompareFunc,
+    pub border_color: SamplerBorderColor,
+    pub lod_clamp_min: LodBase16,
+    pub lod_clamp_max: LodBase16,
+    pub max_anisotropy: i32,
 }
 
 /// A MSL shader platform.
@@ -155,7 +254,8 @@ pub struct CompilerOptions {
     pub resource_binding_overrides: BTreeMap<ResourceBindingLocation, ResourceBinding>,
     /// MSL vertex attribute overrides.
     pub vertex_attribute_overrides: BTreeMap<VertexAttributeLocation, VertexAttribute>,
-    
+    /// MSL const sampler mappings.
+    pub const_samplers: BTreeMap<SamplerLocation, SamplerData>,
 }
 
 impl CompilerOptions {
@@ -203,6 +303,7 @@ impl Default for CompilerOptions {
             pad_fragment_output_components: false,
             resource_binding_overrides: Default::default(),
             vertex_attribute_overrides: Default::default(),
+            const_samplers: Default::default(),
         }
     }
 }
@@ -224,6 +325,7 @@ impl<'a> spirv::Parse<Target> for spirv::Ast<Target> {
                 target_data: TargetData {
                     resource_binding_overrides: Vec::new(),
                     vertex_attribute_overrides: Vec::new(),
+                    const_samplers: Vec::new(),
                 },
                 has_been_compiled: false,
             },
@@ -277,6 +379,35 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
             }),
         );
 
+        self.compiler.target_data.const_samplers.clear();
+        self.compiler.target_data.const_samplers.extend(
+            options.const_samplers.iter().map(|(loc, data)| unsafe {
+                use std::mem::transmute;
+                br::MslConstSamplerMapping {
+                    desc_set: loc.desc_set,
+                    binding: loc.binding,
+                    sampler: br::SPIRV_CROSS_NAMESPACE::MSLConstexprSampler {
+                        coord: transmute(data.coord),
+                        min_filter: transmute(data.min_filter),
+                        mag_filter: transmute(data.mag_filter),
+                        mip_filter: transmute(data.mip_filter),
+                        s_address: transmute(data.s_address),
+                        t_address: transmute(data.t_address),
+                        r_address: transmute(data.r_address),
+                        compare_func: transmute(data.compare_func),
+                        border_color: transmute(data.border_color),
+                        lod_clamp_min: data.lod_clamp_min.into(),
+                        lod_clamp_max: data.lod_clamp_max.into(),
+                        max_anisotropy: data.max_anisotropy,
+                        compare_enable: data.compare_func != SamplerCompareFunc::Always,
+                        lod_clamp_enable: data.lod_clamp_min != LodBase16::ZERO ||
+                            data.lod_clamp_max != LodBase16::MAX,
+                        anisotropy_enable: data.max_anisotropy != 0,
+                    },
+                }
+            }),
+        );
+
         Ok(())
     }
 
@@ -290,6 +421,7 @@ impl spirv::Ast<Target> {
     fn compile_internal(&self) -> Result<String, ErrorCode> {
         let vat_overrides = &self.compiler.target_data.vertex_attribute_overrides;
         let res_overrides = &self.compiler.target_data.resource_binding_overrides;
+        let const_samplers = &self.compiler.target_data.const_samplers;
         unsafe {
             let mut shader_ptr = ptr::null();
             check!(br::sc_internal_compiler_msl_compile(
@@ -299,6 +431,8 @@ impl spirv::Ast<Target> {
                 vat_overrides.len(),
                 res_overrides.as_ptr(),
                 res_overrides.len(),
+                const_samplers.as_ptr(),
+                const_samplers.len(),
             ));
             let shader = match CStr::from_ptr(shader_ptr).to_str() {
                 Ok(v) => v.to_owned(),
