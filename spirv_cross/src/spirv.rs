@@ -1,4 +1,3 @@
-use crate::bindings as br;
 use crate::{compiler, ErrorCode};
 use std::marker::PhantomData;
 
@@ -175,8 +174,10 @@ pub enum BuiltIn {
     IncomingRayFlagsNv,
 }
 
-pub(crate) fn built_in_as_raw(built_in: Option<BuiltIn>) -> br::spv::BuiltIn {
+#[cfg(feature = "msl")]
+pub(crate) fn built_in_as_raw(built_in: Option<BuiltIn>) -> crate::bindings::spv::BuiltIn {
     use BuiltIn::*;
+    use crate::bindings as br;
     match built_in {
         None => br::spv::BuiltIn::BuiltInMax,
         Some(Position) => br::spv::BuiltIn::BuiltInPosition,
