@@ -108,7 +108,8 @@ extern "C"
 
     ScInternalResult sc_internal_compiler_msl_compile(const ScInternalCompilerBase *compiler, const char **shader,
                                                       const spirv_cross::MSLVertexAttr *p_vat_overrides, const size_t vat_override_count,
-                                                      const spirv_cross::MSLResourceBinding *p_res_overrides, const size_t res_override_count)
+                                                      const spirv_cross::MSLResourceBinding *p_res_overrides, const size_t res_override_count,
+                                                      const MslConstSamplerMapping *p_const_samplers, const size_t const_sampler_count)
     {
         INTERNAL_RESULT(
             do {
@@ -122,6 +123,12 @@ extern "C"
                 for (size_t i = 0; i < res_override_count; i++)
                 {
                     compiler_msl->add_msl_resource_binding(p_res_overrides[i]);
+                }
+
+                for (size_t i = 0; i < const_sampler_count; i++)
+                {
+                    const auto& mapping = p_const_samplers[i];
+                    compiler_msl->remap_constexpr_sampler_by_binding(mapping.desc_set, mapping.binding, mapping.sampler);
                 }
 
                 *shader = strdup(compiler_msl->compile().c_str());

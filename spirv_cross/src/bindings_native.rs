@@ -1701,6 +1701,81 @@ pub mod root {
         impl Clone for MSLResourceBinding {
             fn clone(&self) -> Self { *self }
         }
+        #[repr(u32)]
+        #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+        pub enum MSLSamplerCoord {
+            MSL_SAMPLER_COORD_NORMALIZED = 0,
+            MSL_SAMPLER_COORD_PIXEL = 1,
+            MSL_SAMPLER_INT_MAX = 2147483647,
+        }
+        #[repr(u32)]
+        #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+        pub enum MSLSamplerFilter {
+            MSL_SAMPLER_FILTER_NEAREST = 0,
+            MSL_SAMPLER_FILTER_LINEAR = 1,
+            MSL_SAMPLER_FILTER_INT_MAX = 2147483647,
+        }
+        #[repr(u32)]
+        #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+        pub enum MSLSamplerMipFilter {
+            MSL_SAMPLER_MIP_FILTER_NONE = 0,
+            MSL_SAMPLER_MIP_FILTER_NEAREST = 1,
+            MSL_SAMPLER_MIP_FILTER_LINEAR = 2,
+            MSL_SAMPLER_MIP_FILTER_INT_MAX = 2147483647,
+        }
+        #[repr(u32)]
+        #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+        pub enum MSLSamplerAddress {
+            MSL_SAMPLER_ADDRESS_CLAMP_TO_ZERO = 0,
+            MSL_SAMPLER_ADDRESS_CLAMP_TO_EDGE = 1,
+            MSL_SAMPLER_ADDRESS_CLAMP_TO_BORDER = 2,
+            MSL_SAMPLER_ADDRESS_REPEAT = 3,
+            MSL_SAMPLER_ADDRESS_MIRRORED_REPEAT = 4,
+            MSL_SAMPLER_ADDRESS_INT_MAX = 2147483647,
+        }
+        #[repr(u32)]
+        #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+        pub enum MSLSamplerCompareFunc {
+            MSL_SAMPLER_COMPARE_FUNC_NEVER = 0,
+            MSL_SAMPLER_COMPARE_FUNC_LESS = 1,
+            MSL_SAMPLER_COMPARE_FUNC_LESS_EQUAL = 2,
+            MSL_SAMPLER_COMPARE_FUNC_GREATER = 3,
+            MSL_SAMPLER_COMPARE_FUNC_GREATER_EQUAL = 4,
+            MSL_SAMPLER_COMPARE_FUNC_EQUAL = 5,
+            MSL_SAMPLER_COMPARE_FUNC_NOT_EQUAL = 6,
+            MSL_SAMPLER_COMPARE_FUNC_ALWAYS = 7,
+            MSL_SAMPLER_COMPARE_FUNC_INT_MAX = 2147483647,
+        }
+        #[repr(u32)]
+        #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+        pub enum MSLSamplerBorderColor {
+            MSL_SAMPLER_BORDER_COLOR_TRANSPARENT_BLACK = 0,
+            MSL_SAMPLER_BORDER_COLOR_OPAQUE_BLACK = 1,
+            MSL_SAMPLER_BORDER_COLOR_OPAQUE_WHITE = 2,
+            MSL_SAMPLER_BORDER_COLOR_INT_MAX = 2147483647,
+        }
+        #[repr(C)]
+        #[derive(Debug, Copy)]
+        pub struct MSLConstexprSampler {
+            pub coord: root::SPIRV_CROSS_NAMESPACE::MSLSamplerCoord,
+            pub min_filter: root::SPIRV_CROSS_NAMESPACE::MSLSamplerFilter,
+            pub mag_filter: root::SPIRV_CROSS_NAMESPACE::MSLSamplerFilter,
+            pub mip_filter: root::SPIRV_CROSS_NAMESPACE::MSLSamplerMipFilter,
+            pub s_address: root::SPIRV_CROSS_NAMESPACE::MSLSamplerAddress,
+            pub t_address: root::SPIRV_CROSS_NAMESPACE::MSLSamplerAddress,
+            pub r_address: root::SPIRV_CROSS_NAMESPACE::MSLSamplerAddress,
+            pub compare_func: root::SPIRV_CROSS_NAMESPACE::MSLSamplerCompareFunc,
+            pub border_color: root::SPIRV_CROSS_NAMESPACE::MSLSamplerBorderColor,
+            pub lod_clamp_min: f32,
+            pub lod_clamp_max: f32,
+            pub max_anisotropy: ::std::os::raw::c_int,
+            pub compare_enable: bool,
+            pub lod_clamp_enable: bool,
+            pub anisotropy_enable: bool,
+        }
+        impl Clone for MSLConstexprSampler {
+            fn clone(&self) -> Self { *self }
+        }
     }
     pub type ScInternalCompilerBase = ::std::os::raw::c_void;
     pub type ScInternalCompilerHlsl = ::std::os::raw::c_void;
@@ -1879,6 +1954,16 @@ pub mod root {
                                                                       usize)
          -> root::ScInternalResult;
     }
+    #[repr(C)]
+    #[derive(Debug, Copy)]
+    pub struct MslConstSamplerMapping {
+        pub desc_set: u32,
+        pub binding: u32,
+        pub sampler: root::SPIRV_CROSS_NAMESPACE::MSLConstexprSampler,
+    }
+    impl Clone for MslConstSamplerMapping {
+        fn clone(&self) -> Self { *self }
+    }
     extern "C" {
         pub fn sc_internal_compiler_msl_new(compiler:
                                                 *mut *mut root::ScInternalCompilerMsl,
@@ -1909,7 +1994,10 @@ pub mod root {
                                                 vat_override_count: usize,
                                                 p_res_overrides:
                                                     *const root::SPIRV_CROSS_NAMESPACE::MSLResourceBinding,
-                                                res_override_count: usize)
+                                                res_override_count: usize,
+                                                p_const_samplers:
+                                                    *const root::MslConstSamplerMapping,
+                                                const_sampler_count: usize)
          -> root::ScInternalResult;
     }
     extern "C" {
