@@ -53,6 +53,9 @@ extern "C" {
     fn _sc_internal_compiler_unset_decoration(compiler: u32, id: u32, decoration: u32) -> u32;
 
     #[wasm_bindgen(js_namespace = sc_internal)]
+    fn _sc_internal_compiler_get_name(compiler: u32, id: u32, name: u32) -> u32;
+
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_set_name(compiler: u32, id: u32, name: u32) -> u32;
 
     #[wasm_bindgen(js_namespace = sc_internal)]
@@ -287,6 +290,26 @@ pub fn sc_internal_compiler_unset_decoration(
         id,
         decoration as u32,
     ))
+}
+
+pub fn sc_internal_compiler_get_name(
+    compiler: *const bindings::ScInternalCompilerBase,
+    id: u32,
+    name: *mut *const ::std::os::raw::c_char,
+) -> bindings::ScInternalResult {
+    let module = emscripten::get_module();
+    unsafe {
+        let name_ptr_to_ptr = module.allocate(U32_SIZE);
+        let result = map_internal_result(_sc_internal_compiler_get_name(
+            compiler as u32,
+            id,
+            name_ptr_to_ptr.as_offset(),
+        ));
+        let name_ptr = module.get_u32(name_ptr_to_ptr);
+        *name = name_ptr as *const ::std::os::raw::c_char;
+        module.free(name_ptr_to_ptr);
+        result
+    }
 }
 
 pub fn sc_internal_compiler_set_name(

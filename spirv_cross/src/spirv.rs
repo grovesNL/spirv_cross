@@ -444,6 +444,11 @@ where
         self.compiler.get_decoration(id, decoration)
     }
 
+	/// Gets a name. If not defined, an empty string will be returned.
+    pub fn get_name(&mut self, id: u32) -> Result<String, ErrorCode> {
+        self.compiler.get_name(id)
+    }
+
     /// Sets a name.
     pub fn set_name(&mut self, id: u32, name: &str) -> Result<(), ErrorCode> {
         self.compiler.set_name(id, name)

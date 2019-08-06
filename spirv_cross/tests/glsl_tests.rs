@@ -190,6 +190,7 @@ fn ast_can_rename_combined_image_samplers() {
             + "_"
             + &cis.combined_id.to_string();
         ast.set_name(cis.combined_id, &new_name).unwrap();
+        assert_eq!(new_name, ast.get_name(cis.combined_id).unwrap());
     }
 
     assert_eq!(

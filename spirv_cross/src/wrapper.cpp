@@ -226,6 +226,15 @@ extern "C"
         INTERNAL_RESULT(((spirv_cross::Compiler *)compiler)->set_decoration(id, decoration, argument);)
     }
 
+    ScInternalResult sc_internal_compiler_get_name(const ScInternalCompilerBase *compiler, const uint32_t id, const char **name)
+    {
+        INTERNAL_RESULT(
+            do {
+                auto const _name = ((spirv_cross::Compiler *)compiler)->get_name(id);
+                *name = strdup(_name.c_str());
+            } while (0);)
+    }
+
     ScInternalResult sc_internal_compiler_set_name(const ScInternalCompilerBase *compiler, const uint32_t id, const char *name)
     {
         INTERNAL_RESULT(((spirv_cross::Compiler *)compiler)->set_name(id, std::string(name));)
