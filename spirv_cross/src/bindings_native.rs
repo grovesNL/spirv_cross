@@ -2053,6 +2053,14 @@ pub mod root {
          -> root::ScInternalResult;
     }
     extern "C" {
+        pub fn sc_internal_compiler_get_name(compiler:
+                                                 *const root::ScInternalCompilerBase,
+                                             id: u32,
+                                             name:
+                                                 *mut *const ::std::os::raw::c_char)
+         -> root::ScInternalResult;
+    }
+    extern "C" {
         pub fn sc_internal_compiler_set_name(compiler:
                                                  *const root::ScInternalCompilerBase,
                                              id: u32,

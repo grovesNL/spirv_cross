@@ -166,6 +166,20 @@ impl<TTargetData> Compiler<TTargetData> {
         Ok(result)
     }
 
+    pub fn get_name(&mut self, id: u32) -> Result<String, ErrorCode> {
+        unsafe {
+            let mut name_ptr = ptr::null();
+            check!(br::sc_internal_compiler_get_name(
+                self.sc_compiler,
+                id,
+                &mut name_ptr,
+            ));
+            let name = read_string_from_ptr(name_ptr)?;
+            check!(br::sc_internal_free_pointer(name_ptr as *mut c_void));
+            Ok(name)
+        }
+    }
+
     pub fn set_name(&mut self, id: u32, name: &str) -> Result<(), ErrorCode> {
         let name = CString::new(name);
         unsafe {
