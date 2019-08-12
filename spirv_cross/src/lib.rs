@@ -45,9 +45,9 @@ mod compiler;
 
 #[cfg(feature = "glsl")]
 pub mod glsl;
-#[cfg(feature = "hlsl")]
+#[cfg(all(feature = "hlsl", not(target_arch = "wasm32")))]
 pub mod hlsl;
-#[cfg(feature = "msl")]
+#[cfg(all(feature = "msl", not(target_arch = "wasm32")))]
 pub mod msl;
 
 pub mod spirv;
