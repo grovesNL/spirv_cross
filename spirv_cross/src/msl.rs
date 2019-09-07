@@ -185,6 +185,7 @@ pub enum Version {
     V1_2,
     V2_0,
     V2_1,
+    V2_2,
 }
 
 impl Version {
@@ -196,6 +197,7 @@ impl Version {
             V1_2 => 10200,
             V2_0 => 20000,
             V2_1 => 20100,
+            V2_2 => 20200,
         }
     }
 }
