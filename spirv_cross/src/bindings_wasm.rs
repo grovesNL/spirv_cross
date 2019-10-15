@@ -1624,8 +1624,15 @@ pub mod root {
     pub mod std {
         #[allow(unused_imports)]
         use self::super::super::root;
-        pub type string = [u64; 3usize];
+        pub type string = [u64; 4usize];
     }
+    pub mod __gnu_cxx {
+        #[allow(unused_imports)]
+        use self::super::super::root;
+    }
+    pub type __uint8_t = ::std::os::raw::c_uchar;
+    pub type __int32_t = ::std::os::raw::c_int;
+    pub type __uint32_t = ::std::os::raw::c_uint;
     pub mod SPIRV_CROSS_NAMESPACE {
         #[allow(unused_imports)]
         use self::super::super::root;

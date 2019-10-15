@@ -1624,8 +1624,15 @@ pub mod root {
     pub mod std {
         #[allow(unused_imports)]
         use self::super::super::root;
-        pub type string = [u64; 3usize];
+        pub type string = [u64; 4usize];
     }
+    pub mod __gnu_cxx {
+        #[allow(unused_imports)]
+        use self::super::super::root;
+    }
+    pub type __uint8_t = ::std::os::raw::c_uchar;
+    pub type __int32_t = ::std::os::raw::c_int;
+    pub type __uint32_t = ::std::os::raw::c_uint;
     pub mod SPIRV_CROSS_NAMESPACE {
         #[allow(unused_imports)]
         use self::super::super::root;
@@ -1798,6 +1805,16 @@ pub mod root {
         pub work_group_size_z: u32,
     }
     impl Clone for ScEntryPoint {
+        fn clone(&self) -> Self { *self }
+    }
+    #[repr(C)]
+    #[derive(Debug, Copy)]
+    pub struct ScBufferRange {
+        pub index: ::std::os::raw::c_uint,
+        pub offset: usize,
+        pub range: usize,
+    }
+    impl Clone for ScBufferRange {
         fn clone(&self) -> Self { *self }
     }
     #[repr(C)]
@@ -2074,6 +2091,15 @@ pub mod root {
                                                      entry_points:
                                                          *mut *mut root::ScEntryPoint,
                                                      size: *mut usize)
+         -> root::ScInternalResult;
+    }
+    extern "C" {
+        pub fn sc_internal_compiler_get_active_buffer_ranges(compiler:
+                                                                 *const root::ScInternalCompilerBase,
+                                                             id: u32,
+                                                             active_buffer_ranges:
+                                                                 *mut *mut root::ScBufferRange,
+                                                             size: *mut usize)
          -> root::ScInternalResult;
     }
     extern "C" {

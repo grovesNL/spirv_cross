@@ -274,6 +274,39 @@ impl<TTargetData> Compiler<TTargetData> {
         }
     }
 
+    pub fn get_active_buffer_ranges(&self, id: u32) -> Result<Vec<spirv::BufferRange>, ErrorCode> {
+        let mut active_buffer_ranges_raw = ptr::null_mut();
+        let mut active_buffer_ranges_raw_length = 0 as usize;
+
+        unsafe {
+            check!(br::sc_internal_compiler_get_active_buffer_ranges(
+                self.sc_compiler,
+                id,
+                &mut active_buffer_ranges_raw,
+                &mut active_buffer_ranges_raw_length,
+            ));
+
+            let active_buffer_ranges = (0..active_buffer_ranges_raw_length)
+                .map(|offset| {
+                    let active_buffer_range_raw_ptr = active_buffer_ranges_raw.add(offset);
+                    let active_buffer_range_raw =
+                        read_from_ptr::<br::ScBufferRange>(active_buffer_range_raw_ptr);
+                    spirv::BufferRange {
+                        index: active_buffer_range_raw.index,
+                        offset: active_buffer_range_raw.offset,
+                        range: active_buffer_range_raw.range,
+                    }
+                })
+                .collect::<Vec<_>>();
+
+            check!(br::sc_internal_free_pointer(
+                active_buffer_ranges_raw as *mut c_void
+            ));
+
+            Ok(active_buffer_ranges)
+        }
+    }
+
     pub fn get_cleansed_entry_point_name(
         &self,
         entry_point_name: &str,
