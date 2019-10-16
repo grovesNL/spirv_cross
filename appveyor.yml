@@ -12,6 +12,8 @@ install:
   - curl -sSf -o rustup-init.exe https://win.rustup.rs
   - rustup-init.exe --default-host %TARGET% --default-toolchain %CHANNEL% -y
   - set PATH=%PATH%;C:\msys64\mingw64\bin;C:\Users\appveyor\.cargo\bin
+  - if "%TARGET%" == "x86_64-pc-windows-gnu" ( rustup component remove rust-mingw )
+  - if "%TARGET%" == "x86_64-pc-windows-gnu" ( for %%I in (crt2.o dllcrt2.o libmingwex.a libmsvcrt.a) do xcopy /Y "C:\msys64\mingw64\x86_64-w64-mingw32\lib\%%I" "C:\Users\appveyor\.rustup\toolchains\stable-%TARGET%\lib\rustlib\%TARGET%\lib\" )
   - rustc -Vv
   - cargo -V
   - git submodule update --init --recursive
