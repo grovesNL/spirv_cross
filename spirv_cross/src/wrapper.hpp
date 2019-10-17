@@ -27,6 +27,13 @@ extern "C"
         uint32_t work_group_size_z;
     } ScEntryPoint;
 
+    typedef struct ScBufferRange
+    {
+        unsigned index;
+        size_t offset;
+        size_t range;
+    } ScBufferRange;
+
     typedef struct ScCombinedImageSampler
     {
         uint32_t combined_id;
@@ -161,6 +168,7 @@ extern "C"
     ScInternalResult sc_internal_compiler_get_name(const ScInternalCompilerBase *compiler, const uint32_t id, const char **name);
     ScInternalResult sc_internal_compiler_set_name(const ScInternalCompilerBase *compiler, const uint32_t id, const char *name);
     ScInternalResult sc_internal_compiler_get_entry_points(const ScInternalCompilerBase *compiler, ScEntryPoint **entry_points, size_t *size);
+    ScInternalResult sc_internal_compiler_get_active_buffer_ranges(const ScInternalCompilerBase *compiler, uint32_t id, ScBufferRange **active_buffer_ranges, size_t *size);
     ScInternalResult sc_internal_compiler_get_cleansed_entry_point_name(const ScInternalCompilerBase *compiler, const char *original_entry_point_name, const spv::ExecutionModel execution_model, const char **compiled_entry_point_name);
     ScInternalResult sc_internal_compiler_get_shader_resources(const ScInternalCompilerBase *compiler, ScShaderResources *shader_resources);
     ScInternalResult sc_internal_compiler_get_specialization_constants(const ScInternalCompilerBase *compiler, ScSpecializationConstant **constants, size_t *size);

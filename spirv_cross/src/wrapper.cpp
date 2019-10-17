@@ -268,6 +268,26 @@ extern "C"
             } while (0);)
     }
 
+    ScInternalResult sc_internal_compiler_get_active_buffer_ranges(const ScInternalCompilerBase *compiler, uint32_t id, ScBufferRange **active_buffer_ranges, size_t *size)
+    {
+        INTERNAL_RESULT(
+            do {
+                auto const &comp = *((spirv_cross::Compiler *)compiler);
+                auto const &sc_active_buffer_ranges = comp.get_active_buffer_ranges(id);
+                auto const sc_size = sc_active_buffer_ranges.size();
+
+                *active_buffer_ranges = (ScBufferRange *)malloc(sc_size * sizeof(ScBufferRange));
+                *size = sc_size;
+                for (uint32_t i = 0; i < sc_size; i++)
+                {
+                    auto const &sc_active_buffer_range = sc_active_buffer_ranges[i];
+                    active_buffer_ranges[i]->index = sc_active_buffer_range.index;
+                    active_buffer_ranges[i]->offset = sc_active_buffer_range.offset;
+                    active_buffer_ranges[i]->range = sc_active_buffer_range.range;
+                }
+            } while (0);)
+    }
+
     ScInternalResult sc_internal_compiler_get_cleansed_entry_point_name(const ScInternalCompilerBase *compiler, const char *original_entry_point_name, const spv::ExecutionModel execution_model, const char **compiled_entry_point_name)
     {
         INTERNAL_RESULT(

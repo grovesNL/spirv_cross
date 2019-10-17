@@ -290,6 +290,17 @@ pub struct EntryPoint {
     pub work_group_size: WorkGroupSize,
 }
 
+/// Description of struct member's range.
+#[derive(Clone, Debug, Hash, Eq, PartialEq)]
+pub struct BufferRange {
+    /// Useful for passing to get_member_name() and get_member_decoration(), testing showes.
+    pub index: u32,
+    /// Bytes from start of buffer not beggining of struct, testing showes.
+    pub offset: usize,
+    /// Size of field in bytes.  From https://github.com/KhronosGroup/SPIRV-Cross/issues/1176#issuecomment-542563608
+    pub range: usize,
+}
+
 /// A resource.
 #[derive(Clone, Debug, Hash, Eq, PartialEq)]
 pub struct Resource {
@@ -488,6 +499,11 @@ where
                 "`compile` must be called first",
             )))
         }
+    }
+
+    /// Gets active buffer ragnes.  Useful for push constants.
+    pub fn get_active_buffer_ranges(&self, id: u32) -> Result<Vec<BufferRange>, ErrorCode> {
+        self.compiler.get_active_buffer_ranges(id)
     }
 
     /// Gets all specialization constants.
