@@ -377,12 +377,8 @@ pub mod root {
                 self.0 |= rhs.0;
             }
         }
-        impl ::std::ops::BitAnd<root::spv::ImageOperandsMask> for
-         root::spv::ImageOperandsMask {
-            type
-            Output
-            =
-            Self;
+        impl ::std::ops::BitAnd<root::spv::ImageOperandsMask> for root::spv::ImageOperandsMask {
+            type Output = Self;
             #[inline]
             fn bitand(self, other: Self) -> Self {
                 ImageOperandsMask(self.0 & other.0)
@@ -394,43 +390,44 @@ pub mod root {
                 self.0 &= rhs.0;
             }
         }
-        #[repr(C)]
+        #[repr(transparent)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-        pub struct ImageOperandsMask(pub ::std::os::raw::c_uint);
-        #[repr(u32)]
-        #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-        pub enum FPFastMathModeShift {
-            FPFastMathModeNotNaNShift = 0,
-            FPFastMathModeNotInfShift = 1,
-            FPFastMathModeNSZShift = 2,
-            FPFastMathModeAllowRecipShift = 3,
-            FPFastMathModeFastShift = 4,
-            FPFastMathModeMax = 2147483647,
+        pub struct ImageOperandsMask(pub u32);
+        pub const FPFastMathModeShift_FPFastMathModeNotNaNShift: root::spv::FPFastMathModeShift = 0;
+        pub const FPFastMathModeShift_FPFastMathModeNotInfShift: root::spv::FPFastMathModeShift = 1;
+        pub const FPFastMathModeShift_FPFastMathModeNSZShift: root::spv::FPFastMathModeShift = 2;
+        pub const FPFastMathModeShift_FPFastMathModeAllowRecipShift:
+            root::spv::FPFastMathModeShift = 3;
+        pub const FPFastMathModeShift_FPFastMathModeFastShift: root::spv::FPFastMathModeShift = 4;
+        pub const FPFastMathModeShift_FPFastMathModeMax: root::spv::FPFastMathModeShift =
+            2147483647;
+        pub type FPFastMathModeShift = u32;
+        impl FPFastMathModeMask {
+            pub const FPFastMathModeMaskNone: root::spv::FPFastMathModeMask =
+                root::spv::FPFastMathModeMask(0);
         }
-        pub const FPFastMathModeMask_FPFastMathModeMaskNone:
-                  root::spv::FPFastMathModeMask =
-            FPFastMathModeMask(0);
-        pub const FPFastMathModeMask_FPFastMathModeNotNaNMask:
-                  root::spv::FPFastMathModeMask =
-            FPFastMathModeMask(1);
-        pub const FPFastMathModeMask_FPFastMathModeNotInfMask:
-                  root::spv::FPFastMathModeMask =
-            FPFastMathModeMask(2);
-        pub const FPFastMathModeMask_FPFastMathModeNSZMask:
-                  root::spv::FPFastMathModeMask =
-            FPFastMathModeMask(4);
-        pub const FPFastMathModeMask_FPFastMathModeAllowRecipMask:
-                  root::spv::FPFastMathModeMask =
-            FPFastMathModeMask(8);
-        pub const FPFastMathModeMask_FPFastMathModeFastMask:
-                  root::spv::FPFastMathModeMask =
-            FPFastMathModeMask(16);
-        impl ::std::ops::BitOr<root::spv::FPFastMathModeMask> for
-         root::spv::FPFastMathModeMask {
-            type
-            Output
-            =
-            Self;
+        impl FPFastMathModeMask {
+            pub const FPFastMathModeNotNaNMask: root::spv::FPFastMathModeMask =
+                root::spv::FPFastMathModeMask(1);
+        }
+        impl FPFastMathModeMask {
+            pub const FPFastMathModeNotInfMask: root::spv::FPFastMathModeMask =
+                root::spv::FPFastMathModeMask(2);
+        }
+        impl FPFastMathModeMask {
+            pub const FPFastMathModeNSZMask: root::spv::FPFastMathModeMask =
+                root::spv::FPFastMathModeMask(4);
+        }
+        impl FPFastMathModeMask {
+            pub const FPFastMathModeAllowRecipMask: root::spv::FPFastMathModeMask =
+                root::spv::FPFastMathModeMask(8);
+        }
+        impl FPFastMathModeMask {
+            pub const FPFastMathModeFastMask: root::spv::FPFastMathModeMask =
+                root::spv::FPFastMathModeMask(16);
+        }
+        impl ::std::ops::BitOr<root::spv::FPFastMathModeMask> for root::spv::FPFastMathModeMask {
+            type Output = Self;
             #[inline]
             fn bitor(self, other: Self) -> Self {
                 FPFastMathModeMask(self.0 | other.0)
@@ -442,12 +439,8 @@ pub mod root {
                 self.0 |= rhs.0;
             }
         }
-        impl ::std::ops::BitAnd<root::spv::FPFastMathModeMask> for
-         root::spv::FPFastMathModeMask {
-            type
-            Output
-            =
-            Self;
+        impl ::std::ops::BitAnd<root::spv::FPFastMathModeMask> for root::spv::FPFastMathModeMask {
+            type Output = Self;
             #[inline]
             fn bitand(self, other: Self) -> Self {
                 FPFastMathModeMask(self.0 & other.0)
@@ -459,34 +452,7 @@ pub mod root {
                 self.0 &= rhs.0;
             }
         }
-        #[repr(C)]
-        #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-        pub struct FPFastMathModeMask(pub ::std::os::raw::c_uint);
-        #[repr(u32)]
-        #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-        pub enum FPRoundingMode {
-            FPRoundingModeRTE = 0,
-            FPRoundingModeRTZ = 1,
-            FPRoundingModeRTP = 2,
-            FPRoundingModeRTN = 3,
-            FPRoundingModeMax = 2147483647,
-        }
-        #[repr(u32)]
-        #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-        pub enum LinkageType {
-            LinkageTypeExport = 0,
-            LinkageTypeImport = 1,
-            LinkageTypeMax = 2147483647,
-        }
-        #[repr(u32)]
-        #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-        pub enum AccessQualifier {
-            AccessQualifierReadOnly = 0,
-            AccessQualifierWriteOnly = 1,
-            AccessQualifierReadWrite = 2,
-            AccessQualifierMax = 2147483647,
-        }
-        #[repr(u32)]
+        #[repr(transparent)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum FunctionParameterAttribute {
             FunctionParameterAttributeZext = 0,
@@ -728,12 +694,8 @@ pub mod root {
                 self.0 |= rhs.0;
             }
         }
-        impl ::std::ops::BitAnd<root::spv::SelectionControlMask> for
-         root::spv::SelectionControlMask {
-            type
-            Output
-            =
-            Self;
+        impl ::std::ops::BitAnd<root::spv::SelectionControlMask> for root::spv::SelectionControlMask {
+            type Output = Self;
             #[inline]
             fn bitand(self, other: Self) -> Self {
                 SelectionControlMask(self.0 & other.0)
@@ -741,15 +703,11 @@ pub mod root {
         }
         impl ::std::ops::BitAndAssign for root::spv::SelectionControlMask {
             #[inline]
-            fn bitand_assign(&mut self,
-                             rhs: root::spv::SelectionControlMask) {
+            fn bitand_assign(&mut self, rhs: root::spv::SelectionControlMask) {
                 self.0 &= rhs.0;
             }
         }
-        #[repr(C)]
-        #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-        pub struct SelectionControlMask(pub ::std::os::raw::c_uint);
-        #[repr(u32)]
+        #[repr(transparent)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum LoopControlShift {
             LoopControlUnrollShift = 0,
@@ -810,12 +768,8 @@ pub mod root {
                 self.0 |= rhs.0;
             }
         }
-        impl ::std::ops::BitAnd<root::spv::LoopControlMask> for
-         root::spv::LoopControlMask {
-            type
-            Output
-            =
-            Self;
+        impl ::std::ops::BitAnd<root::spv::LoopControlMask> for root::spv::LoopControlMask {
+            type Output = Self;
             #[inline]
             fn bitand(self, other: Self) -> Self {
                 LoopControlMask(self.0 & other.0)
@@ -827,39 +781,42 @@ pub mod root {
                 self.0 &= rhs.0;
             }
         }
-        #[repr(C)]
+        #[repr(transparent)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-        pub struct LoopControlMask(pub ::std::os::raw::c_uint);
-        #[repr(u32)]
-        #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-        pub enum FunctionControlShift {
-            FunctionControlInlineShift = 0,
-            FunctionControlDontInlineShift = 1,
-            FunctionControlPureShift = 2,
-            FunctionControlConstShift = 3,
-            FunctionControlMax = 2147483647,
+        pub struct LoopControlMask(pub u32);
+        pub const FunctionControlShift_FunctionControlInlineShift: root::spv::FunctionControlShift =
+            0;
+        pub const FunctionControlShift_FunctionControlDontInlineShift:
+            root::spv::FunctionControlShift = 1;
+        pub const FunctionControlShift_FunctionControlPureShift: root::spv::FunctionControlShift =
+            2;
+        pub const FunctionControlShift_FunctionControlConstShift: root::spv::FunctionControlShift =
+            3;
+        pub const FunctionControlShift_FunctionControlMax: root::spv::FunctionControlShift =
+            2147483647;
+        pub type FunctionControlShift = u32;
+        impl FunctionControlMask {
+            pub const FunctionControlMaskNone: root::spv::FunctionControlMask =
+                root::spv::FunctionControlMask(0);
         }
-        pub const FunctionControlMask_FunctionControlMaskNone:
-                  root::spv::FunctionControlMask =
-            FunctionControlMask(0);
-        pub const FunctionControlMask_FunctionControlInlineMask:
-                  root::spv::FunctionControlMask =
-            FunctionControlMask(1);
-        pub const FunctionControlMask_FunctionControlDontInlineMask:
-                  root::spv::FunctionControlMask =
-            FunctionControlMask(2);
-        pub const FunctionControlMask_FunctionControlPureMask:
-                  root::spv::FunctionControlMask =
-            FunctionControlMask(4);
-        pub const FunctionControlMask_FunctionControlConstMask:
-                  root::spv::FunctionControlMask =
-            FunctionControlMask(8);
-        impl ::std::ops::BitOr<root::spv::FunctionControlMask> for
-         root::spv::FunctionControlMask {
-            type
-            Output
-            =
-            Self;
+        impl FunctionControlMask {
+            pub const FunctionControlInlineMask: root::spv::FunctionControlMask =
+                root::spv::FunctionControlMask(1);
+        }
+        impl FunctionControlMask {
+            pub const FunctionControlDontInlineMask: root::spv::FunctionControlMask =
+                root::spv::FunctionControlMask(2);
+        }
+        impl FunctionControlMask {
+            pub const FunctionControlPureMask: root::spv::FunctionControlMask =
+                root::spv::FunctionControlMask(4);
+        }
+        impl FunctionControlMask {
+            pub const FunctionControlConstMask: root::spv::FunctionControlMask =
+                root::spv::FunctionControlMask(8);
+        }
+        impl ::std::ops::BitOr<root::spv::FunctionControlMask> for root::spv::FunctionControlMask {
+            type Output = Self;
             #[inline]
             fn bitor(self, other: Self) -> Self {
                 FunctionControlMask(self.0 | other.0)
@@ -871,12 +828,8 @@ pub mod root {
                 self.0 |= rhs.0;
             }
         }
-        impl ::std::ops::BitAnd<root::spv::FunctionControlMask> for
-         root::spv::FunctionControlMask {
-            type
-            Output
-            =
-            Self;
+        impl ::std::ops::BitAnd<root::spv::FunctionControlMask> for root::spv::FunctionControlMask {
+            type Output = Self;
             #[inline]
             fn bitand(self, other: Self) -> Self {
                 FunctionControlMask(self.0 & other.0)
@@ -990,12 +943,8 @@ pub mod root {
                 self.0 |= rhs.0;
             }
         }
-        impl ::std::ops::BitAnd<root::spv::MemorySemanticsMask> for
-         root::spv::MemorySemanticsMask {
-            type
-            Output
-            =
-            Self;
+        impl ::std::ops::BitAnd<root::spv::MemorySemanticsMask> for root::spv::MemorySemanticsMask {
+            type Output = Self;
             #[inline]
             fn bitand(self, other: Self) -> Self {
                 MemorySemanticsMask(self.0 & other.0)
@@ -1077,12 +1026,8 @@ pub mod root {
                 self.0 |= rhs.0;
             }
         }
-        impl ::std::ops::BitAnd<root::spv::MemoryAccessMask> for
-         root::spv::MemoryAccessMask {
-            type
-            Output
-            =
-            Self;
+        impl ::std::ops::BitAnd<root::spv::MemoryAccessMask> for root::spv::MemoryAccessMask {
+            type Output = Self;
             #[inline]
             fn bitand(self, other: Self) -> Self {
                 MemoryAccessMask(self.0 & other.0)
@@ -1094,7 +1039,7 @@ pub mod root {
                 self.0 &= rhs.0;
             }
         }
-        #[repr(C)]
+        #[repr(transparent)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub struct MemoryAccessMask(pub ::std::os::raw::c_uint);
         pub const Scope_ScopeQueueFamilyKHR: root::spv::Scope =
@@ -1151,12 +1096,8 @@ pub mod root {
                 self.0 |= rhs.0;
             }
         }
-        impl ::std::ops::BitAnd<root::spv::KernelEnqueueFlags> for
-         root::spv::KernelEnqueueFlags {
-            type
-            Output
-            =
-            Self;
+        impl ::std::ops::BitAnd<root::spv::KernelEnqueueFlags> for root::spv::KernelEnqueueFlags {
+            type Output = Self;
             #[inline]
             fn bitand(self, other: Self) -> Self {
                 KernelEnqueueFlags(self.0 & other.0)
@@ -1168,27 +1109,24 @@ pub mod root {
                 self.0 &= rhs.0;
             }
         }
-        #[repr(C)]
+        #[repr(transparent)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-        pub struct KernelEnqueueFlags(pub ::std::os::raw::c_uint);
-        #[repr(u32)]
-        #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-        pub enum KernelProfilingInfoShift {
-            KernelProfilingInfoCmdExecTimeShift = 0,
-            KernelProfilingInfoMax = 2147483647,
+        pub struct KernelEnqueueFlags(pub u32);
+        pub const KernelProfilingInfoShift_KernelProfilingInfoCmdExecTimeShift:
+            root::spv::KernelProfilingInfoShift = 0;
+        pub const KernelProfilingInfoShift_KernelProfilingInfoMax:
+            root::spv::KernelProfilingInfoShift = 2147483647;
+        pub type KernelProfilingInfoShift = u32;
+        impl KernelProfilingInfoMask {
+            pub const KernelProfilingInfoMaskNone: root::spv::KernelProfilingInfoMask =
+                root::spv::KernelProfilingInfoMask(0);
         }
-        pub const KernelProfilingInfoMask_KernelProfilingInfoMaskNone:
-                  root::spv::KernelProfilingInfoMask =
-            KernelProfilingInfoMask(0);
-        pub const KernelProfilingInfoMask_KernelProfilingInfoCmdExecTimeMask:
-                  root::spv::KernelProfilingInfoMask =
-            KernelProfilingInfoMask(1);
-        impl ::std::ops::BitOr<root::spv::KernelProfilingInfoMask> for
-         root::spv::KernelProfilingInfoMask {
-            type
-            Output
-            =
-            Self;
+        impl KernelProfilingInfoMask {
+            pub const KernelProfilingInfoCmdExecTimeMask: root::spv::KernelProfilingInfoMask =
+                root::spv::KernelProfilingInfoMask(1);
+        }
+        impl ::std::ops::BitOr<root::spv::KernelProfilingInfoMask> for root::spv::KernelProfilingInfoMask {
+            type Output = Self;
             #[inline]
             fn bitor(self, other: Self) -> Self {
                 KernelProfilingInfoMask(self.0 | other.0)
@@ -1196,17 +1134,12 @@ pub mod root {
         }
         impl ::std::ops::BitOrAssign for root::spv::KernelProfilingInfoMask {
             #[inline]
-            fn bitor_assign(&mut self,
-                            rhs: root::spv::KernelProfilingInfoMask) {
+            fn bitor_assign(&mut self, rhs: root::spv::KernelProfilingInfoMask) {
                 self.0 |= rhs.0;
             }
         }
-        impl ::std::ops::BitAnd<root::spv::KernelProfilingInfoMask> for
-         root::spv::KernelProfilingInfoMask {
-            type
-            Output
-            =
-            Self;
+        impl ::std::ops::BitAnd<root::spv::KernelProfilingInfoMask> for root::spv::KernelProfilingInfoMask {
+            type Output = Self;
             #[inline]
             fn bitand(self, other: Self) -> Self {
                 KernelProfilingInfoMask(self.0 & other.0)
@@ -1214,8 +1147,7 @@ pub mod root {
         }
         impl ::std::ops::BitAndAssign for root::spv::KernelProfilingInfoMask {
             #[inline]
-            fn bitand_assign(&mut self,
-                             rhs: root::spv::KernelProfilingInfoMask) {
+            fn bitand_assign(&mut self, rhs: root::spv::KernelProfilingInfoMask) {
                 self.0 &= rhs.0;
             }
         }
@@ -1969,6 +1901,9 @@ pub mod root {
             OpMax = 2147483647,
         }
     }
+    pub type __uint8_t = ::std::os::raw::c_uchar;
+    pub type __int32_t = ::std::os::raw::c_int;
+    pub type __uint32_t = ::std::os::raw::c_uint;
     pub mod std {
         #[allow(unused_imports)]
         use self::super::super::root;
@@ -2057,15 +1992,12 @@ pub mod root {
     pub type ScInternalCompilerHlsl = ::std::os::raw::c_void;
     pub type ScInternalCompilerMsl = ::std::os::raw::c_void;
     pub type ScInternalCompilerGlsl = ::std::os::raw::c_void;
-    #[repr(u32)]
-    #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-    pub enum ScInternalResult {
-        Success = 0,
-        Unhandled = 1,
-        CompilationError = 2,
-    }
+    pub const ScInternalResult_Success: root::ScInternalResult = 0;
+    pub const ScInternalResult_Unhandled: root::ScInternalResult = 1;
+    pub const ScInternalResult_CompilationError: root::ScInternalResult = 2;
+    pub type ScInternalResult = u32;
     #[repr(C)]
-    #[derive(Debug, Copy)]
+    #[derive(Debug, Copy, Clone)]
     pub struct ScEntryPoint {
         pub name: *mut ::std::os::raw::c_char,
         pub execution_model: root::spv::ExecutionModel,
@@ -2073,32 +2005,23 @@ pub mod root {
         pub work_group_size_y: u32,
         pub work_group_size_z: u32,
     }
-    impl Clone for ScEntryPoint {
-        fn clone(&self) -> Self { *self }
-    }
     #[repr(C)]
-    #[derive(Debug, Copy)]
+    #[derive(Debug, Copy, Clone)]
     pub struct ScCombinedImageSampler {
         pub combined_id: u32,
         pub image_id: u32,
         pub sampler_id: u32,
     }
-    impl Clone for ScCombinedImageSampler {
-        fn clone(&self) -> Self { *self }
-    }
     #[repr(C)]
-    #[derive(Debug, Copy)]
+    #[derive(Debug, Copy, Clone)]
     pub struct ScHlslRootConstant {
         pub start: u32,
         pub end: u32,
         pub binding: u32,
         pub space: u32,
     }
-    impl Clone for ScHlslRootConstant {
-        fn clone(&self) -> Self { *self }
-    }
     #[repr(C)]
-    #[derive(Debug, Copy)]
+    #[derive(Debug, Copy, Clone)]
     pub struct ScHlslCompilerOptions {
         pub shader_model: i32,
         pub point_size_compat: bool,
@@ -2106,11 +2029,8 @@ pub mod root {
         pub vertex_transform_clip_space: bool,
         pub vertex_invert_y: bool,
     }
-    impl Clone for ScHlslCompilerOptions {
-        fn clone(&self) -> Self { *self }
-    }
     #[repr(C)]
-    #[derive(Debug, Copy)]
+    #[derive(Debug, Copy, Clone)]
     pub struct ScMslCompilerOptions {
         pub vertex_transform_clip_space: bool,
         pub vertex_invert_y: bool,
@@ -2130,42 +2050,30 @@ pub mod root {
         pub argument_buffers: bool,
         pub pad_fragment_output_components: bool,
     }
-    impl Clone for ScMslCompilerOptions {
-        fn clone(&self) -> Self { *self }
-    }
     #[repr(C)]
-    #[derive(Debug, Copy)]
+    #[derive(Debug, Copy, Clone)]
     pub struct ScGlslCompilerOptions {
         pub vertex_transform_clip_space: bool,
         pub vertex_invert_y: bool,
         pub version: u32,
         pub es: bool,
     }
-    impl Clone for ScGlslCompilerOptions {
-        fn clone(&self) -> Self { *self }
-    }
     #[repr(C)]
-    #[derive(Debug, Copy)]
+    #[derive(Debug, Copy, Clone)]
     pub struct ScResource {
         pub id: u32,
         pub type_id: u32,
         pub base_type_id: u32,
         pub name: *mut ::std::os::raw::c_char,
     }
-    impl Clone for ScResource {
-        fn clone(&self) -> Self { *self }
-    }
     #[repr(C)]
-    #[derive(Debug, Copy)]
+    #[derive(Debug, Copy, Clone)]
     pub struct ScResourceArray {
         pub data: *mut root::ScResource,
         pub num: usize,
     }
-    impl Clone for ScResourceArray {
-        fn clone(&self) -> Self { *self }
-    }
     #[repr(C)]
-    #[derive(Debug, Copy)]
+    #[derive(Debug, Copy, Clone)]
     pub struct ScShaderResources {
         pub uniform_buffers: root::ScResourceArray,
         pub storage_buffers: root::ScResourceArray,
@@ -2179,28 +2087,19 @@ pub mod root {
         pub separate_images: root::ScResourceArray,
         pub separate_samplers: root::ScResourceArray,
     }
-    impl Clone for ScShaderResources {
-        fn clone(&self) -> Self { *self }
-    }
     #[repr(C)]
-    #[derive(Debug, Copy)]
+    #[derive(Debug, Copy, Clone)]
     pub struct ScSpecializationConstant {
         pub id: u32,
         pub constant_id: u32,
     }
-    impl Clone for ScSpecializationConstant {
-        fn clone(&self) -> Self { *self }
-    }
     #[repr(C)]
-    #[derive(Debug, Copy)]
+    #[derive(Debug, Copy, Clone)]
     pub struct ScType {
-        pub type_: root::SPIRV_CROSS_NAMESPACE::SPIRType_BaseType,
+        pub type_: root::spirv_cross::SPIRType_BaseType,
         pub member_types: *mut u32,
         pub member_types_size: usize,
         pub array: *mut u32,
         pub array_size: usize,
-    }
-    impl Clone for ScType {
-        fn clone(&self) -> Self { *self }
     }
 }
