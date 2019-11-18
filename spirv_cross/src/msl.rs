@@ -140,15 +140,48 @@ impl LodBase16 {
     pub const ZERO: Self = LodBase16(0);
     pub const MAX: Self = LodBase16(!0);
 }
+
 impl From<f32> for LodBase16 {
     fn from(v: f32) -> Self {
         LodBase16((v * 16.0).max(0.0).min(u8::MAX as f32) as u8)
     }
 }
+
 impl Into<f32> for LodBase16 {
     fn into(self) -> f32 {
         self.0 as f32 / 16.0
     }
+}
+
+
+/// MSL format resolution.
+#[repr(C)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum FormatResolution {
+    _444 = 0,
+    _422 = 1,
+    _420 = 2,
+}
+
+/// MSL chroma location.
+#[repr(C)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum ChromaLocation {
+    CositedEven = 0,
+    LocationMidpoint = 1,
+}
+
+/// MSL component swizzle.
+#[repr(C)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum ComponentSwizzle {
+    Identity = 0,
+    Zero = 1,
+    One = 2,
+    R = 3,
+    G = 4,
+    B = 5,
+    A = 6,
 }
 
 /// Data fully defining a constant sampler.
@@ -166,6 +199,36 @@ pub struct SamplerData {
     pub lod_clamp_min: LodBase16,
     pub lod_clamp_max: LodBase16,
     pub max_anisotropy: i32,
+    // Sampler YCbCr conversion parameters
+    pub planes: u32,
+    pub resolution: FormatResolution,
+    pub chroma_filter: SamplerFilter,
+	pub x_chroma_offset: ChromaLocation,
+	pub y_chroma_offset: ChromaLocation,
+	pub swizzle: [ComponentSwizzle; 4],
+    pub ycbcr_conversion_enable: bool,
+	pub ycbcr_model: SamplerYCbCrModelConversion,
+	pub ycbcr_range: SamplerYCbCrRange,
+	pub bpc: u32,
+}
+
+/// A MSL sampler YCbCr model conversion.
+#[repr(C)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum SamplerYCbCrModelConversion {
+    RgbIdentity = 0,
+    YCbCrIdentity = 1,
+    YCbCrBt709 = 2,
+    YCbCrBt601 = 3,
+    YCbCrBt2020 = 4,
+}
+
+/// A MSL sampler YCbCr range.
+#[repr(C)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum SamplerYCbCrRange {
+    ItuFull = 0,
+    ItuNarrow = 1,
 }
 
 /// A MSL shader platform.
@@ -405,6 +468,16 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
                         lod_clamp_enable: data.lod_clamp_min != LodBase16::ZERO ||
                             data.lod_clamp_max != LodBase16::MAX,
                         anisotropy_enable: data.max_anisotropy != 0,
+                        bpc: data.bpc,
+                        chroma_filter: transmute(data.chroma_filter),
+                        planes: data.planes,
+                        resolution: transmute(data.resolution),
+                        swizzle: transmute(data.swizzle),
+                        x_chroma_offset:  transmute(data.x_chroma_offset),
+                        y_chroma_offset: transmute(data.y_chroma_offset),
+                        ycbcr_conversion_enable: data.ycbcr_conversion_enable,
+                        ycbcr_model: transmute(data.ycbcr_model),
+                        ycbcr_range: transmute(data.ycbcr_range),
                     },
                 }
             }),
