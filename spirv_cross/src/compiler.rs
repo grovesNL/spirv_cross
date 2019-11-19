@@ -5,7 +5,7 @@ use crate::spirv::{self, Decoration, Type};
 use crate::ErrorCode;
 use std::ffi::CString;
 use std::os::raw::c_void;
-use std::{mem, ptr};
+use std::{mem::{MaybeUninit}, ptr};
 
 impl spirv::ExecutionModel {
     fn from_raw(raw: br::spv::ExecutionModel) -> Result<Self, ErrorCode> {
@@ -489,11 +489,12 @@ impl<TTargetData> Compiler<TTargetData> {
 
     pub fn get_shader_resources(&self) -> Result<spirv::ShaderResources, ErrorCode> {
         unsafe {
-            let mut shader_resources_raw = mem::uninitialized();
+            let mut shader_resources_raw = MaybeUninit::uninit();
             check!(br::sc_internal_compiler_get_shader_resources(
                 self.sc_compiler,
-                &mut shader_resources_raw,
+                shader_resources_raw.as_mut_ptr(),
             ));
+            let shader_resources_raw = shader_resources_raw.assume_init();
 
             let fill_resources = |array_raw: &br::ScResourceArray| {
                 let resources = (0..array_raw.num as usize)
