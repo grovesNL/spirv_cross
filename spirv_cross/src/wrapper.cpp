@@ -277,9 +277,10 @@ extern "C"
                 for (uint32_t i = 0; i < sc_size; i++)
                 {
                     auto const &sc_active_buffer_range = sc_active_buffer_ranges[i];
-                    active_buffer_ranges[i]->index = sc_active_buffer_range.index;
-                    active_buffer_ranges[i]->offset = sc_active_buffer_range.offset;
-                    active_buffer_ranges[i]->range = sc_active_buffer_range.range;
+                    auto &active_buffer_range = (*active_buffer_ranges)[i];
+                    active_buffer_range.index = sc_active_buffer_range.index;
+                    active_buffer_range.offset = sc_active_buffer_range.offset;
+                    active_buffer_range.range = sc_active_buffer_range.range;
                 }
             } while (0);)
     }
