@@ -49,25 +49,6 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - clang-5.0
-    - os: linux
-      compiler: clang
-      env:
-        - JOB="linux_clang_coverage"
-      sudo: required
-      addons:
-        apt:
-          sources:
-            - llvm-toolchain-precise
-            - ubuntu-toolchain-r-test
-          packages:
-            - clang-5.0
-            - libcurl4-openssl-dev
-            - libelf-dev
-            - libdw-dev
-            - cmake
-            - gcc
-            - binutils-dev
-            - libiberty-dev
 notifications:
   webhooks:
     urls:
@@ -83,4 +64,3 @@ script:
   - if [[ $JOB == "macos_clang" ]]; then .travis/macos_clang.sh; fi
   - if [[ $JOB == "linux_gcc" ]]; then .travis/linux_gcc.sh; fi
   - if [[ $JOB == "linux_clang" ]]; then .travis/linux_clang.sh; fi
-  - if [[ $JOB == "linux_clang_coverage" ]]; then .travis/linux_clang_coverage.sh; fi  
