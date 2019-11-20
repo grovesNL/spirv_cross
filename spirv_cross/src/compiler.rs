@@ -262,13 +262,14 @@ impl<TTargetData> Compiler<TTargetData> {
                     check!(br::sc_internal_free_pointer(
                         entry_point_raw.name as *mut c_void,
                     ));
-                    check!(br::sc_internal_free_pointer(
-                        entry_point_raw_ptr as *mut c_void
-                    ));
 
                     Ok(entry_point)
                 })
                 .collect::<Result<Vec<_>, _>>();
+
+            check!(br::sc_internal_free_pointer(
+                entry_points_raw as *mut c_void,
+            ));
 
             Ok(entry_points?)
         }

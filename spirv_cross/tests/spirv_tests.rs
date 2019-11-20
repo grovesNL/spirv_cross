@@ -4,16 +4,17 @@ mod common;
 use crate::common::words_from_bytes;
 
 #[test]
-fn ast_gets_entry_points() {
+fn ast_gets_multiple_entry_points() {
     let module =
-        spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
+        spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/multiple_entry_points.cl.spv")));
     let entry_points = spirv::Ast::<lang::Target>::parse(&module)
         .unwrap()
         .get_entry_points()
         .unwrap();
 
-    assert_eq!(entry_points.len(), 1);
-    assert_eq!(entry_points[0].name, "main");
+    assert_eq!(entry_points.len(), 2);
+    assert!(entry_points.iter().any(|e| e.name == "entry_1"));
+    assert!(entry_points.iter().any(|e| e.name == "entry_2"));
 }
 
 #[test]
