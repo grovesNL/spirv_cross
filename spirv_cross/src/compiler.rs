@@ -139,7 +139,7 @@ pub struct Compiler<TTargetData> {
 }
 
 impl<TTargetData> Compiler<TTargetData> {
-    #[cfg(any(feature = "msl", feature = "glsl", feature = "hlsl"))]
+    #[cfg(any(feature = "glsl", feature = "hlsl"))]
     pub fn compile(&mut self) -> Result<String, ErrorCode> {
         unsafe {
             let mut shader_ptr = ptr::null();
