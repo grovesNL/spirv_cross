@@ -5,7 +5,7 @@ use crate::spirv::{self, Decoration, Type};
 use crate::ErrorCode;
 use std::ffi::CString;
 use std::os::raw::c_void;
-use std::{mem::{MaybeUninit}, ptr};
+use std::{mem::MaybeUninit, ptr};
 
 impl spirv::ExecutionModel {
     fn from_raw(raw: br::spv::ExecutionModel) -> Result<Self, ErrorCode> {
@@ -95,11 +95,11 @@ impl spirv::Decoration {
 
 impl spirv::Type {
     pub(crate) fn from_raw(
-        ty: br::SPIRV_CROSS_NAMESPACE::SPIRType_BaseType,
+        ty: br::spirv_cross::SPIRType_BaseType,
         member_types: Vec<u32>,
         array: Vec<u32>,
     ) -> Type {
-        use crate::bindings::root::SPIRV_CROSS_NAMESPACE::SPIRType_BaseType as B;
+        use crate::bindings::root::spirv_cross::SPIRType_BaseType as B;
         use crate::spirv::Type::*;
         match ty {
             B::Unknown => Unknown,
@@ -139,7 +139,7 @@ pub struct Compiler<TTargetData> {
 }
 
 impl<TTargetData> Compiler<TTargetData> {
-    #[cfg(any(feature = "msl", feature = "glsl", feature = "hlsl"))]
+    #[cfg(any(feature = "glsl", feature = "hlsl"))]
     pub fn compile(&mut self) -> Result<String, ErrorCode> {
         unsafe {
             let mut shader_ptr = ptr::null();

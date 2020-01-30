@@ -257,15 +257,18 @@ fn sets_argument_buffer_index() {
         spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/sampler.frag.spv")));
     let mut ast = spirv::Ast::<msl::Target>::parse(&module).unwrap();
     let mut resource_binding_overrides = BTreeMap::new();
-    resource_binding_overrides.insert(spirv_cross::msl::ResourceBindingLocation {
-        stage: spirv::ExecutionModel::Fragment,
-        desc_set: 0,
-        binding: msl::ARGUMENT_BUFFER_BINDING,
-    }, spirv_cross::msl::ResourceBinding {
-        buffer_id: 2,
-        texture_id: 0,
-        sampler_id: 0,
-    });
+    resource_binding_overrides.insert(
+        spirv_cross::msl::ResourceBindingLocation {
+            stage: spirv::ExecutionModel::Fragment,
+            desc_set: 0,
+            binding: msl::ARGUMENT_BUFFER_BINDING,
+        },
+        spirv_cross::msl::ResourceBinding {
+            buffer_id: 2,
+            texture_id: 0,
+            sampler_id: 0,
+        },
+    );
     let compiler_options = msl::CompilerOptions {
         resource_binding_overrides,
         version: spirv_cross::msl::Version::V2_0,

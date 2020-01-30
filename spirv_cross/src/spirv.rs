@@ -176,8 +176,8 @@ pub enum BuiltIn {
 
 #[cfg(feature = "msl")]
 pub(crate) fn built_in_as_raw(built_in: Option<BuiltIn>) -> crate::bindings::spv::BuiltIn {
-    use BuiltIn::*;
     use crate::bindings as br;
+    use BuiltIn::*;
     match built_in {
         None => br::spv::BuiltIn::BuiltInMax,
         Some(Position) => br::spv::BuiltIn::BuiltInPosition,
@@ -455,7 +455,7 @@ where
         self.compiler.get_decoration(id, decoration)
     }
 
-	/// Gets a name. If not defined, an empty string will be returned.
+    /// Gets a name. If not defined, an empty string will be returned.
     pub fn get_name(&mut self, id: u32) -> Result<String, ErrorCode> {
         self.compiler.get_name(id)
     }
