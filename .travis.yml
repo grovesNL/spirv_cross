@@ -49,6 +49,17 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - clang-5.0
+    - os: linux
+      compiler: clang
+      env:
+        - JOB="linux_wasm"
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-precise
+            - ubuntu-toolchain-r-test
+          packages:
+            - clang-5.0
 notifications:
   webhooks:
     urls:
@@ -64,3 +75,4 @@ script:
   - if [[ $JOB == "macos_clang" ]]; then .travis/macos_clang.sh; fi
   - if [[ $JOB == "linux_gcc" ]]; then .travis/linux_gcc.sh; fi
   - if [[ $JOB == "linux_clang" ]]; then .travis/linux_clang.sh; fi
+  - if [[ $JOB == "linux_wasm" ]]; then .travis/linux_wasm.sh; fi
