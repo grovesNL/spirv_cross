@@ -56,6 +56,8 @@ extern "C"
         bool point_coord_compat;
         bool vertex_transform_clip_space;
         bool vertex_invert_y;
+        bool force_storage_buffer_as_uav;
+        bool nonwritable_uav_texture_as_srv;
     } ScHlslCompilerOptions;
 
     typedef struct ScMslCompilerOptions

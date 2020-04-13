@@ -2235,6 +2235,8 @@ pub mod root {
         pub point_coord_compat: bool,
         pub vertex_transform_clip_space: bool,
         pub vertex_invert_y: bool,
+        pub force_storage_buffer_as_uav: bool,
+        pub nonwritable_uav_texture_as_srv: bool,
     }
     #[repr(C)]
     #[derive(Debug, Copy, Clone)]
