@@ -74,6 +74,8 @@ extern "C"
                 hlsl_options.shader_model = options->shader_model;
                 hlsl_options.point_size_compat = options->point_size_compat;
                 hlsl_options.point_coord_compat = options->point_coord_compat;
+                hlsl_options.force_storage_buffer_as_uav = options->force_storage_buffer_as_uav;
+                hlsl_options.nonwritable_uav_texture_as_srv = options->nonwritable_uav_texture_as_srv;
 
                 compiler_hlsl->set_hlsl_options(hlsl_options);
             } while (0);)
