@@ -55,6 +55,7 @@ impl Default for CompilerVertexOptions {
 #[derive(Debug, Clone)]
 pub struct CompilerOptions {
     pub version: Version,
+    pub no_420_pack_extension: bool,
     pub vertex: CompilerVertexOptions,
 }
 
@@ -82,6 +83,7 @@ impl CompilerOptions {
             vertex_invert_y: self.vertex.invert_y,
             vertex_transform_clip_space: self.vertex.transform_clip_space,
             version,
+            no_420_pack_extension: self.no_420_pack_extension,
             es,
         }
     }
@@ -91,6 +93,7 @@ impl Default for CompilerOptions {
     fn default() -> CompilerOptions {
         CompilerOptions {
             version: Version::V4_50,
+            no_420_pack_extension: false,
             vertex: CompilerVertexOptions::default(),
         }
     }
