@@ -18,7 +18,7 @@ fn ast_compiles_to_glsl() {
     .unwrap();
     ast.set_compiler_options(&glsl::CompilerOptions {
         version: glsl::Version::V4_60,
-        no_420_pack_extension: false,
+        enable_420_pack_extension: true,
         vertex: glsl::CompilerVertexOptions::default(),
     })
     .unwrap();
@@ -64,7 +64,7 @@ fn ast_compiles_all_versions_to_glsl() {
         if ast
             .set_compiler_options(&glsl::CompilerOptions {
                 version,
-                no_420_pack_extension: false,
+                enable_420_pack_extension: true,
                 vertex: glsl::CompilerVertexOptions::default(),
             })
             .is_err()
@@ -82,7 +82,7 @@ fn ast_renames_interface_variables() {
     vert_ast
         .set_compiler_options(&glsl::CompilerOptions {
             version: glsl::Version::V1_00Es,
-            no_420_pack_extension: false,
+            enable_420_pack_extension: true,
             vertex: glsl::CompilerVertexOptions::default(),
         })
         .unwrap();
@@ -99,7 +99,7 @@ fn ast_renames_interface_variables() {
     frag_ast
         .set_compiler_options(&glsl::CompilerOptions {
             version: glsl::Version::V1_00Es,
-            no_420_pack_extension: false,
+            enable_420_pack_extension: true,
             vertex: glsl::CompilerVertexOptions::default(),
         })
         .unwrap();
@@ -182,7 +182,7 @@ fn ast_can_rename_combined_image_samplers() {
     .unwrap();
     ast.set_compiler_options(&glsl::CompilerOptions {
         version: glsl::Version::V4_10,
-        no_420_pack_extension: false,
+        enable_420_pack_extension: true,
         vertex: glsl::CompilerVertexOptions::default(),
     })
     .unwrap();
