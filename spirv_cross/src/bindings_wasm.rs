@@ -2236,7 +2236,7 @@ pub mod root {
         pub vertex_transform_clip_space: bool,
         pub vertex_invert_y: bool,
         pub version: u32,
-        pub no_420_pack_extension: bool,
+        pub enable_420_pack_extension: bool,
         pub es: bool,
     }
     #[repr(C)]
