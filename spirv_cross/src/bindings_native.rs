@@ -2266,6 +2266,7 @@ pub mod root {
         pub vertex_invert_y: bool,
         pub version: u32,
         pub es: bool,
+        pub enable_420_pack_extension: bool,
     }
     #[repr(C)]
     #[derive(Debug, Copy, Clone)]

@@ -188,6 +188,7 @@ extern "C"
                 auto glsl_options = compiler_glsl->get_common_options();
                 glsl_options.version = options->version;
                 glsl_options.es = options->es;
+                glsl_options.enable_420pack_extension = options->enable_420_pack_extension;
                 glsl_options.vertex.fixup_clipspace = options->vertex_transform_clip_space;
                 glsl_options.vertex.flip_vert_y = options->vertex_invert_y;
                 compiler_glsl->set_common_options(glsl_options);
