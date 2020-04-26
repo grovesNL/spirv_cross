@@ -96,8 +96,8 @@ impl spirv::Decoration {
 impl spirv::Type {
     pub(crate) fn from_raw(
         ty: br::spirv_cross::SPIRType_BaseType,
-        vecsize: usize,
-        columns: usize,
+        vecsize: u32,
+        columns: u32,
         member_types: Vec<u32>,
         array: Vec<u32>,
     ) -> Type {
