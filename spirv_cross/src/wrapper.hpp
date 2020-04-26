@@ -128,6 +128,7 @@ extern "C"
     typedef struct ScType
     {
         spirv_cross::SPIRType::BaseType type;
+        size_t vecsize;
         uint32_t *member_types;
         size_t member_types_size;
         uint32_t *array;

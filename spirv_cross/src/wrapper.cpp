@@ -380,6 +380,7 @@ extern "C"
 
                 auto ty = (ScType *)malloc(sizeof(ScType));
                 ty->type = type.basetype;
+                ty->vecsize = type.vecsize;
                 ty->member_types_size = member_types_size;
                 ty->array_size = array_size;
 

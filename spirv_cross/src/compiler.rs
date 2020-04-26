@@ -96,6 +96,7 @@ impl spirv::Decoration {
 impl spirv::Type {
     pub(crate) fn from_raw(
         ty: br::spirv_cross::SPIRType_BaseType,
+        vecsize: usize,
         member_types: Vec<u32>,
         array: Vec<u32>,
     ) -> Type {
@@ -112,7 +113,7 @@ impl spirv::Type {
             B::UInt64 => UInt64 { array },
             B::AtomicCounter => AtomicCounter { array },
             B::Half => Half { array },
-            B::Float => Float { array },
+            B::Float => Float { vecsize, array },
             B::Double => Double { array },
             B::Struct => Struct {
                 member_types,
@@ -393,7 +394,7 @@ impl<TTargetData> Compiler<TTargetData> {
             let raw = read_from_ptr::<br::ScType>(type_ptr);
             let member_types = read_into_vec_from_ptr(raw.member_types, raw.member_types_size);
             let array = read_into_vec_from_ptr(raw.array, raw.array_size);
-            let result = Type::from_raw(raw.type_, member_types, array);
+            let result = Type::from_raw(raw.type_, raw.vecsize, member_types, array);
 
             if raw.member_types_size > 0 {
                 check!(br::sc_internal_free_pointer(

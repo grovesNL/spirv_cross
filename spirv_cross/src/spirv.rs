@@ -371,6 +371,7 @@ pub enum Type {
         array: Vec<u32>,
     },
     Float {
+        vecsize: usize,
         array: Vec<u32>,
     },
     Double {
