@@ -97,6 +97,7 @@ impl spirv::Type {
     pub(crate) fn from_raw(
         ty: br::spirv_cross::SPIRType_BaseType,
         vecsize: usize,
+        columns: usize,
         member_types: Vec<u32>,
         array: Vec<u32>,
     ) -> Type {
@@ -105,16 +106,16 @@ impl spirv::Type {
         match ty {
             B::Unknown => Unknown,
             B::Void => Void,
-            B::Boolean => Boolean { array },
-            B::Char => Char { array },
-            B::Int => Int { array },
-            B::UInt => UInt { array },
-            B::Int64 => Int64 { array },
-            B::UInt64 => UInt64 { array },
+            B::Boolean => Boolean { vecsize, array },
+            B::Char => Char { vecsize, array },
+            B::Int => Int { vecsize, array },
+            B::UInt => UInt { vecsize, array },
+            B::Int64 => Int64 { vecsize, array },
+            B::UInt64 => UInt64 { vecsize, array },
             B::AtomicCounter => AtomicCounter { array },
-            B::Half => Half { array },
-            B::Float => Float { vecsize, array },
-            B::Double => Double { array },
+            B::Half => Half { vecsize, columns, array },
+            B::Float => Float { vecsize, columns, array },
+            B::Double => Double { vecsize, columns, array },
             B::Struct => Struct {
                 member_types,
                 array,
@@ -122,10 +123,10 @@ impl spirv::Type {
             B::Image => Image { array },
             B::SampledImage => SampledImage { array },
             B::Sampler => Sampler { array },
-            B::SByte => SByte { array },
-            B::UByte => UByte { array },
-            B::Short => Short { array },
-            B::UShort => UShort { array },
+            B::SByte => SByte { vecsize, array },
+            B::UByte => UByte { vecsize, array },
+            B::Short => Short { vecsize, array },
+            B::UShort => UShort { vecsize, array },
             B::ControlPointArray => ControlPointArray,
             B::AccelerationStructureNV => AccelerationStructureNv,
         }
@@ -394,7 +395,7 @@ impl<TTargetData> Compiler<TTargetData> {
             let raw = read_from_ptr::<br::ScType>(type_ptr);
             let member_types = read_into_vec_from_ptr(raw.member_types, raw.member_types_size);
             let array = read_into_vec_from_ptr(raw.array, raw.array_size);
-            let result = Type::from_raw(raw.type_, raw.vecsize, member_types, array);
+            let result = Type::from_raw(raw.type_, raw.vecsize, raw.columns, member_types, array);
 
             if raw.member_types_size > 0 {
                 check!(br::sc_internal_free_pointer(

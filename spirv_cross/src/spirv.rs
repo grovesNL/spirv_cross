@@ -347,34 +347,45 @@ pub enum Type {
     Unknown,
     Void,
     Boolean {
+        vecsize: usize,
         array: Vec<u32>,
     },
     Char {
+        vecsize: usize,
         array: Vec<u32>,
     },
     Int {
+        vecsize: usize,
         array: Vec<u32>,
     },
     UInt {
+        vecsize: usize,
         array: Vec<u32>,
     },
     Int64 {
+        vecsize: usize,
         array: Vec<u32>,
     },
     UInt64 {
+        vecsize: usize,
         array: Vec<u32>,
     },
     AtomicCounter {
         array: Vec<u32>,
     },
     Half {
+        vecsize: usize,
+        columns: usize,
         array: Vec<u32>,
     },
     Float {
         vecsize: usize,
+        columns: usize,
         array: Vec<u32>,
     },
     Double {
+        vecsize: usize,
+        columns: usize,
         array: Vec<u32>,
     },
     Struct {
@@ -391,15 +402,19 @@ pub enum Type {
         array: Vec<u32>,
     },
     SByte {
+        vecsize: usize,
         array: Vec<u32>,
     },
     UByte {
+        vecsize: usize,
         array: Vec<u32>,
     },
     Short {
+        vecsize: usize,
         array: Vec<u32>,
     },
     UShort {
+        vecsize: usize,
         array: Vec<u32>,
     },
     ControlPointArray,
