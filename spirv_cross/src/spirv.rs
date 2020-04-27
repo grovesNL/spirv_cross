@@ -348,18 +348,20 @@ pub enum Type {
     Void,
     Boolean {
         vecsize: u32,
+        columns: u32,
         array: Vec<u32>,
     },
     Char {
-        vecsize: u32,
         array: Vec<u32>,
     },
     Int {
         vecsize: u32,
+        columns: u32,
         array: Vec<u32>,
     },
     UInt {
         vecsize: u32,
+        columns: u32,
         array: Vec<u32>,
     },
     Int64 {
