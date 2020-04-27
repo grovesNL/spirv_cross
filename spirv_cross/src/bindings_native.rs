@@ -2307,6 +2307,8 @@ pub mod root {
     #[derive(Debug, Copy, Clone)]
     pub struct ScType {
         pub type_: root::spirv_cross::SPIRType_BaseType,
+        pub vecsize: u32,
+        pub columns: u32,
         pub member_types: *mut u32,
         pub member_types_size: usize,
         pub array: *mut u32,
