@@ -420,7 +420,8 @@ pub enum Type {
         array: Vec<u32>,
     },
     ControlPointArray,
-    AccelerationStructureNv,
+    AccelerationStructure,
+    RayQuery,
 }
 
 /// A SPIR-V shader module.

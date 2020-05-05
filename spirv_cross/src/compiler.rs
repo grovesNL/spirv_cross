@@ -128,7 +128,8 @@ impl spirv::Type {
             B::Short => Short { vecsize, array },
             B::UShort => UShort { vecsize, array },
             B::ControlPointArray => ControlPointArray,
-            B::AccelerationStructureNV => AccelerationStructureNv,
+            B::AccelerationStructure => AccelerationStructure,
+            B::RayQuery => RayQuery,
         }
     }
 }
