@@ -233,8 +233,6 @@ fn flatten_uniform_buffers_as_plain_uniforms() {
     })
     .unwrap();
 
-    println!("{}", ast.compile().unwrap());
-
     assert_eq!(
         ast.compile().unwrap(),
         "\
@@ -270,4 +268,39 @@ void main()
     );
 }
 
-// TODO more tests!
+#[test]
+fn low_precision() {
+    let mut ast = spirv::Ast::<glsl::Target>::parse(&spirv::Module::from_words(words_from_bytes(
+        include_bytes!("shaders/sampler.frag.spv"),
+    )))
+    .unwrap();
+    ast.set_compiler_options(&glsl::CompilerOptions {
+        version: glsl::Version::V3_00Es,
+        fragment: glsl::CompilerFragmentOptions {
+            default_float_precision: glsl::Precision::Low,
+            default_int_precision: glsl::Precision::Low,
+        },
+        ..glsl::CompilerOptions::default()
+    })
+    .unwrap();
+
+    assert_eq!(
+        ast.compile().unwrap(),
+        "\
+#version 300 es
+precision lowp float;
+precision lowp int;
+
+uniform highp sampler2D _26;
+
+layout(location = 0) out highp vec4 target0;
+in highp vec2 v_uv;
+
+void main()
+{
+    target0 = texture(_26, v_uv);
+}
+
+"
+    );
+}
