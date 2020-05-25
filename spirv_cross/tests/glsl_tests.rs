@@ -19,7 +19,7 @@ fn ast_compiles_to_glsl() {
     ast.set_compiler_options(&glsl::CompilerOptions {
         version: glsl::Version::V4_60,
         enable_420_pack_extension: true,
-        vertex: glsl::CompilerVertexOptions::default(),
+        ..glsl::CompilerOptions::default()
     })
     .unwrap();
 
@@ -65,7 +65,7 @@ fn ast_compiles_all_versions_to_glsl() {
             .set_compiler_options(&glsl::CompilerOptions {
                 version,
                 enable_420_pack_extension: true,
-                vertex: glsl::CompilerVertexOptions::default(),
+                ..glsl::CompilerOptions::default()
             })
             .is_err()
         {
@@ -83,7 +83,7 @@ fn ast_renames_interface_variables() {
         .set_compiler_options(&glsl::CompilerOptions {
             version: glsl::Version::V1_00Es,
             enable_420_pack_extension: true,
-            vertex: glsl::CompilerVertexOptions::default(),
+            ..glsl::CompilerOptions::default()
         })
         .unwrap();
     let vert_stage_outputs = vert_ast.get_shader_resources().unwrap().stage_outputs;
@@ -100,7 +100,7 @@ fn ast_renames_interface_variables() {
         .set_compiler_options(&glsl::CompilerOptions {
             version: glsl::Version::V1_00Es,
             enable_420_pack_extension: true,
-            vertex: glsl::CompilerVertexOptions::default(),
+            ..glsl::CompilerOptions::default()
         })
         .unwrap();
     let frag_stage_inputs = frag_ast.get_shader_resources().unwrap().stage_inputs;
@@ -183,7 +183,7 @@ fn ast_can_rename_combined_image_samplers() {
     ast.set_compiler_options(&glsl::CompilerOptions {
         version: glsl::Version::V4_10,
         enable_420_pack_extension: true,
-        vertex: glsl::CompilerVertexOptions::default(),
+        ..glsl::CompilerOptions::default()
     })
     .unwrap();
     for cis in ast.get_combined_image_samplers().unwrap() {
@@ -219,3 +219,55 @@ void main()
 "
     );
 }
+
+#[test]
+fn flatten_uniform_buffers_as_plain_uniforms() {
+    let mut ast = spirv::Ast::<glsl::Target>::parse(&spirv::Module::from_words(words_from_bytes(
+        include_bytes!("shaders/two_ubo.vert.spv"),
+    )))
+    .unwrap();
+    ast.set_compiler_options(&glsl::CompilerOptions {
+        version: glsl::Version::V3_30,
+        emit_uniform_buffer_as_plain_uniforms: true,
+        ..glsl::CompilerOptions::default()
+    })
+    .unwrap();
+
+    println!("{}", ast.compile().unwrap());
+
+    assert_eq!(
+        ast.compile().unwrap(),
+        "\
+#version 330
+#ifdef GL_ARB_shading_language_420pack
+#extension GL_ARB_shading_language_420pack : require
+#endif
+
+struct ubo1
+{
+    mat4 a;
+    float b;
+    vec4 c[2];
+};
+
+uniform ubo1 _19;
+
+struct ubo2
+{
+    float d;
+    vec3 e;
+    vec3 f;
+};
+
+uniform ubo2 _35;
+
+void main()
+{
+    gl_Position = vec4(((((_19.a[1].z + _19.b) + _19.c[1].y) + _35.d) + _35.e.x) + _35.f.z);
+}
+
+"
+    );
+}
+
+// TODO more tests!
