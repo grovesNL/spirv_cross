@@ -177,6 +177,8 @@ extern "C"
     ScInternalResult sc_internal_compiler_glsl_set_options(const ScInternalCompilerGlsl *compiler, const ScGlslCompilerOptions *options);
     ScInternalResult sc_internal_compiler_glsl_build_combined_image_samplers(const ScInternalCompilerBase *compiler);
     ScInternalResult sc_internal_compiler_glsl_get_combined_image_samplers(const ScInternalCompilerBase *compiler, const ScCombinedImageSampler **samplers, size_t *size);
+    ScInternalResult sc_internal_compiler_glsl_add_header_line(const ScInternalCompilerBase *compiler, const char *str);
+    ScInternalResult sc_internal_compiler_glsl_flatten_buffer_block(const ScInternalCompilerBase *compiler, const uint32_t id);
 #endif
 
     ScInternalResult sc_internal_compiler_get_decoration(const ScInternalCompilerBase *compiler, uint32_t *result, const uint32_t id, const spv::Decoration decoration);

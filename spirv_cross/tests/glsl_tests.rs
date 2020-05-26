@@ -221,51 +221,56 @@ void main()
 }
 
 #[test]
-fn flatten_uniform_buffers_as_plain_uniforms() {
+fn flatten_uniform_buffers() {
     let mut ast = spirv::Ast::<glsl::Target>::parse(&spirv::Module::from_words(words_from_bytes(
         include_bytes!("shaders/two_ubo.vert.spv"),
     )))
     .unwrap();
     ast.set_compiler_options(&glsl::CompilerOptions {
         version: glsl::Version::V3_30,
+        enable_420_pack_extension: false,
         emit_uniform_buffer_as_plain_uniforms: true,
         ..glsl::CompilerOptions::default()
     })
     .unwrap();
 
+    for uniform_buffer in &ast.get_shader_resources().unwrap().uniform_buffers {
+        ast.flatten_buffer_block(uniform_buffer.id);
+    }
+
     assert_eq!(
         ast.compile().unwrap(),
         "\
 #version 330
-#ifdef GL_ARB_shading_language_420pack
-#extension GL_ARB_shading_language_420pack : require
-#endif
 
-struct ubo1
-{
-    mat4 a;
-    float b;
-    vec4 c[2];
-};
-
-uniform ubo1 _19;
-
-struct ubo2
-{
-    float d;
-    vec3 e;
-    vec3 f;
-};
-
-uniform ubo2 _35;
-
+uniform vec4 ubo1[7];
+uniform vec4 ubo2[3];
 void main()
 {
-    gl_Position = vec4(((((_19.a[1].z + _19.b) + _19.c[1].y) + _35.d) + _35.e.x) + _35.f.z);
+    gl_Position = vec4(((((ubo1[1].z + ubo1[4].x) + ubo1[6].y) + ubo2[0].x) + ubo2[1].x) + ubo2[2].z);
 }
 
 "
     );
+}
+
+#[test]
+fn add_header_line() {
+    let mut ast = spirv::Ast::<glsl::Target>::parse(&spirv::Module::from_words(words_from_bytes(
+        include_bytes!("shaders/simple.vert.spv"),
+    )))
+    .unwrap();
+    ast.set_compiler_options(&glsl::CompilerOptions {
+        version: glsl::Version::V3_30,
+        enable_420_pack_extension: false,
+        emit_uniform_buffer_as_plain_uniforms: true,
+        ..glsl::CompilerOptions::default()
+    })
+    .unwrap();
+
+    ast.add_header_line("// Comment");
+
+    assert_eq!(Some("// Comment"), ast.compile().unwrap().lines().nth(1));
 }
 
 #[test]

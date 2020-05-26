@@ -1,6 +1,7 @@
 use crate::bindings as br;
 use crate::ptr_util::read_into_vec_from_ptr;
 use crate::{compiler, spirv, ErrorCode};
+use std::ffi::CString;
 use std::marker::PhantomData;
 use std::ptr;
 
@@ -246,6 +247,34 @@ impl spirv::Ast<Target> {
                 .collect();
 
             Ok(samplers)
+        }
+    }
+
+    pub fn add_header_line(&mut self, line: &str) -> Result<(), ErrorCode> {
+        unsafe {
+            let line = CString::new(line);
+            match line {
+                Ok(line) => {
+                    check!(br::sc_internal_compiler_glsl_add_header_line(
+                        self.compiler.sc_compiler,
+                        line.as_ptr(),
+                    ));
+                }
+                _ => return Err(ErrorCode::Unhandled),
+            }
+
+            Ok(())
+        }
+    }
+
+    pub fn flatten_buffer_block(&mut self, id: u32) -> Result<(), ErrorCode> {
+        unsafe {
+            check!(br::sc_internal_compiler_glsl_flatten_buffer_block(
+                self.compiler.sc_compiler,
+                id,
+            ));
+
+            Ok(())
         }
     }
 }

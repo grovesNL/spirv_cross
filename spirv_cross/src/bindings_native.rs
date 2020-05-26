@@ -2633,6 +2633,18 @@ pub mod root {
         ) -> root::ScInternalResult;
     }
     extern "C" {
+        pub fn sc_internal_compiler_glsl_add_header_line(
+            compiler: *const root::ScInternalCompilerBase,
+            str: *const ::std::os::raw::c_char,
+        ) -> root::ScInternalResult;
+    }
+    extern "C" {
+        pub fn sc_internal_compiler_glsl_flatten_buffer_block(
+            compiler: *const root::ScInternalCompilerBase,
+            id: u32,
+        ) -> root::ScInternalResult;
+    }
+    extern "C" {
         pub fn sc_internal_compiler_get_decoration(
             compiler: *const root::ScInternalCompilerBase,
             result: *mut u32,

@@ -224,6 +224,22 @@ extern "C"
                 *size = ret.size();
             } while (0);)
     }
+
+    ScInternalResult sc_internal_compiler_glsl_add_header_line(const ScInternalCompilerBase *compiler, const char *str)
+    {
+        INTERNAL_RESULT(
+            do {
+                ((spirv_cross::CompilerGLSL *)compiler)->add_header_line(std::string(str));
+            } while (0);)
+    }
+
+    ScInternalResult sc_internal_compiler_glsl_flatten_buffer_block(const ScInternalCompilerBase *compiler, const uint32_t id)
+    {
+        INTERNAL_RESULT(
+            do {
+                ((spirv_cross::CompilerGLSL *)compiler)->flatten_buffer_block(id);
+            } while (0);)
+    }
 #endif
 
     ScInternalResult sc_internal_compiler_get_decoration(const ScInternalCompilerBase *compiler, uint32_t *result, const uint32_t id, const spv::Decoration decoration)
