@@ -54,13 +54,14 @@ impl Default for CompilerVertexOptions {
     }
 }
 
+// Note: These values should match with `CompilerGLSL::Options::Precision`.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 #[repr(u8)]
 pub enum Precision {
-    DontCare,
-    Low,
-    Medium,
-    High,
+    DontCare = 0,
+    Low = 1,
+    Medium = 2,
+    High = 3,
 }
 
 #[derive(Debug, Clone)]
