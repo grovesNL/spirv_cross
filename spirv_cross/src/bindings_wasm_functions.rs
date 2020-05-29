@@ -34,6 +34,18 @@ extern "C" {
     ) -> u32;
 
     #[wasm_bindgen(js_namespace = sc_internal)]
+    fn _sc_internal_compiler_glsl_add_header_line(
+        compiler: u32,
+        str: u32,
+    ) -> u32;
+
+    #[wasm_bindgen(js_namespace = sc_internal)]
+    fn _sc_internal_compiler_glsl_flatten_buffer_block(
+        compiler: u32,
+        id: u32,
+    ) -> u32;
+
+    #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_get_decoration(
         compiler: u32,
         result: u32,
@@ -249,6 +261,38 @@ pub fn sc_internal_compiler_glsl_get_combined_image_samplers(
         module.free(samplers_ptr_to_ptr);
         module.free(size_ptr);
 
+        result
+    }
+}
+
+pub fn sc_internal_compiler_glsl_add_header_line(
+    compiler: *const bindings::ScInternalCompilerBase,
+    str: *const ::std::os::raw::c_char,
+) -> bindings::ScInternalResult {
+    let module = emscripten::get_module();
+    unsafe {
+        let str_bytes = CStr::from_ptr(str).to_bytes();
+        let str_ptr = module.allocate(str_bytes.len() as u32);
+        module.set_from_u8_slice(str_ptr, str_bytes);
+        let result = map_internal_result(_sc_internal_compiler_glsl_add_header_line(
+            compiler as u32,
+            str_ptr.as_offset(),
+        ));
+        module.free(str_ptr);
+        result
+    }
+}
+
+pub fn sc_internal_compiler_glsl_flatten_buffer_block(
+    compiler: *const bindings::ScInternalCompilerBase,
+    id: u32,
+) -> bindings::ScInternalResult {
+    let module = emscripten::get_module();
+    unsafe {
+        let result = map_internal_result(_sc_internal_compiler_glsl_flatten_buffer_block(
+            compiler as u32,
+            id
+        ));
         result
     }
 }

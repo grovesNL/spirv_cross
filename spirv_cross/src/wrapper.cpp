@@ -188,9 +188,21 @@ extern "C"
                 auto glsl_options = compiler_glsl->get_common_options();
                 glsl_options.version = options->version;
                 glsl_options.es = options->es;
+                glsl_options.force_temporary = options->force_temporary;
+                glsl_options.vulkan_semantics = options->vulkan_semantics;
+                glsl_options.separate_shader_objects = options->separate_shader_objects;
+                glsl_options.flatten_multidimensional_arrays = options->flatten_multidimensional_arrays;
                 glsl_options.enable_420pack_extension = options->enable_420_pack_extension;
+                glsl_options.emit_push_constant_as_uniform_buffer = options->emit_push_constant_as_uniform_buffer;
+                glsl_options.emit_uniform_buffer_as_plain_uniforms = options->emit_uniform_buffer_as_plain_uniforms;
+                glsl_options.emit_line_directives = options->emit_line_directives;
+                glsl_options.enable_storage_image_qualifier_deduction = options->enable_storage_image_qualifier_deduction;
+                glsl_options.force_zero_initialized_variables = options->force_zero_initialized_variables;
                 glsl_options.vertex.fixup_clipspace = options->vertex_transform_clip_space;
                 glsl_options.vertex.flip_vert_y = options->vertex_invert_y;
+                glsl_options.vertex.support_nonzero_base_instance = options->vertex_support_nonzero_base_instance;
+                glsl_options.fragment.default_float_precision = static_cast<spirv_cross::CompilerGLSL::Options::Precision>(options->fragment_default_float_precision);
+                glsl_options.fragment.default_int_precision = static_cast<spirv_cross::CompilerGLSL::Options::Precision>(options->fragment_default_int_precision);
                 compiler_glsl->set_common_options(glsl_options);
             } while (0);)
     }
@@ -210,6 +222,22 @@ extern "C"
                 const spirv_cross::SmallVector<spirv_cross::CombinedImageSampler>& ret = ((spirv_cross::CompilerGLSL *)compiler)->get_combined_image_samplers();
                 *samplers = (const ScCombinedImageSampler *)ret.data();
                 *size = ret.size();
+            } while (0);)
+    }
+
+    ScInternalResult sc_internal_compiler_glsl_add_header_line(const ScInternalCompilerBase *compiler, const char *str)
+    {
+        INTERNAL_RESULT(
+            do {
+                ((spirv_cross::CompilerGLSL *)compiler)->add_header_line(std::string(str));
+            } while (0);)
+    }
+
+    ScInternalResult sc_internal_compiler_glsl_flatten_buffer_block(const ScInternalCompilerBase *compiler, const uint32_t id)
+    {
+        INTERNAL_RESULT(
+            do {
+                ((spirv_cross::CompilerGLSL *)compiler)->flatten_buffer_block(id);
             } while (0);)
     }
 #endif

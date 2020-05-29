@@ -2482,9 +2482,21 @@ pub mod root {
     pub struct ScGlslCompilerOptions {
         pub vertex_transform_clip_space: bool,
         pub vertex_invert_y: bool,
+        pub vertex_support_nonzero_base_instance: bool,
+        pub fragment_default_float_precision: u8,
+        pub fragment_default_int_precision: u8,
         pub version: u32,
         pub es: bool,
+        pub force_temporary: bool,
+        pub vulkan_semantics: bool,
+        pub separate_shader_objects: bool,
+        pub flatten_multidimensional_arrays: bool,
         pub enable_420_pack_extension: bool,
+        pub emit_push_constant_as_uniform_buffer: bool,
+        pub emit_uniform_buffer_as_plain_uniforms: bool,
+        pub emit_line_directives: bool,
+        pub enable_storage_image_qualifier_deduction: bool,
+        pub force_zero_initialized_variables: bool,
     }
     #[repr(C)]
     #[derive(Debug, Copy, Clone)]
@@ -2618,6 +2630,18 @@ pub mod root {
             compiler: *const root::ScInternalCompilerBase,
             samplers: *mut *const root::ScCombinedImageSampler,
             size: *mut usize,
+        ) -> root::ScInternalResult;
+    }
+    extern "C" {
+        pub fn sc_internal_compiler_glsl_add_header_line(
+            compiler: *const root::ScInternalCompilerBase,
+            str: *const ::std::os::raw::c_char,
+        ) -> root::ScInternalResult;
+    }
+    extern "C" {
+        pub fn sc_internal_compiler_glsl_flatten_buffer_block(
+            compiler: *const root::ScInternalCompilerBase,
+            id: u32,
         ) -> root::ScInternalResult;
     }
     extern "C" {

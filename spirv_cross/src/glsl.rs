@@ -1,6 +1,7 @@
 use crate::bindings as br;
 use crate::ptr_util::read_into_vec_from_ptr;
 use crate::{compiler, spirv, ErrorCode};
+use std::ffi::CString;
 use std::marker::PhantomData;
 use std::ptr;
 
@@ -40,6 +41,7 @@ pub enum Version {
 pub struct CompilerVertexOptions {
     pub invert_y: bool,
     pub transform_clip_space: bool,
+    pub support_nonzero_base_instance: bool,
 }
 
 impl Default for CompilerVertexOptions {
@@ -47,6 +49,32 @@ impl Default for CompilerVertexOptions {
         CompilerVertexOptions {
             invert_y: false,
             transform_clip_space: false,
+            support_nonzero_base_instance: true,
+        }
+    }
+}
+
+// Note: These values should match with `CompilerGLSL::Options::Precision`.
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+#[repr(u8)]
+pub enum Precision {
+    DontCare = 0,
+    Low = 1,
+    Medium = 2,
+    High = 3,
+}
+
+#[derive(Debug, Clone)]
+pub struct CompilerFragmentOptions {
+    pub default_float_precision: Precision,
+    pub default_int_precision: Precision,
+}
+
+impl Default for CompilerFragmentOptions {
+    fn default() -> CompilerFragmentOptions {
+        CompilerFragmentOptions {
+            default_float_precision: Precision::Medium,
+            default_int_precision: Precision::High,
         }
     }
 }
@@ -55,8 +83,18 @@ impl Default for CompilerVertexOptions {
 #[derive(Debug, Clone)]
 pub struct CompilerOptions {
     pub version: Version,
+    pub force_temporary: bool,
+    pub vulkan_semantics: bool,
+    pub separate_shader_objects: bool,
+    pub flatten_multidimensional_arrays: bool,
     pub enable_420_pack_extension: bool,
+    pub emit_push_constant_as_uniform_buffer: bool,
+    pub emit_uniform_buffer_as_plain_uniforms: bool,
+    pub emit_line_directives: bool,
+    pub enable_storage_image_qualifier_deduction: bool,
+    pub force_zero_initialized_variables: bool,
     pub vertex: CompilerVertexOptions,
+    pub fragment: CompilerFragmentOptions,
 }
 
 impl CompilerOptions {
@@ -83,8 +121,20 @@ impl CompilerOptions {
             vertex_invert_y: self.vertex.invert_y,
             vertex_transform_clip_space: self.vertex.transform_clip_space,
             version,
-            enable_420_pack_extension: self.enable_420_pack_extension,
             es,
+            vertex_support_nonzero_base_instance: self.vertex.support_nonzero_base_instance,
+            fragment_default_float_precision: self.fragment.default_float_precision as u8,
+            fragment_default_int_precision: self.fragment.default_int_precision as u8,
+            force_temporary: self.force_temporary,
+            vulkan_semantics: self.vulkan_semantics,
+            separate_shader_objects: self.separate_shader_objects,
+            flatten_multidimensional_arrays: self.flatten_multidimensional_arrays,
+            enable_420_pack_extension: self.enable_420_pack_extension,
+            emit_push_constant_as_uniform_buffer: self.emit_push_constant_as_uniform_buffer,
+            emit_uniform_buffer_as_plain_uniforms: self.emit_uniform_buffer_as_plain_uniforms,
+            emit_line_directives: self.emit_line_directives,
+            enable_storage_image_qualifier_deduction: self.enable_storage_image_qualifier_deduction,
+            force_zero_initialized_variables: self.force_zero_initialized_variables,
         }
     }
 }
@@ -93,8 +143,18 @@ impl Default for CompilerOptions {
     fn default() -> CompilerOptions {
         CompilerOptions {
             version: Version::V4_50,
+            force_temporary: false,
+            vulkan_semantics: false,
+            separate_shader_objects: false,
+            flatten_multidimensional_arrays: false,
             enable_420_pack_extension: true,
+            emit_push_constant_as_uniform_buffer: false,
+            emit_uniform_buffer_as_plain_uniforms: false,
+            emit_line_directives: false,
+            enable_storage_image_qualifier_deduction: true,
+            force_zero_initialized_variables: false,
             vertex: CompilerVertexOptions::default(),
+            fragment: CompilerFragmentOptions::default(),
         }
     }
 }
@@ -188,6 +248,34 @@ impl spirv::Ast<Target> {
                 .collect();
 
             Ok(samplers)
+        }
+    }
+
+    pub fn add_header_line(&mut self, line: &str) -> Result<(), ErrorCode> {
+        unsafe {
+            let line = CString::new(line);
+            match line {
+                Ok(line) => {
+                    check!(br::sc_internal_compiler_glsl_add_header_line(
+                        self.compiler.sc_compiler,
+                        line.as_ptr(),
+                    ));
+                }
+                _ => return Err(ErrorCode::Unhandled),
+            }
+
+            Ok(())
+        }
+    }
+
+    pub fn flatten_buffer_block(&mut self, id: u32) -> Result<(), ErrorCode> {
+        unsafe {
+            check!(br::sc_internal_compiler_glsl_flatten_buffer_block(
+                self.compiler.sc_compiler,
+                id,
+            ));
+
+            Ok(())
         }
     }
 }

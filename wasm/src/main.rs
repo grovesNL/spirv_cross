@@ -32,6 +32,8 @@ fn main() {
 		        "_sc_internal_compiler_glsl_set_options",
 		        "_sc_internal_compiler_glsl_build_combined_image_samplers",
 		        "_sc_internal_compiler_glsl_get_combined_image_samplers",
+		        "_sc_internal_compiler_glsl_add_header_line",
+		        "_sc_internal_compiler_glsl_flatten_buffer_block",
 		        "_sc_internal_compiler_get_decoration",
 		        "_sc_internal_compiler_set_decoration",
 		        "_sc_internal_compiler_unset_decoration",

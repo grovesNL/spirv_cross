@@ -19,7 +19,7 @@ fn ast_compiles_to_glsl() {
     ast.set_compiler_options(&glsl::CompilerOptions {
         version: glsl::Version::V4_60,
         enable_420_pack_extension: true,
-        vertex: glsl::CompilerVertexOptions::default(),
+        ..glsl::CompilerOptions::default()
     })
     .unwrap();
 
@@ -65,7 +65,7 @@ fn ast_compiles_all_versions_to_glsl() {
             .set_compiler_options(&glsl::CompilerOptions {
                 version,
                 enable_420_pack_extension: true,
-                vertex: glsl::CompilerVertexOptions::default(),
+                ..glsl::CompilerOptions::default()
             })
             .is_err()
         {
@@ -83,7 +83,7 @@ fn ast_renames_interface_variables() {
         .set_compiler_options(&glsl::CompilerOptions {
             version: glsl::Version::V1_00Es,
             enable_420_pack_extension: true,
-            vertex: glsl::CompilerVertexOptions::default(),
+            ..glsl::CompilerOptions::default()
         })
         .unwrap();
     let vert_stage_outputs = vert_ast.get_shader_resources().unwrap().stage_outputs;
@@ -100,7 +100,7 @@ fn ast_renames_interface_variables() {
         .set_compiler_options(&glsl::CompilerOptions {
             version: glsl::Version::V1_00Es,
             enable_420_pack_extension: true,
-            vertex: glsl::CompilerVertexOptions::default(),
+            ..glsl::CompilerOptions::default()
         })
         .unwrap();
     let frag_stage_inputs = frag_ast.get_shader_resources().unwrap().stage_inputs;
@@ -183,7 +183,7 @@ fn ast_can_rename_combined_image_samplers() {
     ast.set_compiler_options(&glsl::CompilerOptions {
         version: glsl::Version::V4_10,
         enable_420_pack_extension: true,
-        vertex: glsl::CompilerVertexOptions::default(),
+        ..glsl::CompilerOptions::default()
     })
     .unwrap();
     for cis in ast.get_combined_image_samplers().unwrap() {
@@ -214,6 +214,96 @@ layout(location = 0) in vec2 v_uv;
 void main()
 {
     target0 = texture(combined_sampler_16_12_26, v_uv);
+}
+
+"
+    );
+}
+
+#[test]
+fn flatten_uniform_buffers() {
+    let mut ast = spirv::Ast::<glsl::Target>::parse(&spirv::Module::from_words(words_from_bytes(
+        include_bytes!("shaders/two_ubo.vert.spv"),
+    )))
+    .unwrap();
+    ast.set_compiler_options(&glsl::CompilerOptions {
+        version: glsl::Version::V3_30,
+        enable_420_pack_extension: false,
+        emit_uniform_buffer_as_plain_uniforms: true,
+        ..glsl::CompilerOptions::default()
+    })
+    .unwrap();
+
+    for uniform_buffer in &ast.get_shader_resources().unwrap().uniform_buffers {
+        ast.flatten_buffer_block(uniform_buffer.id);
+    }
+
+    assert_eq!(
+        ast.compile().unwrap(),
+        "\
+#version 330
+
+uniform vec4 ubo1[7];
+uniform vec4 ubo2[3];
+void main()
+{
+    gl_Position = vec4(((((ubo1[1].z + ubo1[4].x) + ubo1[6].y) + ubo2[0].x) + ubo2[1].x) + ubo2[2].z);
+}
+
+"
+    );
+}
+
+#[test]
+fn add_header_line() {
+    let mut ast = spirv::Ast::<glsl::Target>::parse(&spirv::Module::from_words(words_from_bytes(
+        include_bytes!("shaders/simple.vert.spv"),
+    )))
+    .unwrap();
+    ast.set_compiler_options(&glsl::CompilerOptions {
+        version: glsl::Version::V3_30,
+        enable_420_pack_extension: false,
+        emit_uniform_buffer_as_plain_uniforms: true,
+        ..glsl::CompilerOptions::default()
+    })
+    .unwrap();
+
+    ast.add_header_line("// Comment");
+
+    assert_eq!(Some("// Comment"), ast.compile().unwrap().lines().nth(1));
+}
+
+#[test]
+fn low_precision() {
+    let mut ast = spirv::Ast::<glsl::Target>::parse(&spirv::Module::from_words(words_from_bytes(
+        include_bytes!("shaders/sampler.frag.spv"),
+    )))
+    .unwrap();
+    ast.set_compiler_options(&glsl::CompilerOptions {
+        version: glsl::Version::V3_00Es,
+        fragment: glsl::CompilerFragmentOptions {
+            default_float_precision: glsl::Precision::Low,
+            default_int_precision: glsl::Precision::Low,
+        },
+        ..glsl::CompilerOptions::default()
+    })
+    .unwrap();
+
+    assert_eq!(
+        ast.compile().unwrap(),
+        "\
+#version 300 es
+precision lowp float;
+precision lowp int;
+
+uniform highp sampler2D _26;
+
+layout(location = 0) out highp vec4 target0;
+in highp vec2 v_uv;
+
+void main()
+{
+    target0 = texture(_26, v_uv);
 }
 
 "

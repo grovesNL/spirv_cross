@@ -85,9 +85,21 @@ extern "C"
     {
         bool vertex_transform_clip_space;
         bool vertex_invert_y;
+        bool vertex_support_nonzero_base_instance;
+        uint8_t fragment_default_float_precision;
+        uint8_t fragment_default_int_precision;
         uint32_t version;
         bool es;
+        bool force_temporary;
+        bool vulkan_semantics;
+        bool separate_shader_objects;
+        bool flatten_multidimensional_arrays;
         bool enable_420_pack_extension;
+        bool emit_push_constant_as_uniform_buffer;
+        bool emit_uniform_buffer_as_plain_uniforms;
+        bool emit_line_directives;
+        bool enable_storage_image_qualifier_deduction;
+        bool force_zero_initialized_variables;
     } ScGlslCompilerOptions;
 
     typedef struct ScResource
@@ -165,6 +177,8 @@ extern "C"
     ScInternalResult sc_internal_compiler_glsl_set_options(const ScInternalCompilerGlsl *compiler, const ScGlslCompilerOptions *options);
     ScInternalResult sc_internal_compiler_glsl_build_combined_image_samplers(const ScInternalCompilerBase *compiler);
     ScInternalResult sc_internal_compiler_glsl_get_combined_image_samplers(const ScInternalCompilerBase *compiler, const ScCombinedImageSampler **samplers, size_t *size);
+    ScInternalResult sc_internal_compiler_glsl_add_header_line(const ScInternalCompilerBase *compiler, const char *str);
+    ScInternalResult sc_internal_compiler_glsl_flatten_buffer_block(const ScInternalCompilerBase *compiler, const uint32_t id);
 #endif
 
     ScInternalResult sc_internal_compiler_get_decoration(const ScInternalCompilerBase *compiler, uint32_t *result, const uint32_t id, const spv::Decoration decoration);
