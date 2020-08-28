@@ -2447,6 +2447,7 @@ pub mod root {
         pub tess_domain_origin_lower_left: bool,
         pub argument_buffers: bool,
         pub pad_fragment_output_components: bool,
+        pub force_native_arrays: bool,
     }
     #[repr(C)]
     #[derive(Debug, Copy, Clone)]

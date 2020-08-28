@@ -109,7 +109,7 @@ extern "C"
     }
 
     ScInternalResult sc_internal_compiler_msl_compile(const ScInternalCompilerBase *compiler, const char **shader,
-                                                      const spirv_cross::MSLVertexAttr *p_vat_overrides, const size_t vat_override_count,
+                                                      const spirv_cross::MSLShaderInput *p_vat_overrides, const size_t vat_override_count,
                                                       const spirv_cross::MSLResourceBinding *p_res_overrides, const size_t res_override_count,
                                                       const ScMslConstSamplerMapping *p_const_samplers, const size_t const_sampler_count)
     {
@@ -119,7 +119,7 @@ extern "C"
 
                 for (size_t i = 0; i < vat_override_count; i++)
                 {
-                    compiler_msl->add_msl_vertex_attribute(p_vat_overrides[i]);
+                    compiler_msl->add_msl_shader_input(p_vat_overrides[i]);
                 }
 
                 for (size_t i = 0; i < res_override_count; i++)
@@ -164,6 +164,7 @@ extern "C"
                 msl_options.tess_domain_origin_lower_left = options->tess_domain_origin_lower_left;
                 msl_options.argument_buffers = options->argument_buffers;
                 msl_options.pad_fragment_output_components = options->pad_fragment_output_components;
+                msl_options.force_native_arrays = options->force_native_arrays;
                 compiler_msl->set_msl_options(msl_options);
             } while (0);)
     }

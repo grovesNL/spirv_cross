@@ -29,11 +29,9 @@ fn main() {
         msl::VertexAttributeLocation(1),
         msl::VertexAttribute {
             buffer_id: 1,
-            offset: 2,
-            stride: 3,
-            step: spirv::VertexAttributeStep::Instance,
             format: msl::Format::Other,
             built_in: None,
+            vecsize: 0,
         },
     );
 
