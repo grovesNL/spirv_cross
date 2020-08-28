@@ -313,9 +313,10 @@ fragment main0_out main0(main0_in in [[stage_in]], constant spvDescriptorSetBuff
 
 #[test]
 fn forces_native_array() {
-    let module =
-        spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/const_array.vert.spv")));
-    
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!(
+        "shaders/const_array.vert.spv"
+    )));
+
     let cases = [
         (
             false,

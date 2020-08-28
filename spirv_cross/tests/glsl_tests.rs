@@ -185,7 +185,10 @@ fn ast_can_rename_combined_image_samplers() {
     })
     .unwrap();
     for cis in ast.get_combined_image_samplers().unwrap() {
-        let new_name = format!("combined_sampler_{}_{}_{}", cis.sampler_id, cis.image_id, cis.combined_id);
+        let new_name = format!(
+            "combined_sampler_{}_{}_{}",
+            cis.sampler_id, cis.image_id, cis.combined_id
+        );
         ast.set_name(cis.combined_id, &new_name).unwrap();
         assert_eq!(new_name, ast.get_name(cis.combined_id).unwrap());
     }
