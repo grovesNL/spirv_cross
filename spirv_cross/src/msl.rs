@@ -12,7 +12,7 @@ use std::u8;
 pub enum Target {}
 
 pub struct TargetData {
-    vertex_attribute_overrides: Vec<br::spirv_cross::MSLVertexAttr>,
+    vertex_attribute_overrides: Vec<br::spirv_cross::MSLShaderInput>,
     resource_binding_overrides: Vec<br::spirv_cross::MSLResourceBinding>,
     const_samplers: Vec<br::ScMslConstSamplerMapping>,
 }
@@ -34,13 +34,12 @@ pub enum Format {
 }
 
 impl Format {
-    fn as_raw(&self) -> br::spirv_cross::MSLVertexFormat {
+    fn as_raw(&self) -> br::spirv_cross::MSLShaderInputFormat {
         use self::Format::*;
-        use crate::bindings::root::spirv_cross::MSLVertexFormat as R;
         match self {
-            Other => R::MSL_VERTEX_FORMAT_OTHER,
-            Uint8 => R::MSL_VERTEX_FORMAT_UINT8,
-            Uint16 => R::MSL_VERTEX_FORMAT_UINT16,
+            Other => br::spirv_cross::MSLShaderInputFormat_MSL_SHADER_INPUT_FORMAT_OTHER,
+            Uint8 => br::spirv_cross::MSLShaderInputFormat_MSL_SHADER_INPUT_FORMAT_UINT8,
+            Uint16 => br::spirv_cross::MSLShaderInputFormat_MSL_SHADER_INPUT_FORMAT_UINT16,
         }
     }
 }
@@ -49,11 +48,9 @@ impl Format {
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct VertexAttribute {
     pub buffer_id: u32,
-    pub offset: u32,
-    pub stride: u32,
-    pub step: spirv::VertexAttributeStep,
     pub format: Format,
     pub built_in: Option<spirv::BuiltIn>,
+    pub vecsize: u32,
 }
 
 /// Location of a resource binding to override
@@ -320,6 +317,8 @@ pub struct CompilerOptions {
     pub vertex_attribute_overrides: BTreeMap<VertexAttributeLocation, VertexAttribute>,
     /// MSL const sampler mappings.
     pub const_samplers: BTreeMap<SamplerLocation, SamplerData>,
+    /// Whether to force native arrays (useful to workaround issues on some hardware).
+    pub force_native_arrays: bool,
 }
 
 impl CompilerOptions {
@@ -342,6 +341,7 @@ impl CompilerOptions {
             tess_domain_origin_lower_left: self.tessellation_domain_origin_lower_left,
             argument_buffers: self.enable_argument_buffers,
             pad_fragment_output_components: self.pad_fragment_output_components,
+            force_native_arrays: self.force_native_arrays,
         }
     }
 }
@@ -368,6 +368,7 @@ impl Default for CompilerOptions {
             resource_binding_overrides: Default::default(),
             vertex_attribute_overrides: Default::default(),
             const_samplers: Default::default(),
+            force_native_arrays: false,
         }
     }
 }
@@ -428,17 +429,11 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
         self.compiler.target_data.vertex_attribute_overrides.clear();
         self.compiler.target_data.vertex_attribute_overrides.extend(
             options.vertex_attribute_overrides.iter().map(|(loc, vat)| {
-                br::spirv_cross::MSLVertexAttr {
+                br::spirv_cross::MSLShaderInput {
                     location: loc.0,
-                    msl_buffer: vat.buffer_id,
-                    msl_offset: vat.offset,
-                    msl_stride: vat.stride,
-                    per_instance: match vat.step {
-                        spirv::VertexAttributeStep::Vertex => false,
-                        spirv::VertexAttributeStep::Instance => true,
-                    },
                     format: vat.format.as_raw(),
                     builtin: spirv::built_in_as_raw(vat.built_in),
+                    vecsize: vat.vecsize,
                 }
             }),
         );

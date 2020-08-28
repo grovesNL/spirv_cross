@@ -79,6 +79,7 @@ extern "C"
         bool tess_domain_origin_lower_left;
         bool argument_buffers;
         bool pad_fragment_output_components;
+        bool force_native_arrays;
     } ScMslCompilerOptions;
 
     typedef struct ScGlslCompilerOptions
@@ -167,7 +168,7 @@ extern "C"
     ScInternalResult sc_internal_compiler_msl_set_options(const ScInternalCompilerMsl *compiler, const ScMslCompilerOptions *options);
     ScInternalResult sc_internal_compiler_msl_get_is_rasterization_disabled(const ScInternalCompilerMsl *compiler, bool *is_rasterization_disabled);
     ScInternalResult sc_internal_compiler_msl_compile(const ScInternalCompilerBase *compiler, const char **shader,
-                                                      const spirv_cross::MSLVertexAttr *p_vat_overrides, const size_t vat_override_count,
+                                                      const spirv_cross::MSLShaderInput *p_vat_overrides, const size_t vat_override_count,
                                                       const spirv_cross::MSLResourceBinding *p_res_overrides, const size_t res_override_count,
                                                       const ScMslConstSamplerMapping *p_const_samplers, const size_t const_sampler_count);
 #endif

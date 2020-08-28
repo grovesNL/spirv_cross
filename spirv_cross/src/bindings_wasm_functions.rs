@@ -34,16 +34,10 @@ extern "C" {
     ) -> u32;
 
     #[wasm_bindgen(js_namespace = sc_internal)]
-    fn _sc_internal_compiler_glsl_add_header_line(
-        compiler: u32,
-        str: u32,
-    ) -> u32;
+    fn _sc_internal_compiler_glsl_add_header_line(compiler: u32, str: u32) -> u32;
 
     #[wasm_bindgen(js_namespace = sc_internal)]
-    fn _sc_internal_compiler_glsl_flatten_buffer_block(
-        compiler: u32,
-        id: u32,
-    ) -> u32;
+    fn _sc_internal_compiler_glsl_flatten_buffer_block(compiler: u32, id: u32) -> u32;
 
     #[wasm_bindgen(js_namespace = sc_internal)]
     fn _sc_internal_compiler_get_decoration(
@@ -291,7 +285,7 @@ pub fn sc_internal_compiler_glsl_flatten_buffer_block(
     unsafe {
         let result = map_internal_result(_sc_internal_compiler_glsl_flatten_buffer_block(
             compiler as u32,
-            id
+            id,
         ));
         result
     }

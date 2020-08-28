@@ -133,13 +133,11 @@ attribute vec4 d;
 
 void main()
 {
-    {
-        SPIRV_Cross_Interface_Location0 renamed = SPIRV_Cross_Interface_Location0(a, b, c, d);
-        renamed_InterfaceMember0 = renamed.InterfaceMember0;
-        renamed_InterfaceMember1 = renamed.InterfaceMember1;
-        renamed_InterfaceMember2 = renamed.InterfaceMember2;
-        renamed_InterfaceMember3 = renamed.InterfaceMember3;
-    }
+    SPIRV_Cross_Interface_Location0 _20 = SPIRV_Cross_Interface_Location0(a, b, c, d);
+    renamed_InterfaceMember0 = _20.InterfaceMember0;
+    renamed_InterfaceMember1 = _20.InterfaceMember1;
+    renamed_InterfaceMember2 = _20.InterfaceMember2;
+    renamed_InterfaceMember3 = _20.InterfaceMember3;
 }
 
 "
@@ -187,13 +185,10 @@ fn ast_can_rename_combined_image_samplers() {
     })
     .unwrap();
     for cis in ast.get_combined_image_samplers().unwrap() {
-        let new_name = "combined_sampler".to_string()
-            + "_"
-            + &cis.sampler_id.to_string()
-            + "_"
-            + &cis.image_id.to_string()
-            + "_"
-            + &cis.combined_id.to_string();
+        let new_name = format!(
+            "combined_sampler_{}_{}_{}",
+            cis.sampler_id, cis.image_id, cis.combined_id
+        );
         ast.set_name(cis.combined_id, &new_name).unwrap();
         assert_eq!(new_name, ast.get_name(cis.combined_id).unwrap());
     }
@@ -235,7 +230,7 @@ fn flatten_uniform_buffers() {
     .unwrap();
 
     for uniform_buffer in &ast.get_shader_resources().unwrap().uniform_buffers {
-        ast.flatten_buffer_block(uniform_buffer.id);
+        ast.flatten_buffer_block(uniform_buffer.id).unwrap();
     }
 
     assert_eq!(
@@ -268,7 +263,7 @@ fn add_header_line() {
     })
     .unwrap();
 
-    ast.add_header_line("// Comment");
+    ast.add_header_line("// Comment").unwrap();
 
     assert_eq!(Some("// Comment"), ast.compile().unwrap().lines().nth(1));
 }
