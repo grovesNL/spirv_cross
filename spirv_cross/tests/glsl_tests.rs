@@ -304,3 +304,60 @@ void main()
 "
     );
 }
+
+#[test]
+fn forces_zero_initialization() {
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!(
+        "shaders/initialization.vert.spv"
+    )));
+
+    let cases = [
+        (
+            false,
+            "\
+#version 450
+
+layout(location = 0) in float rand;
+
+void main()
+{
+    vec4 pos;
+    if (rand > 0.5)
+    {
+        pos = vec4(1.0);
+    }
+    gl_Position = pos;
+}
+
+"
+        ),
+        (
+            true,
+            "\
+#version 450
+
+layout(location = 0) in float rand;
+
+void main()
+{
+    vec4 pos = vec4(0.0);
+    if (rand > 0.5)
+    {
+        pos = vec4(1.0);
+    }
+    gl_Position = pos;
+}
+
+"
+        )
+    ];
+    for (force_zero_initialized_variables, expected_result) in cases.iter() {
+        let mut ast = spirv::Ast::<glsl::Target>::parse(&module).unwrap();
+        let compiler_options = glsl::CompilerOptions {
+            force_zero_initialized_variables: *force_zero_initialized_variables,
+            ..Default::default()
+        };
+        ast.set_compiler_options(&compiler_options).unwrap();
+        assert_eq!(&ast.compile().unwrap(), expected_result);
+    }
+}

@@ -319,6 +319,8 @@ pub struct CompilerOptions {
     pub const_samplers: BTreeMap<SamplerLocation, SamplerData>,
     /// Whether to force native arrays (useful to workaround issues on some hardware).
     pub force_native_arrays: bool,
+    /// Whether to force all uninitialized variables to be initialized to zero.
+    pub force_zero_initialized_variables: bool,
 }
 
 impl CompilerOptions {
@@ -342,6 +344,7 @@ impl CompilerOptions {
             argument_buffers: self.enable_argument_buffers,
             pad_fragment_output_components: self.pad_fragment_output_components,
             force_native_arrays: self.force_native_arrays,
+            force_zero_initialized_variables: self.force_zero_initialized_variables,
         }
     }
 }
@@ -369,6 +372,7 @@ impl Default for CompilerOptions {
             vertex_attribute_overrides: Default::default(),
             const_samplers: Default::default(),
             force_native_arrays: false,
+            force_zero_initialized_variables: false,
         }
     }
 }

@@ -15,6 +15,7 @@ fn main() {
         vertex: hlsl::CompilerVertexOptions::default(),
         force_storage_buffer_as_uav: false,
         nonwritable_uav_texture_as_srv: false,
+        force_zero_initialized_variables: true,
     })
     .unwrap();
 

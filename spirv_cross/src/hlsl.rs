@@ -72,6 +72,8 @@ pub struct CompilerOptions {
     pub vertex: CompilerVertexOptions,
     pub force_storage_buffer_as_uav: bool,
     pub nonwritable_uav_texture_as_srv: bool,
+    /// Whether to force all uninitialized variables to be initialized to zero.
+    pub force_zero_initialized_variables: bool,
 }
 
 impl CompilerOptions {
@@ -84,6 +86,7 @@ impl CompilerOptions {
             vertex_transform_clip_space: self.vertex.transform_clip_space,
             force_storage_buffer_as_uav: self.force_storage_buffer_as_uav,
             nonwritable_uav_texture_as_srv: self.nonwritable_uav_texture_as_srv,
+            force_zero_initialized_variables: self.force_zero_initialized_variables,
         }
     }
 }
@@ -97,6 +100,7 @@ impl Default for CompilerOptions {
             vertex: CompilerVertexOptions::default(),
             force_storage_buffer_as_uav: false,
             nonwritable_uav_texture_as_srv: false,
+            force_zero_initialized_variables: false,
         }
     }
 }

@@ -67,6 +67,7 @@ extern "C"
                 auto glsl_options = compiler_glsl->get_common_options();
                 glsl_options.vertex.fixup_clipspace = options->vertex_transform_clip_space;
                 glsl_options.vertex.flip_vert_y = options->vertex_invert_y;
+                glsl_options.force_zero_initialized_variables = options->force_zero_initialized_variables;
                 compiler_glsl->set_common_options(glsl_options);
 
                 auto compiler_hlsl = (spirv_cross::CompilerHLSL *)compiler;
@@ -146,6 +147,7 @@ extern "C"
                 auto glsl_options = compiler_msl->get_common_options();
                 glsl_options.vertex.fixup_clipspace = options->vertex_transform_clip_space;
                 glsl_options.vertex.flip_vert_y = options->vertex_invert_y;
+                glsl_options.force_zero_initialized_variables = options->force_zero_initialized_variables;
                 compiler_msl->set_common_options(glsl_options);
 
                 auto msl_options = compiler_msl->get_msl_options();
