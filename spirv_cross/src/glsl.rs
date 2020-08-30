@@ -92,6 +92,7 @@ pub struct CompilerOptions {
     pub emit_uniform_buffer_as_plain_uniforms: bool,
     pub emit_line_directives: bool,
     pub enable_storage_image_qualifier_deduction: bool,
+    /// Whether to force all uninitialized variables to be initialized to zero.
     pub force_zero_initialized_variables: bool,
     pub vertex: CompilerVertexOptions,
     pub fragment: CompilerFragmentOptions,

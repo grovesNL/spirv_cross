@@ -25,6 +25,7 @@ fn ast_compiles_to_hlsl() {
         vertex: hlsl::CompilerVertexOptions::default(),
         force_storage_buffer_as_uav: false,
         nonwritable_uav_texture_as_srv: false,
+        force_zero_initialized_variables: false,
     })
     .unwrap();
 
@@ -93,7 +94,7 @@ fn ast_compiles_all_shader_models_to_hlsl() {
         hlsl::ShaderModel::V6_0,
     ];
     for &shader_model in shader_models.iter() {
-        if ast
+        assert!(ast
             .set_compiler_options(&hlsl::CompilerOptions {
                 shader_model,
                 point_size_compat: false,
@@ -101,10 +102,107 @@ fn ast_compiles_all_shader_models_to_hlsl() {
                 vertex: hlsl::CompilerVertexOptions::default(),
                 force_storage_buffer_as_uav: false,
                 nonwritable_uav_texture_as_srv: false,
+                force_zero_initialized_variables: false,
             })
-            .is_err()
-        {
-            panic!("Did not compile");
-        }
+            .is_ok());
+    }
+}
+
+#[test]
+fn forces_zero_initialization() {
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!(
+        "shaders/initialization.vert.spv"
+    )));
+
+    let cases = [
+        (
+            false,
+            "\
+uniform float4 gl_HalfPixel;
+
+static float4 gl_Position;
+static float rand;
+
+struct SPIRV_Cross_Input
+{
+    float rand : TEXCOORD0;
+};
+
+struct SPIRV_Cross_Output
+{
+    float4 gl_Position : POSITION;
+};
+
+void vert_main()
+{
+    float4 pos;
+    if (rand > 0.5f)
+    {
+        pos = 1.0f.xxxx;
+    }
+    gl_Position = pos;
+    gl_Position.x = gl_Position.x - gl_HalfPixel.x * gl_Position.w;
+    gl_Position.y = gl_Position.y + gl_HalfPixel.y * gl_Position.w;
+}
+
+SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
+{
+    rand = stage_input.rand;
+    vert_main();
+    SPIRV_Cross_Output stage_output;
+    stage_output.gl_Position = gl_Position;
+    return stage_output;
+}
+"
+        ),
+        (
+            true,
+            "\
+uniform float4 gl_HalfPixel;
+
+static float4 gl_Position;
+static float rand;
+
+struct SPIRV_Cross_Input
+{
+    float rand : TEXCOORD0;
+};
+
+struct SPIRV_Cross_Output
+{
+    float4 gl_Position : POSITION;
+};
+
+void vert_main()
+{
+    float4 pos = 0.0f.xxxx;
+    if (rand > 0.5f)
+    {
+        pos = 1.0f.xxxx;
+    }
+    gl_Position = pos;
+    gl_Position.x = gl_Position.x - gl_HalfPixel.x * gl_Position.w;
+    gl_Position.y = gl_Position.y + gl_HalfPixel.y * gl_Position.w;
+}
+
+SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
+{
+    rand = stage_input.rand;
+    vert_main();
+    SPIRV_Cross_Output stage_output;
+    stage_output.gl_Position = gl_Position;
+    return stage_output;
+}
+"
+        )
+    ];
+    for (force_zero_initialized_variables, expected_result) in cases.iter() {
+        let mut ast = spirv::Ast::<hlsl::Target>::parse(&module).unwrap();
+        let compiler_options = hlsl::CompilerOptions {
+            force_zero_initialized_variables: *force_zero_initialized_variables,
+            ..Default::default()
+        };
+        ast.set_compiler_options(&compiler_options).unwrap();
+        assert_eq!(&ast.compile().unwrap(), expected_result);
     }
 }

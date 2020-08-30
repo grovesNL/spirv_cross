@@ -58,6 +58,7 @@ extern "C"
         bool vertex_invert_y;
         bool force_storage_buffer_as_uav;
         bool nonwritable_uav_texture_as_srv;
+        bool force_zero_initialized_variables;
     } ScHlslCompilerOptions;
 
     typedef struct ScMslCompilerOptions
@@ -80,6 +81,7 @@ extern "C"
         bool argument_buffers;
         bool pad_fragment_output_components;
         bool force_native_arrays;
+        bool force_zero_initialized_variables;
     } ScMslCompilerOptions;
 
     typedef struct ScGlslCompilerOptions

@@ -418,3 +418,86 @@ vertex main0_out main0(uint gl_VertexIndex [[vertex_id]])
         assert_eq!(&ast.compile().unwrap(), expected_result);
     }
 }
+
+#[test]
+fn forces_zero_initialization() {
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!(
+        "shaders/initialization.vert.spv"
+    )));
+
+    let cases = [
+        (
+            false,
+            "\
+#include <metal_stdlib>
+#include <simd/simd.h>
+
+using namespace metal;
+
+struct main0_out
+{
+    float4 gl_Position [[position]];
+};
+
+struct main0_in
+{
+    float rand [[attribute(0)]];
+};
+
+vertex main0_out main0(main0_in in [[stage_in]])
+{
+    main0_out out = {};
+    float4 pos;
+    if (in.rand > 0.5)
+    {
+        pos = float4(1.0);
+    }
+    out.gl_Position = pos;
+    return out;
+}
+
+"
+        ),
+        (
+            true,
+            "\
+#include <metal_stdlib>
+#include <simd/simd.h>
+
+using namespace metal;
+
+struct main0_out
+{
+    float4 gl_Position [[position]];
+};
+
+struct main0_in
+{
+    float rand [[attribute(0)]];
+};
+
+vertex main0_out main0(main0_in in [[stage_in]])
+{
+    main0_out out = {};
+    float4 pos = {};
+    if (in.rand > 0.5)
+    {
+        pos = float4(1.0);
+    }
+    out.gl_Position = pos;
+    return out;
+}
+
+"
+        )
+    ];
+    for (force_zero_initialized_variables, expected_result) in cases.iter() {
+        let mut ast = spirv::Ast::<msl::Target>::parse(&module).unwrap();
+        let compiler_options = msl::CompilerOptions {
+            force_zero_initialized_variables: *force_zero_initialized_variables,
+            ..Default::default()
+        };
+        ast.set_compiler_options(&compiler_options).unwrap();
+        assert_eq!(&ast.compile().unwrap(), expected_result);
+    }
+}
