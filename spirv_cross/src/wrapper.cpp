@@ -521,6 +521,11 @@ extern "C"
         } while (0);)
     }
 
+    ScInternalResult sc_internal_compiler_set_entry_point(const ScInternalCompilerBase *compiler, const char *name, const spv::ExecutionModel execution_model)
+    {
+        INTERNAL_RESULT(((spirv_cross::Compiler *)compiler)->set_entry_point(name, execution_model);)
+    }
+
     ScInternalResult sc_internal_compiler_compile(const ScInternalCompilerBase *compiler, const char **shader)
     {
         INTERNAL_RESULT(*shader = strdup(((spirv_cross::Compiler *)compiler)->compile().c_str());)

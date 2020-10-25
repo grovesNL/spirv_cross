@@ -204,6 +204,7 @@ extern "C"
     ScInternalResult sc_internal_compiler_get_declared_struct_member_size(const ScInternalCompilerBase *compiler, const uint32_t id, const uint32_t index, uint32_t *result);
     ScInternalResult sc_internal_compiler_rename_interface_variable(const ScInternalCompilerBase *compiler, const ScResource *resources, const size_t resources_size, uint32_t location, const char *name);
     ScInternalResult sc_internal_compiler_get_work_group_size_specialization_constants(const ScInternalCompilerBase *compiler, ScSpecializationConstant **constants);
+    ScInternalResult sc_internal_compiler_set_entry_point(const ScInternalCompilerBase *compiler, const char *name, const spv::ExecutionModel execution_model);
     ScInternalResult sc_internal_compiler_compile(const ScInternalCompilerBase *compiler, const char **shader);
     ScInternalResult sc_internal_compiler_delete(ScInternalCompilerBase *compiler);
 

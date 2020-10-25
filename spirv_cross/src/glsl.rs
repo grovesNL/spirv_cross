@@ -80,6 +80,7 @@ impl Default for CompilerFragmentOptions {
 }
 
 /// GLSL compiler options.
+#[non_exhaustive]
 #[derive(Debug, Clone)]
 pub struct CompilerOptions {
     pub version: Version,
@@ -96,48 +97,9 @@ pub struct CompilerOptions {
     pub force_zero_initialized_variables: bool,
     pub vertex: CompilerVertexOptions,
     pub fragment: CompilerFragmentOptions,
-}
-
-impl CompilerOptions {
-    fn as_raw(&self) -> br::ScGlslCompilerOptions {
-        use self::Version::*;
-        let (version, es) = match self.version {
-            V1_10 => (1_10, false),
-            V1_20 => (1_20, false),
-            V1_30 => (1_30, false),
-            V1_40 => (1_40, false),
-            V1_50 => (1_50, false),
-            V3_30 => (3_30, false),
-            V4_00 => (4_00, false),
-            V4_10 => (4_10, false),
-            V4_20 => (4_20, false),
-            V4_30 => (4_30, false),
-            V4_40 => (4_40, false),
-            V4_50 => (4_50, false),
-            V4_60 => (4_60, false),
-            V1_00Es => (1_00, true),
-            V3_00Es => (3_00, true),
-        };
-        br::ScGlslCompilerOptions {
-            vertex_invert_y: self.vertex.invert_y,
-            vertex_transform_clip_space: self.vertex.transform_clip_space,
-            version,
-            es,
-            vertex_support_nonzero_base_instance: self.vertex.support_nonzero_base_instance,
-            fragment_default_float_precision: self.fragment.default_float_precision as u8,
-            fragment_default_int_precision: self.fragment.default_int_precision as u8,
-            force_temporary: self.force_temporary,
-            vulkan_semantics: self.vulkan_semantics,
-            separate_shader_objects: self.separate_shader_objects,
-            flatten_multidimensional_arrays: self.flatten_multidimensional_arrays,
-            enable_420_pack_extension: self.enable_420_pack_extension,
-            emit_push_constant_as_uniform_buffer: self.emit_push_constant_as_uniform_buffer,
-            emit_uniform_buffer_as_plain_uniforms: self.emit_uniform_buffer_as_plain_uniforms,
-            emit_line_directives: self.emit_line_directives,
-            enable_storage_image_qualifier_deduction: self.enable_storage_image_qualifier_deduction,
-            force_zero_initialized_variables: self.force_zero_initialized_variables,
-        }
-    }
+    /// The name and execution model of the entry point to use. If no entry
+    /// point is specified, then the first entry point found will be used.
+    pub entry_point: Option<(String, spirv::ExecutionModel)>,
 }
 
 impl Default for CompilerOptions {
@@ -156,6 +118,7 @@ impl Default for CompilerOptions {
             force_zero_initialized_variables: false,
             vertex: CompilerVertexOptions::default(),
             fragment: CompilerFragmentOptions::default(),
+            entry_point: None,
         }
     }
 }
@@ -193,7 +156,56 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
 
     /// Set GLSL compiler specific compilation settings.
     fn set_compiler_options(&mut self, options: &CompilerOptions) -> Result<(), ErrorCode> {
-        let raw_options = options.as_raw();
+        if let Some((name, model)) = &options.entry_point {
+            let name_raw = CString::new(name.as_str()).map_err(|_| ErrorCode::Unhandled)?;
+            let model = model.as_raw();
+            unsafe {
+                check!(br::sc_internal_compiler_set_entry_point(
+                    self.compiler.sc_compiler,
+                    name_raw.as_ptr(),
+                    model,
+                ));
+            }
+        };
+
+        use self::Version::*;
+        let (version, es) = match options.version {
+            V1_10 => (1_10, false),
+            V1_20 => (1_20, false),
+            V1_30 => (1_30, false),
+            V1_40 => (1_40, false),
+            V1_50 => (1_50, false),
+            V3_30 => (3_30, false),
+            V4_00 => (4_00, false),
+            V4_10 => (4_10, false),
+            V4_20 => (4_20, false),
+            V4_30 => (4_30, false),
+            V4_40 => (4_40, false),
+            V4_50 => (4_50, false),
+            V4_60 => (4_60, false),
+            V1_00Es => (1_00, true),
+            V3_00Es => (3_00, true),
+        };
+        let raw_options = br::ScGlslCompilerOptions {
+            vertex_invert_y: options.vertex.invert_y,
+            vertex_transform_clip_space: options.vertex.transform_clip_space,
+            version,
+            es,
+            vertex_support_nonzero_base_instance: options.vertex.support_nonzero_base_instance,
+            fragment_default_float_precision: options.fragment.default_float_precision as u8,
+            fragment_default_int_precision: options.fragment.default_int_precision as u8,
+            force_temporary: options.force_temporary,
+            vulkan_semantics: options.vulkan_semantics,
+            separate_shader_objects: options.separate_shader_objects,
+            flatten_multidimensional_arrays: options.flatten_multidimensional_arrays,
+            enable_420_pack_extension: options.enable_420_pack_extension,
+            emit_push_constant_as_uniform_buffer: options.emit_push_constant_as_uniform_buffer,
+            emit_uniform_buffer_as_plain_uniforms: options.emit_uniform_buffer_as_plain_uniforms,
+            emit_line_directives: options.emit_line_directives,
+            enable_storage_image_qualifier_deduction: options
+                .enable_storage_image_qualifier_deduction,
+            force_zero_initialized_variables: options.force_zero_initialized_variables,
+        };
         unsafe {
             check!(br::sc_internal_compiler_glsl_set_options(
                 self.compiler.sc_compiler,

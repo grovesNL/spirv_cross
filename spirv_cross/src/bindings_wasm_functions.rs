@@ -713,6 +713,14 @@ pub fn sc_internal_compiler_get_work_group_size_specialization_constants(
     }
 }
 
+pub fn sc_internal_compiler_set_entry_point(
+    compiler: *const bindings::ScInternalCompilerBase,
+    name: *const ::std::os::raw::c_char,
+    execution_model: bindings::spv::ExecutionModel,
+) -> bindings::ScInternalResult {
+    unimplemented!()
+}
+
 pub fn sc_internal_compiler_compile(
     compiler: *const bindings::ScInternalCompilerBase,
     shader: *mut *const ::std::os::raw::c_char,

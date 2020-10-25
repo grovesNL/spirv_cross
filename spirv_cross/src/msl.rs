@@ -2,7 +2,7 @@ use crate::bindings as br;
 use crate::{compiler, spirv, ErrorCode};
 
 use std::collections::BTreeMap;
-use std::ffi::CStr;
+use std::ffi::{CStr, CString};
 use std::marker::PhantomData;
 use std::ptr;
 use std::u8;
@@ -277,6 +277,7 @@ impl Default for CompilerVertexOptions {
 }
 
 /// MSL compiler options.
+#[non_exhaustive]
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct CompilerOptions {
     /// The target platform.
@@ -321,32 +322,9 @@ pub struct CompilerOptions {
     pub force_native_arrays: bool,
     /// Whether to force all uninitialized variables to be initialized to zero.
     pub force_zero_initialized_variables: bool,
-}
-
-impl CompilerOptions {
-    fn as_raw(&self) -> br::ScMslCompilerOptions {
-        br::ScMslCompilerOptions {
-            vertex_invert_y: self.vertex.invert_y,
-            vertex_transform_clip_space: self.vertex.transform_clip_space,
-            platform: self.platform as _,
-            version: self.version.as_raw(),
-            enable_point_size_builtin: self.enable_point_size_builtin,
-            disable_rasterization: !self.enable_rasterization,
-            swizzle_buffer_index: self.swizzle_buffer_index,
-            indirect_params_buffer_index: self.indirect_params_buffer_index,
-            shader_output_buffer_index: self.output_buffer_index,
-            shader_patch_output_buffer_index: self.patch_output_buffer_index,
-            shader_tess_factor_buffer_index: self.tessellation_factor_buffer_index,
-            buffer_size_buffer_index: self.buffer_size_buffer_index,
-            capture_output_to_buffer: self.capture_output_to_buffer,
-            swizzle_texture_samples: self.swizzle_texture_samples,
-            tess_domain_origin_lower_left: self.tessellation_domain_origin_lower_left,
-            argument_buffers: self.enable_argument_buffers,
-            pad_fragment_output_components: self.pad_fragment_output_components,
-            force_native_arrays: self.force_native_arrays,
-            force_zero_initialized_variables: self.force_zero_initialized_variables,
-        }
-    }
+    /// The name and execution model of the entry point to use. If no entry
+    /// point is specified, then the first entry point found will be used.
+    pub entry_point: Option<(String, spirv::ExecutionModel)>,
 }
 
 impl Default for CompilerOptions {
@@ -373,6 +351,7 @@ impl Default for CompilerOptions {
             const_samplers: Default::default(),
             force_native_arrays: false,
             force_zero_initialized_variables: false,
+            entry_point: None,
         }
     }
 }
@@ -408,7 +387,38 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
 
     /// Set MSL compiler specific compilation settings.
     fn set_compiler_options(&mut self, options: &CompilerOptions) -> Result<(), ErrorCode> {
-        let raw_options = options.as_raw();
+        if let Some((name, model)) = &options.entry_point {
+            let name_raw = CString::new(name.as_str()).map_err(|_| ErrorCode::Unhandled)?;
+            let model = model.as_raw();
+            unsafe {
+                check!(br::sc_internal_compiler_set_entry_point(
+                    self.compiler.sc_compiler,
+                    name_raw.as_ptr(),
+                    model,
+                ));
+            }
+        };
+        let raw_options = br::ScMslCompilerOptions {
+            vertex_invert_y: options.vertex.invert_y,
+            vertex_transform_clip_space: options.vertex.transform_clip_space,
+            platform: options.platform as _,
+            version: options.version.as_raw(),
+            enable_point_size_builtin: options.enable_point_size_builtin,
+            disable_rasterization: !options.enable_rasterization,
+            swizzle_buffer_index: options.swizzle_buffer_index,
+            indirect_params_buffer_index: options.indirect_params_buffer_index,
+            shader_output_buffer_index: options.output_buffer_index,
+            shader_patch_output_buffer_index: options.patch_output_buffer_index,
+            shader_tess_factor_buffer_index: options.tessellation_factor_buffer_index,
+            buffer_size_buffer_index: options.buffer_size_buffer_index,
+            capture_output_to_buffer: options.capture_output_to_buffer,
+            swizzle_texture_samples: options.swizzle_texture_samples,
+            tess_domain_origin_lower_left: options.tessellation_domain_origin_lower_left,
+            argument_buffers: options.enable_argument_buffers,
+            pad_fragment_output_components: options.pad_fragment_output_components,
+            force_native_arrays: options.force_native_arrays,
+            force_zero_initialized_variables: options.force_zero_initialized_variables,
+        };
         unsafe {
             check!(br::sc_internal_compiler_msl_set_options(
                 self.compiler.sc_compiler,
