@@ -277,6 +277,7 @@ impl Default for CompilerVertexOptions {
 }
 
 /// MSL compiler options.
+#[non_exhaustive]
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct CompilerOptions {
     /// The target platform.

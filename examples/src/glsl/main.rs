@@ -8,11 +8,9 @@ fn main() {
 
     // Parse a SPIR-V module
     let mut ast = spirv::Ast::<glsl::Target>::parse(&module).unwrap();
-    ast.set_compiler_options(&glsl::CompilerOptions {
-        version: glsl::Version::V4_60,
-        ..glsl::CompilerOptions::default()
-    })
-    .unwrap();
+    let mut options = glsl::CompilerOptions::default();
+    options.version = glsl::Version::V4_60;
+    ast.set_compiler_options(&options).unwrap();
 
     // List all entry points
     for entry_point in &ast.get_entry_points().unwrap() {

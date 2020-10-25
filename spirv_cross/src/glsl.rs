@@ -80,6 +80,7 @@ impl Default for CompilerFragmentOptions {
 }
 
 /// GLSL compiler options.
+#[non_exhaustive]
 #[derive(Debug, Clone)]
 pub struct CompilerOptions {
     pub version: Version,
@@ -201,7 +202,8 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
             emit_push_constant_as_uniform_buffer: options.emit_push_constant_as_uniform_buffer,
             emit_uniform_buffer_as_plain_uniforms: options.emit_uniform_buffer_as_plain_uniforms,
             emit_line_directives: options.emit_line_directives,
-            enable_storage_image_qualifier_deduction: options.enable_storage_image_qualifier_deduction,
+            enable_storage_image_qualifier_deduction: options
+                .enable_storage_image_qualifier_deduction,
             force_zero_initialized_variables: options.force_zero_initialized_variables,
         };
         unsafe {

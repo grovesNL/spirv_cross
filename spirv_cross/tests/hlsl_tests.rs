@@ -18,17 +18,9 @@ fn ast_compiles_to_hlsl() {
     let module =
         spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/simple.vert.spv")));
     let mut ast = spirv::Ast::<hlsl::Target>::parse(&module).unwrap();
-    ast.set_compiler_options(&hlsl::CompilerOptions {
-        shader_model: hlsl::ShaderModel::V6_0,
-        point_size_compat: false,
-        point_coord_compat: false,
-        vertex: hlsl::CompilerVertexOptions::default(),
-        force_storage_buffer_as_uav: false,
-        nonwritable_uav_texture_as_srv: false,
-        force_zero_initialized_variables: false,
-        entry_point: None,
-    })
-    .unwrap();
+    let mut options = hlsl::CompilerOptions::default();
+    options.shader_model = hlsl::ShaderModel::V6_0;
+    ast.set_compiler_options(&options).unwrap();
 
     assert_eq!(
         ast.compile().unwrap(),
@@ -95,18 +87,9 @@ fn ast_compiles_all_shader_models_to_hlsl() {
         hlsl::ShaderModel::V6_0,
     ];
     for &shader_model in shader_models.iter() {
-        assert!(ast
-            .set_compiler_options(&hlsl::CompilerOptions {
-                shader_model,
-                point_size_compat: false,
-                point_coord_compat: false,
-                vertex: hlsl::CompilerVertexOptions::default(),
-                force_storage_buffer_as_uav: false,
-                nonwritable_uav_texture_as_srv: false,
-                force_zero_initialized_variables: false,
-                entry_point: None,
-            })
-            .is_ok());
+        let mut options = hlsl::CompilerOptions::default();
+        options.shader_model = shader_model;
+        assert!(ast.set_compiler_options(&options).is_ok());
     }
 }
 
@@ -155,7 +138,7 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
     stage_output.gl_Position = gl_Position;
     return stage_output;
 }
-"
+",
         ),
         (
             true,
@@ -195,15 +178,13 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
     stage_output.gl_Position = gl_Position;
     return stage_output;
 }
-"
-        )
+",
+        ),
     ];
     for (force_zero_initialized_variables, expected_result) in cases.iter() {
         let mut ast = spirv::Ast::<hlsl::Target>::parse(&module).unwrap();
-        let compiler_options = hlsl::CompilerOptions {
-            force_zero_initialized_variables: *force_zero_initialized_variables,
-            ..Default::default()
-        };
+        let mut compiler_options = hlsl::CompilerOptions::default();
+        compiler_options.force_zero_initialized_variables = *force_zero_initialized_variables;
         ast.set_compiler_options(&compiler_options).unwrap();
         assert_eq!(&ast.compile().unwrap(), expected_result);
     }
@@ -214,7 +195,7 @@ fn ast_sets_entry_point() {
     let module = spirv::Module::from_words(words_from_bytes(include_bytes!(
         "shaders/vs_and_fs.asm.spv"
     )));
-    
+
     let mut cases = vec![
         (
             None,
@@ -298,10 +279,8 @@ SPIRV_Cross_Output main()
 
     for (entry_point, expected_result) in cases.drain(..) {
         let mut ast = spirv::Ast::<hlsl::Target>::parse(&module).unwrap();
-        let compiler_options = hlsl::CompilerOptions {
-            entry_point,
-            ..Default::default()
-        };
+        let mut compiler_options = hlsl::CompilerOptions::default();
+        compiler_options.entry_point = entry_point;
         ast.set_compiler_options(&compiler_options).unwrap();
         assert_eq!(&ast.compile().unwrap(), expected_result);
     }

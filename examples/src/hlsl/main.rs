@@ -8,17 +8,16 @@ fn main() {
 
     // Parse a SPIR-V module
     let mut ast = spirv::Ast::<hlsl::Target>::parse(&module).unwrap();
-    ast.set_compiler_options(&hlsl::CompilerOptions {
-        shader_model: hlsl::ShaderModel::V5_1,
-        point_size_compat: false,
-        point_coord_compat: false,
-        vertex: hlsl::CompilerVertexOptions::default(),
-        force_storage_buffer_as_uav: false,
-        nonwritable_uav_texture_as_srv: false,
-        force_zero_initialized_variables: true,
-        entry_point: None,
-    })
-    .unwrap();
+    let mut options = hlsl::CompilerOptions::default();
+    options.shader_model = hlsl::ShaderModel::V5_1;
+    options.point_size_compat = false;
+    options.point_coord_compat = false;
+    options.vertex = hlsl::CompilerVertexOptions::default();
+    options.force_storage_buffer_as_uav = false;
+    options.nonwritable_uav_texture_as_srv = false;
+    options.force_zero_initialized_variables = true;
+    options.entry_point = None;
+    ast.set_compiler_options(&options).unwrap();
 
     // List all entry points
     for entry_point in &ast.get_entry_points().unwrap() {

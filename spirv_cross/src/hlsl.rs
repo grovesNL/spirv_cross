@@ -1,8 +1,8 @@
 use crate::bindings as br;
 use crate::{compiler, spirv, ErrorCode};
+use std::ffi::CString;
 use std::marker::PhantomData;
 use std::ptr;
-use std::ffi::CString;
 
 pub use crate::bindings::root::ScHlslRootConstant as RootConstant;
 
@@ -63,6 +63,7 @@ impl Default for CompilerVertexOptions {
 }
 
 /// HLSL compiler options.
+#[non_exhaustive]
 #[derive(Debug, Clone)]
 pub struct CompilerOptions {
     pub shader_model: ShaderModel,
