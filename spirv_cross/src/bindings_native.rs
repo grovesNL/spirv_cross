@@ -2800,6 +2800,13 @@ pub mod root {
         ) -> root::ScInternalResult;
     }
     extern "C" {
+        pub fn sc_internal_compiler_set_entry_point(
+            compiler: *const root::ScInternalCompilerBase,
+            name: *const ::std::os::raw::c_char,
+            execution_model: root::spv::ExecutionModel,
+        ) -> root::ScInternalResult;
+    }
+    extern "C" {
         pub fn sc_internal_compiler_compile(
             compiler: *const root::ScInternalCompilerBase,
             shader: *mut *const ::std::os::raw::c_char,

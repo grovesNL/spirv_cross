@@ -501,3 +501,89 @@ vertex main0_out main0(main0_in in [[stage_in]])
         assert_eq!(&ast.compile().unwrap(), expected_result);
     }
 }
+
+#[test]
+fn ast_sets_entry_point() {
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!(
+        "shaders/vs_and_fs.asm.spv"
+    )));
+    
+    let mut cases = vec![
+        (
+            None,
+            "\
+#include <metal_stdlib>
+#include <simd/simd.h>
+
+using namespace metal;
+
+struct main_vs_out
+{
+    float4 gl_Position [[position]];
+};
+
+vertex main_vs_out main_vs()
+{
+    main_vs_out out = {};
+    out.gl_Position = float4(1.0);
+    return out;
+}
+
+"
+        ),
+        (
+            Some((String::from("main_vs"), spirv::ExecutionModel::Vertex)),
+            "\
+#include <metal_stdlib>
+#include <simd/simd.h>
+
+using namespace metal;
+
+struct main_vs_out
+{
+    float4 gl_Position [[position]];
+};
+
+vertex main_vs_out main_vs()
+{
+    main_vs_out out = {};
+    out.gl_Position = float4(1.0);
+    return out;
+}
+
+"
+        ),
+        (
+            Some((String::from("main_fs"), spirv::ExecutionModel::Fragment)),
+            "\
+#include <metal_stdlib>
+#include <simd/simd.h>
+
+using namespace metal;
+
+struct main_fs_out
+{
+    float4 color [[color(0)]];
+};
+
+fragment main_fs_out main_fs()
+{
+    main_fs_out out = {};
+    out.color = float4(1.0);
+    return out;
+}
+
+"
+        )
+    ];
+
+    for (entry_point, expected_result) in cases.drain(..) {
+        let mut ast = spirv::Ast::<msl::Target>::parse(&module).unwrap();
+        let compiler_options = msl::CompilerOptions {
+            entry_point,
+            ..Default::default()
+        };
+        ast.set_compiler_options(&compiler_options).unwrap();
+        assert_eq!(&ast.compile().unwrap(), expected_result);
+    }
+}

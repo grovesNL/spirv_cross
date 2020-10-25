@@ -361,3 +361,61 @@ void main()
         assert_eq!(&ast.compile().unwrap(), expected_result);
     }
 }
+
+#[test]
+fn ast_sets_entry_point() {
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!(
+        "shaders/vs_and_fs.asm.spv"
+    )));
+    
+    let mut cases = vec![
+        (
+            None,
+            "\
+#version 450
+
+void main()
+{
+    gl_Position = vec4(1.0);
+}
+
+"
+        ),
+        (
+            Some((String::from("main_vs"), spirv::ExecutionModel::Vertex)),
+            "\
+#version 450
+
+void main()
+{
+    gl_Position = vec4(1.0);
+}
+
+"
+        ),
+        (
+            Some((String::from("main_fs"), spirv::ExecutionModel::Fragment)),
+            "\
+#version 450
+
+layout(location = 0) out vec4 color;
+
+void main()
+{
+    color = vec4(1.0);
+}
+
+"
+        )
+    ];
+
+    for (entry_point, expected_result) in cases.drain(..) {
+        let mut ast = spirv::Ast::<glsl::Target>::parse(&module).unwrap();
+        let compiler_options = glsl::CompilerOptions {
+            entry_point,
+            ..Default::default()
+        };
+        ast.set_compiler_options(&compiler_options).unwrap();
+        assert_eq!(&ast.compile().unwrap(), expected_result);
+    }
+}

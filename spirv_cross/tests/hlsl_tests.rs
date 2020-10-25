@@ -26,6 +26,7 @@ fn ast_compiles_to_hlsl() {
         force_storage_buffer_as_uav: false,
         nonwritable_uav_texture_as_srv: false,
         force_zero_initialized_variables: false,
+        entry_point: None,
     })
     .unwrap();
 
@@ -103,6 +104,7 @@ fn ast_compiles_all_shader_models_to_hlsl() {
                 force_storage_buffer_as_uav: false,
                 nonwritable_uav_texture_as_srv: false,
                 force_zero_initialized_variables: false,
+                entry_point: None,
             })
             .is_ok());
     }
@@ -200,6 +202,104 @@ SPIRV_Cross_Output main(SPIRV_Cross_Input stage_input)
         let mut ast = spirv::Ast::<hlsl::Target>::parse(&module).unwrap();
         let compiler_options = hlsl::CompilerOptions {
             force_zero_initialized_variables: *force_zero_initialized_variables,
+            ..Default::default()
+        };
+        ast.set_compiler_options(&compiler_options).unwrap();
+        assert_eq!(&ast.compile().unwrap(), expected_result);
+    }
+}
+
+#[test]
+fn ast_sets_entry_point() {
+    let module = spirv::Module::from_words(words_from_bytes(include_bytes!(
+        "shaders/vs_and_fs.asm.spv"
+    )));
+    
+    let mut cases = vec![
+        (
+            None,
+            "\
+uniform float4 gl_HalfPixel;
+
+static float4 gl_Position;
+struct SPIRV_Cross_Output
+{
+    float4 gl_Position : POSITION;
+};
+
+void vert_main()
+{
+    gl_Position = 1.0f.xxxx;
+    gl_Position.x = gl_Position.x - gl_HalfPixel.x * gl_Position.w;
+    gl_Position.y = gl_Position.y + gl_HalfPixel.y * gl_Position.w;
+}
+
+SPIRV_Cross_Output main()
+{
+    vert_main();
+    SPIRV_Cross_Output stage_output;
+    stage_output.gl_Position = gl_Position;
+    return stage_output;
+}
+"
+        ),
+        (
+            Some((String::from("main_vs"), spirv::ExecutionModel::Vertex)),
+            "\
+uniform float4 gl_HalfPixel;
+
+static float4 gl_Position;
+struct SPIRV_Cross_Output
+{
+    float4 gl_Position : POSITION;
+};
+
+void vert_main()
+{
+    gl_Position = 1.0f.xxxx;
+    gl_Position.x = gl_Position.x - gl_HalfPixel.x * gl_Position.w;
+    gl_Position.y = gl_Position.y + gl_HalfPixel.y * gl_Position.w;
+}
+
+SPIRV_Cross_Output main()
+{
+    vert_main();
+    SPIRV_Cross_Output stage_output;
+    stage_output.gl_Position = gl_Position;
+    return stage_output;
+}
+"
+        ),
+        (
+            Some((String::from("main_fs"), spirv::ExecutionModel::Fragment)),
+            "\
+static float4 color;
+
+struct SPIRV_Cross_Output
+{
+    float4 color : COLOR0;
+};
+
+void frag_main()
+{
+    color = 1.0f.xxxx;
+}
+
+SPIRV_Cross_Output main()
+{
+    frag_main();
+    SPIRV_Cross_Output stage_output;
+    stage_output.color = float4(color);
+    return stage_output;
+}
+"
+        )
+    ];
+
+    for (entry_point, expected_result) in cases.drain(..) {
+        let mut ast = spirv::Ast::<hlsl::Target>::parse(&module).unwrap();
+        let compiler_options = hlsl::CompilerOptions {
+            entry_point,
             ..Default::default()
         };
         ast.set_compiler_options(&compiler_options).unwrap();
