@@ -499,6 +499,15 @@ where
         self.compiler.set_decoration(id, decoration, argument)
     }
 
+    /// Set entry point.
+    pub fn set_entry_point(
+        &mut self,
+        entry_point_name: &str,
+        execution_model: ExecutionModel,
+    ) -> Result<(), ErrorCode> {
+        self.compiler.set_entry_point(entry_point_name, execution_model)
+    }
+
     /// Gets entry points.
     pub fn get_entry_points(&self) -> Result<Vec<EntryPoint>, ErrorCode> {
         self.compiler.get_entry_points()

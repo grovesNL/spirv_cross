@@ -258,6 +258,28 @@ impl<TTargetData> Compiler<TTargetData> {
         Ok(())
     }
 
+    /// Set entry point.
+    pub fn set_entry_point(
+        &mut self,
+        entry_point_name: &str,
+        execution_model: spirv::ExecutionModel,
+    ) -> Result<(), ErrorCode> {
+        let name = CString::new(entry_point_name);
+        unsafe {
+            match name {
+                Ok(name) => {
+                    check!(br::sc_internal_compiler_set_entry_point(
+                        self.sc_compiler,
+                        name.as_ptr(),
+                        execution_model.as_raw(),
+                    ));
+                }
+                _ => return Err(ErrorCode::Unhandled),
+            }
+        }
+        Ok(())
+    }
+
     pub fn get_entry_points(&self) -> Result<Vec<spirv::EntryPoint>, ErrorCode> {
         let mut entry_points_raw = ptr::null_mut();
         let mut entry_points_raw_length = 0 as usize;
