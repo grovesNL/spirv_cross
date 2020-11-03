@@ -51,7 +51,8 @@ fn main() {
 		        "_sc_internal_compiler_get_declared_struct_size",
 		        "_sc_internal_compiler_get_declared_struct_member_size",
 		        "_sc_internal_compiler_rename_interface_variable",
-		        "_sc_internal_compiler_get_work_group_size_specialization_constants",
+                "_sc_internal_compiler_get_work_group_size_specialization_constants",
+                "_sc_internal_compiler_set_entry_point",
 		        "_sc_internal_compiler_compile",
 		        "_sc_internal_compiler_delete",
 		        "_sc_internal_free_pointer"
