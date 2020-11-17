@@ -519,7 +519,7 @@ vertex main_vs_out main_vs()
     return out;
 }
 
-"
+",
         ),
         (
             Some((String::from("main_vs"), spirv::ExecutionModel::Vertex)),
@@ -541,7 +541,7 @@ vertex main_vs_out main_vs()
     return out;
 }
 
-"
+",
         ),
         (
             Some((String::from("main_fs"), spirv::ExecutionModel::Fragment)),
@@ -563,8 +563,8 @@ fragment main_fs_out main_fs()
     return out;
 }
 
-"
-        )
+",
+        ),
     ];
 
     for (entry_point, expected_result) in cases.drain(..) {
