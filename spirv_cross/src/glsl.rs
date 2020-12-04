@@ -35,6 +35,8 @@ pub enum Version {
     V4_60,
     V1_00Es,
     V3_00Es,
+    V3_10Es,
+    V3_20Es,
 }
 
 #[derive(Debug, Clone)]
@@ -185,6 +187,8 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
             V4_60 => (4_60, false),
             V1_00Es => (1_00, true),
             V3_00Es => (3_00, true),
+            V3_10Es => (3_10, true),
+            V3_20Es => (3_20, true),
         };
         let raw_options = br::ScGlslCompilerOptions {
             vertex_invert_y: options.vertex.invert_y,
