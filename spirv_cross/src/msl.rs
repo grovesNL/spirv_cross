@@ -238,6 +238,7 @@ pub enum Platform {
 
 /// A MSL shader model version.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+#[non_exhaustive]
 pub enum Version {
     V1_0,
     V1_1,
@@ -245,6 +246,7 @@ pub enum Version {
     V2_0,
     V2_1,
     V2_2,
+    V2_3,
 }
 
 impl Version {
@@ -257,6 +259,7 @@ impl Version {
             V2_0 => 20000,
             V2_1 => 20100,
             V2_2 => 20200,
+            V2_3 => 20300,
         }
     }
 }
