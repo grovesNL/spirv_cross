@@ -67,6 +67,7 @@ pub struct ResourceBinding {
     pub buffer_id: u32,
     pub texture_id: u32,
     pub sampler_id: u32,
+    pub count: u32,
 }
 
 /// Location of a sampler binding to override
@@ -439,6 +440,7 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
                     msl_buffer: res.buffer_id,
                     msl_texture: res.texture_id,
                     msl_sampler: res.sampler_id,
+                    count: res.count,
                 }
             }),
         );

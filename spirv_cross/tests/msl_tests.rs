@@ -53,6 +53,7 @@ fn ast_compiles_to_msl() {
             buffer_id: 5,
             texture_id: 6,
             sampler_id: 7,
+            count: 0,
         },
     );
 
@@ -263,6 +264,7 @@ fn sets_argument_buffer_index() {
             buffer_id: 2,
             texture_id: 0,
             sampler_id: 0,
+            count: 0,
         },
     );
     let mut compiler_options = msl::CompilerOptions::default();
