@@ -12,8 +12,6 @@ fn main() {
                 .to_str()
                 .unwrap(),
         )
-        .clang_arg("-I/Library/Developer/CommandLineTools/usr/include/c++/v1")
-        .clang_arg("-I/Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/include")
         .clang_args(["-x", "c++", "-std=c++14"].iter())
         .enable_cxx_namespaces()
         .whitelist_function("sc_internal.*")
@@ -45,8 +43,6 @@ fn main() {
                 .to_str()
                 .unwrap(),
         )
-        .clang_arg("-I/Library/Developer/CommandLineTools/usr/include/c++/v1")
-        .clang_arg("-I/Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/include")
         .clang_args(["-x", "c++", "-std=c++14"].iter())
         .enable_cxx_namespaces()
         .whitelist_type("spv::.*")
