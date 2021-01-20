@@ -22,6 +22,7 @@ fn main() {
             buffer_id: 5,
             texture_id: 6,
             sampler_id: 7,
+            count: 0,
         },
     );
 
