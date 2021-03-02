@@ -2638,6 +2638,7 @@ pub mod root {
         pub pad_fragment_output_components: bool,
         pub force_native_arrays: bool,
         pub force_zero_initialized_variables: bool,
+        pub force_active_argument_buffer_resources: bool,
     }
     #[repr(C)]
     #[derive(Debug, Copy, Clone)]
