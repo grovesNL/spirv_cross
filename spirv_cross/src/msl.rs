@@ -326,6 +326,8 @@ pub struct CompilerOptions {
     pub force_native_arrays: bool,
     /// Whether to force all uninitialized variables to be initialized to zero.
     pub force_zero_initialized_variables: bool,
+    /// Whether to force always emit resources which are part of argument buffers
+    pub force_active_argument_buffer_resources: bool,
     /// The name and execution model of the entry point to use. If no entry
     /// point is specified, then the first entry point found will be used.
     pub entry_point: Option<(String, spirv::ExecutionModel)>,
@@ -355,6 +357,7 @@ impl Default for CompilerOptions {
             const_samplers: Default::default(),
             force_native_arrays: false,
             force_zero_initialized_variables: false,
+            force_active_argument_buffer_resources: false,
             entry_point: None,
         }
     }
@@ -422,6 +425,7 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
             pad_fragment_output_components: options.pad_fragment_output_components,
             force_native_arrays: options.force_native_arrays,
             force_zero_initialized_variables: options.force_zero_initialized_variables,
+            force_active_argument_buffer_resources: options.force_active_argument_buffer_resources,
         };
         unsafe {
             check!(br::sc_internal_compiler_msl_set_options(
