@@ -169,6 +169,8 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
                     model,
                 ));
             }
+
+            self.compiler.target_data.combined_image_samplers_built = false;
         };
 
         use self::Version::*;
