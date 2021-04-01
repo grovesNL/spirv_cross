@@ -103,9 +103,11 @@ fn ast_gets_type_member_types_and_array() {
         spirv::Type::Struct {
             member_types,
             array,
+            array_size_literal
         } => {
             assert_eq!(member_types.len(), 2);
             assert_eq!(array.len(), 0);
+            assert_eq!(array_size_literal.len(), 0);
             true
         }
         _ => false,
@@ -130,11 +132,14 @@ fn ast_gets_array_dimensions() {
                     vecsize,
                     columns,
                     array,
+                    array_size_literal
                 } => {
                     assert_eq!(vecsize, 3);
                     assert_eq!(columns, 1);
                     assert_eq!(array.len(), 1);
+                    assert_eq!(array_size_literal.len(), 1);
                     assert_eq!(array[0], 3);
+                    assert_eq!(array_size_literal[0], true);
                     true
                 }
                 _ => false,

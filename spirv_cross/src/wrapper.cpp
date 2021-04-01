@@ -412,10 +412,12 @@ extern "C"
 
                 auto ty = (ScType *)malloc(sizeof(ScType));
                 ty->type = type.basetype;
+                ty->width = type.width;
                 ty->vecsize = type.vecsize;
                 ty->columns = type.columns;
                 ty->member_types_size = member_types_size;
                 ty->array_size = array_size;
+                ty->storage = type.storage;
 
                 if (member_types_size > 0)
                 {
@@ -432,13 +434,16 @@ extern "C"
                 if (array_size > 0)
                 {
                     auto const &array = (uint32_t *)malloc(array_size * sizeof(uint32_t));
+                    auto const &array_size_literal = (bool *)malloc(array_size * sizeof(bool));
 
                     for (size_t i = 0; i < array_size; i++)
                     {
                         array[i] = type.array[i];
+                        array_size_literal[i] = type.array_size_literal[i];
                     }
 
                     ty->array = array;
+                    ty->array_size_literal = array_size_literal;
                 }
 
                 if (type.basetype == spirv_cross::SPIRType::Image || type.basetype == spirv_cross::SPIRType::SampledImage) 
