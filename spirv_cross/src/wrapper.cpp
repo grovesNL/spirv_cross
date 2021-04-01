@@ -441,6 +441,11 @@ extern "C"
                     ty->array = array;
                 }
 
+                if (type.basetype == spirv_cross::SPIRType::Image || type.basetype == spirv_cross::SPIRType::SampledImage) 
+                {
+                    ty->image = type.image;
+                }
+
                 *spirv_type = ty;
             } while (0);)
     }

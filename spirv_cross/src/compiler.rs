@@ -1,5 +1,5 @@
 //! Raw compiler bindings for SPIRV-Cross.
-use crate::bindings as br;
+use crate::{bindings as br, spirv::ImageType};
 use crate::ptr_util::{read_from_ptr, read_into_vec_from_ptr, read_string_from_ptr};
 use crate::spirv::{self, Decoration, Type};
 use crate::ErrorCode;
@@ -93,6 +93,89 @@ impl spirv::Decoration {
     }
 }
 
+impl spirv::Dim {
+    fn from_raw(raw: br::spv::Dim) -> Result<Self, ErrorCode> {
+        use crate::bindings::root::spv::Dim as D;
+        use crate::spirv::Dim::*;
+        match raw {
+            D::Dim1D => Ok(Dim1D),
+            D::Dim2D => Ok(Dim2D),
+            D::Dim3D => Ok(Dim3D),
+            D::DimCube => Ok(DimCube),
+            D::DimRect => Ok(DimRect),
+            D::DimBuffer => Ok(DimBuffer),
+            D::DimSubpassData => Ok(DimSubpassData),
+            _ => Err(ErrorCode::Unhandled),
+        }
+    }
+}
+
+impl spirv::ImageFormat {
+    fn from_raw(raw: br::spv::ImageFormat) -> Result<Self, ErrorCode> {
+        use crate::bindings::root::spv::ImageFormat as IF;
+        use crate::spirv::ImageFormat::*;
+        match raw {
+            IF::ImageFormatUnknown => Ok(Unknown),
+            IF::ImageFormatRgba32f => Ok(Rgba32f),
+            IF::ImageFormatRgba16f => Ok(Rgba16f),
+            IF::ImageFormatR32f => Ok(R32f),
+            IF::ImageFormatRgba8 => Ok(Rgba8),
+            IF::ImageFormatRgba8Snorm => Ok(Rgba8Snorm),
+            IF::ImageFormatRg32f => Ok(Rg32f),
+            IF::ImageFormatRg16f => Ok(Rg16f),
+            IF::ImageFormatR11fG11fB10f => Ok(R11fG11fB10f),
+            IF::ImageFormatR16f => Ok(R16f),
+            IF::ImageFormatRgba16 => Ok(Rgba16),
+            IF::ImageFormatRgb10A2 => Ok(Rgb10A2),
+            IF::ImageFormatRg16 => Ok(Rg16),
+            IF::ImageFormatRg8 => Ok(Rg8),
+            IF::ImageFormatR16 => Ok(R16),
+            IF::ImageFormatR8 => Ok(R8),
+            IF::ImageFormatRgba16Snorm => Ok(Rgba16Snorm),
+            IF::ImageFormatRg16Snorm => Ok(Rg16Snorm),
+            IF::ImageFormatRg8Snorm => Ok(Rg8Snorm),
+            IF::ImageFormatR16Snorm => Ok(R16Snorm),
+            IF::ImageFormatR8Snorm => Ok(R8Snorm),
+            IF::ImageFormatRgba32i => Ok(Rgba32i),
+            IF::ImageFormatRgba16i => Ok(Rgba16i),
+            IF::ImageFormatRgba8i => Ok(Rgba8i),
+            IF::ImageFormatR32i => Ok(R32i),
+            IF::ImageFormatRg32i => Ok(Rg32i),
+            IF::ImageFormatRg16i => Ok(Rg16i),
+            IF::ImageFormatRg8i => Ok(Rg8i),
+            IF::ImageFormatR16i => Ok(R16i),
+            IF::ImageFormatR8i => Ok(R8i),
+            IF::ImageFormatRgba32ui => Ok(Rgba32ui),
+            IF::ImageFormatRgba16ui => Ok(Rgba16ui),
+            IF::ImageFormatRgba8ui => Ok(Rgba8ui),
+            IF::ImageFormatR32ui => Ok(R32ui),
+            IF::ImageFormatRgb10a2ui => Ok(Rgb10a2ui),
+            IF::ImageFormatRg32ui => Ok(Rg32ui),
+            IF::ImageFormatRg16ui => Ok(Rg16ui),
+            IF::ImageFormatRg8ui => Ok(Rg8ui),
+            IF::ImageFormatR16ui => Ok(R16ui),
+            IF::ImageFormatR8ui => Ok(R8ui),
+            IF::ImageFormatR64ui => Ok(R64ui),
+            IF::ImageFormatR64i => Ok(R64i),
+            _ => Err(ErrorCode::Unhandled),
+        }
+    }
+}
+
+impl spirv::ImageType {
+    pub(crate) fn from_raw(ty: br::spirv_cross::SPIRType_ImageType) -> Result<ImageType, ErrorCode> {
+        Ok(ImageType {
+            type_id: ty.type_,
+            dim: spirv::Dim::from_raw(ty.dim)?,
+            depth: ty.depth,
+            arrayed: ty.arrayed,
+            ms: ty.ms,
+            sampled: ty.sampled,
+            format: spirv::ImageFormat::from_raw(ty.format)?,
+        })
+    }
+}
+
 impl spirv::Type {
     pub(crate) fn from_raw(
         ty: br::spirv_cross::SPIRType_BaseType,
@@ -100,62 +183,71 @@ impl spirv::Type {
         columns: u32,
         member_types: Vec<u32>,
         array: Vec<u32>,
-    ) -> Type {
+        array_size_literal: Vec<bool>,
+        image: br::spirv_cross::SPIRType_ImageType,
+    ) -> Result<Self, ErrorCode> {
         use crate::bindings::root::spirv_cross::SPIRType_BaseType as B;
         use crate::spirv::Type::*;
-        match ty {
+        Ok(match ty {
             B::Unknown => Unknown,
             B::Void => Void,
             B::Boolean => Boolean {
                 vecsize,
                 columns,
                 array,
+                array_size_literal,
             },
-            B::Char => Char { array },
+            B::Char => Char { array, array_size_literal, },
             B::Int => Int {
                 vecsize,
                 columns,
                 array,
+                array_size_literal,
             },
             B::UInt => UInt {
                 vecsize,
                 columns,
                 array,
+                array_size_literal,
             },
-            B::Int64 => Int64 { vecsize, array },
-            B::UInt64 => UInt64 { vecsize, array },
-            B::AtomicCounter => AtomicCounter { array },
+            B::Int64 => Int64 { vecsize, array, array_size_literal, },
+            B::UInt64 => UInt64 { vecsize, array, array_size_literal, },
+            B::AtomicCounter => AtomicCounter { array, array_size_literal, },
             B::Half => Half {
                 vecsize,
                 columns,
                 array,
+                array_size_literal,
             },
             B::Float => Float {
                 vecsize,
                 columns,
                 array,
+                array_size_literal,
             },
             B::Double => Double {
                 vecsize,
                 columns,
                 array,
+                array_size_literal,
             },
             B::Struct => Struct {
                 member_types,
                 array,
+                array_size_literal,
             },
-            B::Image => Image { array },
-            B::SampledImage => SampledImage { array },
-            B::Sampler => Sampler { array },
-            B::SByte => SByte { vecsize, array },
-            B::UByte => UByte { vecsize, array },
-            B::Short => Short { vecsize, array },
-            B::UShort => UShort { vecsize, array },
+            B::Image => Image { array, array_size_literal, image: ImageType::from_raw(image)? },
+            B::SampledImage => SampledImage { array, array_size_literal, image: ImageType::from_raw(image)? },
+            B::Sampler => Sampler { array, array_size_literal },
+            B::SByte => SByte { vecsize, array, array_size_literal },
+            B::UByte => UByte { vecsize, array, array_size_literal },
+            B::Short => Short { vecsize, array, array_size_literal },
+            B::UShort => UShort { vecsize, array, array_size_literal },
             B::ControlPointArray => ControlPointArray,
             B::AccelerationStructure => AccelerationStructure,
             B::RayQuery => RayQuery,
             B::Interpolant => Interpolant,
-        }
+        })
     }
 }
 
@@ -421,7 +513,9 @@ impl<TTargetData> Compiler<TTargetData> {
             let raw = read_from_ptr::<br::ScType>(type_ptr);
             let member_types = read_into_vec_from_ptr(raw.member_types, raw.member_types_size);
             let array = read_into_vec_from_ptr(raw.array, raw.array_size);
-            let result = Type::from_raw(raw.type_, raw.vecsize, raw.columns, member_types, array);
+            let array_size_literal = read_into_vec_from_ptr(raw.array_size_literal, raw.array_size);
+            let image = raw.image;
+            let result = Type::from_raw(raw.type_, raw.vecsize, raw.columns, member_types, array, array_size_literal, image)?;
 
             if raw.member_types_size > 0 {
                 check!(br::sc_internal_free_pointer(
