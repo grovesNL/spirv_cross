@@ -144,12 +144,16 @@ extern "C"
     typedef struct ScType
     {
         spirv_cross::SPIRType::BaseType type;
+        uint32_t width;
         uint32_t vecsize;
         uint32_t columns;
         uint32_t *member_types;
         size_t member_types_size;
         uint32_t *array;
+        bool *array_size_literal;
         size_t array_size;
+        spv::StorageClass storage;
+        spirv_cross::SPIRType::ImageType image;
     } ScType;
 
     ScInternalResult sc_internal_get_latest_exception_message(const char **message);

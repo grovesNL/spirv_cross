@@ -148,45 +148,72 @@ pub mod root {
         pub const ExecutionMode_ExecutionModeNumSIMDWorkitemsINTEL: root::spv::ExecutionMode = 5896;
         pub const ExecutionMode_ExecutionModeMax: root::spv::ExecutionMode = 2147483647;
         pub type ExecutionMode = u32;
-        pub const StorageClass_StorageClassUniformConstant: root::spv::StorageClass = 0;
-        pub const StorageClass_StorageClassInput: root::spv::StorageClass = 1;
-        pub const StorageClass_StorageClassUniform: root::spv::StorageClass = 2;
-        pub const StorageClass_StorageClassOutput: root::spv::StorageClass = 3;
-        pub const StorageClass_StorageClassWorkgroup: root::spv::StorageClass = 4;
-        pub const StorageClass_StorageClassCrossWorkgroup: root::spv::StorageClass = 5;
-        pub const StorageClass_StorageClassPrivate: root::spv::StorageClass = 6;
-        pub const StorageClass_StorageClassFunction: root::spv::StorageClass = 7;
-        pub const StorageClass_StorageClassGeneric: root::spv::StorageClass = 8;
-        pub const StorageClass_StorageClassPushConstant: root::spv::StorageClass = 9;
-        pub const StorageClass_StorageClassAtomicCounter: root::spv::StorageClass = 10;
-        pub const StorageClass_StorageClassImage: root::spv::StorageClass = 11;
-        pub const StorageClass_StorageClassStorageBuffer: root::spv::StorageClass = 12;
-        pub const StorageClass_StorageClassCallableDataKHR: root::spv::StorageClass = 5328;
-        pub const StorageClass_StorageClassCallableDataNV: root::spv::StorageClass = 5328;
-        pub const StorageClass_StorageClassIncomingCallableDataKHR: root::spv::StorageClass = 5329;
-        pub const StorageClass_StorageClassIncomingCallableDataNV: root::spv::StorageClass = 5329;
-        pub const StorageClass_StorageClassRayPayloadKHR: root::spv::StorageClass = 5338;
-        pub const StorageClass_StorageClassRayPayloadNV: root::spv::StorageClass = 5338;
-        pub const StorageClass_StorageClassHitAttributeKHR: root::spv::StorageClass = 5339;
-        pub const StorageClass_StorageClassHitAttributeNV: root::spv::StorageClass = 5339;
-        pub const StorageClass_StorageClassIncomingRayPayloadKHR: root::spv::StorageClass = 5342;
-        pub const StorageClass_StorageClassIncomingRayPayloadNV: root::spv::StorageClass = 5342;
-        pub const StorageClass_StorageClassShaderRecordBufferKHR: root::spv::StorageClass = 5343;
-        pub const StorageClass_StorageClassShaderRecordBufferNV: root::spv::StorageClass = 5343;
-        pub const StorageClass_StorageClassPhysicalStorageBuffer: root::spv::StorageClass = 5349;
-        pub const StorageClass_StorageClassPhysicalStorageBufferEXT: root::spv::StorageClass = 5349;
-        pub const StorageClass_StorageClassCodeSectionINTEL: root::spv::StorageClass = 5605;
-        pub const StorageClass_StorageClassMax: root::spv::StorageClass = 2147483647;
-        pub type StorageClass = u32;
-        pub const Dim_Dim1D: root::spv::Dim = 0;
-        pub const Dim_Dim2D: root::spv::Dim = 1;
-        pub const Dim_Dim3D: root::spv::Dim = 2;
-        pub const Dim_DimCube: root::spv::Dim = 3;
-        pub const Dim_DimRect: root::spv::Dim = 4;
-        pub const Dim_DimBuffer: root::spv::Dim = 5;
-        pub const Dim_DimSubpassData: root::spv::Dim = 6;
-        pub const Dim_DimMax: root::spv::Dim = 2147483647;
-        pub type Dim = u32;
+        impl root::spv::StorageClass {
+            pub const StorageClassCallableDataNV: root::spv::StorageClass =
+                StorageClass::StorageClassCallableDataKHR;
+        }
+        impl root::spv::StorageClass {
+            pub const StorageClassIncomingCallableDataNV: root::spv::StorageClass =
+                StorageClass::StorageClassIncomingCallableDataKHR;
+        }
+        impl root::spv::StorageClass {
+            pub const StorageClassRayPayloadNV: root::spv::StorageClass =
+                StorageClass::StorageClassRayPayloadKHR;
+        }
+        impl root::spv::StorageClass {
+            pub const StorageClassHitAttributeNV: root::spv::StorageClass =
+                StorageClass::StorageClassHitAttributeKHR;
+        }
+        impl root::spv::StorageClass {
+            pub const StorageClassIncomingRayPayloadNV: root::spv::StorageClass =
+                StorageClass::StorageClassIncomingRayPayloadKHR;
+        }
+        impl root::spv::StorageClass {
+            pub const StorageClassShaderRecordBufferNV: root::spv::StorageClass =
+                StorageClass::StorageClassShaderRecordBufferKHR;
+        }
+        impl root::spv::StorageClass {
+            pub const StorageClassPhysicalStorageBufferEXT: root::spv::StorageClass =
+                StorageClass::StorageClassPhysicalStorageBuffer;
+        }
+        #[repr(u32)]
+        #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+        pub enum StorageClass {
+            StorageClassUniformConstant = 0,
+            StorageClassInput = 1,
+            StorageClassUniform = 2,
+            StorageClassOutput = 3,
+            StorageClassWorkgroup = 4,
+            StorageClassCrossWorkgroup = 5,
+            StorageClassPrivate = 6,
+            StorageClassFunction = 7,
+            StorageClassGeneric = 8,
+            StorageClassPushConstant = 9,
+            StorageClassAtomicCounter = 10,
+            StorageClassImage = 11,
+            StorageClassStorageBuffer = 12,
+            StorageClassCallableDataKHR = 5328,
+            StorageClassIncomingCallableDataKHR = 5329,
+            StorageClassRayPayloadKHR = 5338,
+            StorageClassHitAttributeKHR = 5339,
+            StorageClassIncomingRayPayloadKHR = 5342,
+            StorageClassShaderRecordBufferKHR = 5343,
+            StorageClassPhysicalStorageBuffer = 5349,
+            StorageClassCodeSectionINTEL = 5605,
+            StorageClassMax = 2147483647,
+        }
+        #[repr(u32)]
+        #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+        pub enum Dim {
+            Dim1D = 0,
+            Dim2D = 1,
+            Dim3D = 2,
+            DimCube = 3,
+            DimRect = 4,
+            DimBuffer = 5,
+            DimSubpassData = 6,
+            DimMax = 2147483647,
+        }
         pub const SamplerAddressingMode_SamplerAddressingModeNone:
             root::spv::SamplerAddressingMode = 0;
         pub const SamplerAddressingMode_SamplerAddressingModeClampToEdge:
@@ -204,50 +231,53 @@ pub mod root {
         pub const SamplerFilterMode_SamplerFilterModeLinear: root::spv::SamplerFilterMode = 1;
         pub const SamplerFilterMode_SamplerFilterModeMax: root::spv::SamplerFilterMode = 2147483647;
         pub type SamplerFilterMode = u32;
-        pub const ImageFormat_ImageFormatUnknown: root::spv::ImageFormat = 0;
-        pub const ImageFormat_ImageFormatRgba32f: root::spv::ImageFormat = 1;
-        pub const ImageFormat_ImageFormatRgba16f: root::spv::ImageFormat = 2;
-        pub const ImageFormat_ImageFormatR32f: root::spv::ImageFormat = 3;
-        pub const ImageFormat_ImageFormatRgba8: root::spv::ImageFormat = 4;
-        pub const ImageFormat_ImageFormatRgba8Snorm: root::spv::ImageFormat = 5;
-        pub const ImageFormat_ImageFormatRg32f: root::spv::ImageFormat = 6;
-        pub const ImageFormat_ImageFormatRg16f: root::spv::ImageFormat = 7;
-        pub const ImageFormat_ImageFormatR11fG11fB10f: root::spv::ImageFormat = 8;
-        pub const ImageFormat_ImageFormatR16f: root::spv::ImageFormat = 9;
-        pub const ImageFormat_ImageFormatRgba16: root::spv::ImageFormat = 10;
-        pub const ImageFormat_ImageFormatRgb10A2: root::spv::ImageFormat = 11;
-        pub const ImageFormat_ImageFormatRg16: root::spv::ImageFormat = 12;
-        pub const ImageFormat_ImageFormatRg8: root::spv::ImageFormat = 13;
-        pub const ImageFormat_ImageFormatR16: root::spv::ImageFormat = 14;
-        pub const ImageFormat_ImageFormatR8: root::spv::ImageFormat = 15;
-        pub const ImageFormat_ImageFormatRgba16Snorm: root::spv::ImageFormat = 16;
-        pub const ImageFormat_ImageFormatRg16Snorm: root::spv::ImageFormat = 17;
-        pub const ImageFormat_ImageFormatRg8Snorm: root::spv::ImageFormat = 18;
-        pub const ImageFormat_ImageFormatR16Snorm: root::spv::ImageFormat = 19;
-        pub const ImageFormat_ImageFormatR8Snorm: root::spv::ImageFormat = 20;
-        pub const ImageFormat_ImageFormatRgba32i: root::spv::ImageFormat = 21;
-        pub const ImageFormat_ImageFormatRgba16i: root::spv::ImageFormat = 22;
-        pub const ImageFormat_ImageFormatRgba8i: root::spv::ImageFormat = 23;
-        pub const ImageFormat_ImageFormatR32i: root::spv::ImageFormat = 24;
-        pub const ImageFormat_ImageFormatRg32i: root::spv::ImageFormat = 25;
-        pub const ImageFormat_ImageFormatRg16i: root::spv::ImageFormat = 26;
-        pub const ImageFormat_ImageFormatRg8i: root::spv::ImageFormat = 27;
-        pub const ImageFormat_ImageFormatR16i: root::spv::ImageFormat = 28;
-        pub const ImageFormat_ImageFormatR8i: root::spv::ImageFormat = 29;
-        pub const ImageFormat_ImageFormatRgba32ui: root::spv::ImageFormat = 30;
-        pub const ImageFormat_ImageFormatRgba16ui: root::spv::ImageFormat = 31;
-        pub const ImageFormat_ImageFormatRgba8ui: root::spv::ImageFormat = 32;
-        pub const ImageFormat_ImageFormatR32ui: root::spv::ImageFormat = 33;
-        pub const ImageFormat_ImageFormatRgb10a2ui: root::spv::ImageFormat = 34;
-        pub const ImageFormat_ImageFormatRg32ui: root::spv::ImageFormat = 35;
-        pub const ImageFormat_ImageFormatRg16ui: root::spv::ImageFormat = 36;
-        pub const ImageFormat_ImageFormatRg8ui: root::spv::ImageFormat = 37;
-        pub const ImageFormat_ImageFormatR16ui: root::spv::ImageFormat = 38;
-        pub const ImageFormat_ImageFormatR8ui: root::spv::ImageFormat = 39;
-        pub const ImageFormat_ImageFormatR64ui: root::spv::ImageFormat = 40;
-        pub const ImageFormat_ImageFormatR64i: root::spv::ImageFormat = 41;
-        pub const ImageFormat_ImageFormatMax: root::spv::ImageFormat = 2147483647;
-        pub type ImageFormat = u32;
+        #[repr(u32)]
+        #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+        pub enum ImageFormat {
+            ImageFormatUnknown = 0,
+            ImageFormatRgba32f = 1,
+            ImageFormatRgba16f = 2,
+            ImageFormatR32f = 3,
+            ImageFormatRgba8 = 4,
+            ImageFormatRgba8Snorm = 5,
+            ImageFormatRg32f = 6,
+            ImageFormatRg16f = 7,
+            ImageFormatR11fG11fB10f = 8,
+            ImageFormatR16f = 9,
+            ImageFormatRgba16 = 10,
+            ImageFormatRgb10A2 = 11,
+            ImageFormatRg16 = 12,
+            ImageFormatRg8 = 13,
+            ImageFormatR16 = 14,
+            ImageFormatR8 = 15,
+            ImageFormatRgba16Snorm = 16,
+            ImageFormatRg16Snorm = 17,
+            ImageFormatRg8Snorm = 18,
+            ImageFormatR16Snorm = 19,
+            ImageFormatR8Snorm = 20,
+            ImageFormatRgba32i = 21,
+            ImageFormatRgba16i = 22,
+            ImageFormatRgba8i = 23,
+            ImageFormatR32i = 24,
+            ImageFormatRg32i = 25,
+            ImageFormatRg16i = 26,
+            ImageFormatRg8i = 27,
+            ImageFormatR16i = 28,
+            ImageFormatR8i = 29,
+            ImageFormatRgba32ui = 30,
+            ImageFormatRgba16ui = 31,
+            ImageFormatRgba8ui = 32,
+            ImageFormatR32ui = 33,
+            ImageFormatRgb10a2ui = 34,
+            ImageFormatRg32ui = 35,
+            ImageFormatRg16ui = 36,
+            ImageFormatRg8ui = 37,
+            ImageFormatR16ui = 38,
+            ImageFormatR8ui = 39,
+            ImageFormatR64ui = 40,
+            ImageFormatR64i = 41,
+            ImageFormatMax = 2147483647,
+        }
         pub const ImageChannelOrder_ImageChannelOrderR: root::spv::ImageChannelOrder = 0;
         pub const ImageChannelOrder_ImageChannelOrderA: root::spv::ImageChannelOrder = 1;
         pub const ImageChannelOrder_ImageChannelOrderRG: root::spv::ImageChannelOrder = 2;
@@ -2340,18 +2370,21 @@ pub mod root {
         pub const Op_OpMax: root::spv::Op = 2147483647;
         pub type Op = u32;
     }
+    pub type __uint8_t = ::std::os::raw::c_uchar;
+    pub type __int32_t = ::std::os::raw::c_int;
+    pub type __uint32_t = ::std::os::raw::c_uint;
     pub mod std {
         #[allow(unused_imports)]
         use self::super::super::root;
-        pub mod __fs {
-            #[allow(unused_imports)]
-            use self::super::super::super::root;
-        }
     }
-    pub type __darwin_size_t = ::std::os::raw::c_ulong;
+    pub mod __gnu_cxx {
+        #[allow(unused_imports)]
+        use self::super::super::root;
+    }
     pub mod spirv_cross {
         #[allow(unused_imports)]
         use self::super::super::root;
+        pub type TypeID = u32;
         #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum SPIRType_BaseType {
@@ -2379,6 +2412,18 @@ pub mod root {
             ControlPointArray = 21,
             Interpolant = 22,
             Char = 23,
+        }
+        #[repr(C)]
+        #[derive(Debug, Copy, Clone)]
+        pub struct SPIRType_ImageType {
+            pub type_: root::spirv_cross::TypeID,
+            pub dim: root::spv::Dim,
+            pub depth: bool,
+            pub arrayed: bool,
+            pub ms: bool,
+            pub sampled: u32,
+            pub format: root::spv::ImageFormat,
+            pub access: root::spv::AccessQualifier,
         }
         pub const MSLShaderInputFormat_MSL_SHADER_INPUT_FORMAT_OTHER:
             root::spirv_cross::MSLShaderInputFormat = 0;
@@ -2700,12 +2745,16 @@ pub mod root {
     #[derive(Debug, Copy, Clone)]
     pub struct ScType {
         pub type_: root::spirv_cross::SPIRType_BaseType,
+        pub width: u32,
         pub vecsize: u32,
         pub columns: u32,
         pub member_types: *mut u32,
         pub member_types_size: usize,
         pub array: *mut u32,
+        pub array_size_literal: *mut bool,
         pub array_size: usize,
+        pub storage: root::spv::StorageClass,
+        pub image: root::spirv_cross::SPIRType_ImageType,
     }
     extern "C" {
         pub fn sc_internal_get_latest_exception_message(

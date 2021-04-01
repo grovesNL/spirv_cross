@@ -342,6 +342,74 @@ pub struct ShaderResources {
 }
 
 #[derive(Debug, Clone)]
+pub enum Dim {
+    Dim1D = 0,
+    Dim2D = 1,
+    Dim3D = 2,
+    DimCube = 3,
+    DimRect = 4,
+    DimBuffer = 5,
+    DimSubpassData = 6,
+}
+
+#[derive(Debug, Clone)]
+pub enum ImageFormat {
+    Unknown = 0,
+    Rgba32f = 1,
+    Rgba16f = 2,
+    R32f = 3,
+    Rgba8 = 4,
+    Rgba8Snorm = 5,
+    Rg32f = 6,
+    Rg16f = 7,
+    R11fG11fB10f = 8,
+    R16f = 9,
+    Rgba16 = 10,
+    Rgb10A2 = 11,
+    Rg16 = 12,
+    Rg8 = 13,
+    R16 = 14,
+    R8 = 15,
+    Rgba16Snorm = 16,
+    Rg16Snorm = 17,
+    Rg8Snorm = 18,
+    R16Snorm = 19,
+    R8Snorm = 20,
+    Rgba32i = 21,
+    Rgba16i = 22,
+    Rgba8i = 23,
+    R32i = 24,
+    Rg32i = 25,
+    Rg16i = 26,
+    Rg8i = 27,
+    R16i = 28,
+    R8i = 29,
+    Rgba32ui = 30,
+    Rgba16ui = 31,
+    Rgba8ui = 32,
+    R32ui = 33,
+    Rgb10a2ui = 34,
+    Rg32ui = 35,
+    Rg16ui = 36,
+    Rg8ui = 37,
+    R16ui = 38,
+    R8ui = 39,
+    R64ui = 40,
+    R64i = 41,
+}
+
+#[derive(Debug, Clone)]
+pub struct ImageType {
+    pub type_id: u32,
+    pub dim: Dim,
+    pub depth: bool,
+    pub arrayed: bool,
+    pub ms: bool,
+    pub sampled: u32,
+    pub format: ImageFormat,
+}
+
+#[derive(Debug, Clone)]
 #[non_exhaustive]
 pub enum Type {
     // TODO: Add missing fields to relevant variants from SPIRType
@@ -351,74 +419,94 @@ pub enum Type {
         vecsize: u32,
         columns: u32,
         array: Vec<u32>,
+        array_size_literal: Vec<bool>,
     },
     Char {
         array: Vec<u32>,
+        array_size_literal: Vec<bool>,
     },
     Int {
         vecsize: u32,
         columns: u32,
         array: Vec<u32>,
+        array_size_literal: Vec<bool>,
     },
     UInt {
         vecsize: u32,
         columns: u32,
         array: Vec<u32>,
+        array_size_literal: Vec<bool>,
     },
     Int64 {
         vecsize: u32,
         array: Vec<u32>,
+        array_size_literal: Vec<bool>,
     },
     UInt64 {
         vecsize: u32,
         array: Vec<u32>,
+        array_size_literal: Vec<bool>,
     },
     AtomicCounter {
         array: Vec<u32>,
+        array_size_literal: Vec<bool>,
     },
     Half {
         vecsize: u32,
         columns: u32,
         array: Vec<u32>,
+        array_size_literal: Vec<bool>,
     },
     Float {
         vecsize: u32,
         columns: u32,
         array: Vec<u32>,
+        array_size_literal: Vec<bool>,
     },
     Double {
         vecsize: u32,
         columns: u32,
         array: Vec<u32>,
+        array_size_literal: Vec<bool>,
     },
     Struct {
         member_types: Vec<u32>,
         array: Vec<u32>,
+        array_size_literal: Vec<bool>,
     },
     Image {
         array: Vec<u32>,
+        array_size_literal: Vec<bool>,
+        image: ImageType,
     },
     SampledImage {
         array: Vec<u32>,
+        array_size_literal: Vec<bool>,
+        image: ImageType,
     },
     Sampler {
         array: Vec<u32>,
+        array_size_literal: Vec<bool>,
     },
     SByte {
         vecsize: u32,
         array: Vec<u32>,
+        array_size_literal: Vec<bool>,
     },
     UByte {
         vecsize: u32,
         array: Vec<u32>,
+        array_size_literal: Vec<bool>,
     },
     Short {
         vecsize: u32,
         array: Vec<u32>,
+        array_size_literal: Vec<bool>,
     },
     UShort {
         vecsize: u32,
         array: Vec<u32>,
+        array_size_literal: Vec<bool>,
     },
     ControlPointArray,
     AccelerationStructure,

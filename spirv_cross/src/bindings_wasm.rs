@@ -2340,18 +2340,21 @@ pub mod root {
         pub const Op_OpMax: root::spv::Op = 2147483647;
         pub type Op = u32;
     }
+    pub type __uint8_t = ::std::os::raw::c_uchar;
+    pub type __int32_t = ::std::os::raw::c_int;
+    pub type __uint32_t = ::std::os::raw::c_uint;
     pub mod std {
         #[allow(unused_imports)]
         use self::super::super::root;
-        pub mod __fs {
-            #[allow(unused_imports)]
-            use self::super::super::super::root;
-        }
     }
-    pub type __darwin_size_t = ::std::os::raw::c_ulong;
+    pub mod __gnu_cxx {
+        #[allow(unused_imports)]
+        use self::super::super::root;
+    }
     pub mod spirv_cross {
         #[allow(unused_imports)]
         use self::super::super::root;
+        pub type TypeID = u32;
         #[repr(u32)]
         #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
         pub enum SPIRType_BaseType {
@@ -2379,6 +2382,18 @@ pub mod root {
             ControlPointArray = 21,
             Interpolant = 22,
             Char = 23,
+        }
+        #[repr(C)]
+        #[derive(Debug, Copy, Clone)]
+        pub struct SPIRType_ImageType {
+            pub type_: root::spirv_cross::TypeID,
+            pub dim: root::spv::Dim,
+            pub depth: bool,
+            pub arrayed: bool,
+            pub ms: bool,
+            pub sampled: u32,
+            pub format: root::spv::ImageFormat,
+            pub access: root::spv::AccessQualifier,
         }
         pub const MSLSamplerCoord_MSL_SAMPLER_COORD_NORMALIZED: root::spirv_cross::MSLSamplerCoord =
             0;
@@ -2662,12 +2677,16 @@ pub mod root {
     #[derive(Debug, Copy, Clone)]
     pub struct ScType {
         pub type_: root::spirv_cross::SPIRType_BaseType,
+        pub width: u32,
         pub vecsize: u32,
         pub columns: u32,
         pub member_types: *mut u32,
         pub member_types_size: usize,
         pub array: *mut u32,
+        pub array_size_literal: *mut bool,
         pub array_size: usize,
+        pub storage: root::spv::StorageClass,
+        pub image: root::spirv_cross::SPIRType_ImageType,
     }
     #[repr(C)]
     #[derive(Debug, Copy, Clone)]
