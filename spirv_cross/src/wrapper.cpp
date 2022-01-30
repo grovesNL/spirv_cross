@@ -532,6 +532,21 @@ extern "C"
         } while (0);)
     }
 
+
+    ScInternalResult sc_internal_compiler_get_active_interface_variables(const ScInternalCompilerBase *compiler, uint32_t **ids, size_t* size) {
+        INTERNAL_RESULT(do {
+            auto const sc_active_variables = ((const spirv_cross::Compiler *)compiler)->get_active_interface_variables();
+            auto const sc_size = sc_active_variables.size();
+
+            *ids = (uint32_t *)malloc(sc_active_variables.size() * sizeof(uint32_t));
+            *size = sc_size;
+            size_t index = 0;
+            for (const auto& elem : sc_active_variables){
+                (*ids)[index++] = (uint32_t) elem;
+            }
+        } while(0);)
+    }
+
     ScInternalResult sc_internal_compiler_set_entry_point(const ScInternalCompilerBase *compiler, const char *name, const spv::ExecutionModel execution_model)
     {
         INTERNAL_RESULT(((spirv_cross::Compiler *)compiler)->set_entry_point(name, execution_model);)
