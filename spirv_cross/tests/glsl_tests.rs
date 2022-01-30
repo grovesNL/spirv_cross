@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use spirv_cross::{glsl, spirv};
 
 mod common;
@@ -65,6 +66,26 @@ fn ast_compiles_all_versions_to_glsl() {
         if ast.set_compiler_options(&options).is_err() {
             panic!("Did not compile");
         }
+    }
+}
+
+
+#[test]
+fn ast_active_variables() {
+    let vert =
+        spirv::Module::from_words(words_from_bytes(include_bytes!("shaders/struct.vert.spv")));
+    let mut vert_ast = spirv::Ast::<glsl::Target>::parse(&vert).unwrap();
+    let mut vert_options = glsl::CompilerOptions::default();
+    vert_options.version = glsl::Version::V1_00Es;
+    vert_options.enable_420_pack_extension = true;
+    vert_ast.set_compiler_options(&vert_options).unwrap();
+
+    let active = vert_ast.get_active_interface_variables().unwrap();
+    assert_eq!(active.len(), 5);
+    let variables = HashSet::from(["a", "b", "c", "d", "v"]);
+    for i in active {
+        let mut name = vert_ast.get_name(i).unwrap();
+        assert!(variables.contains(name.as_str()));
     }
 }
 

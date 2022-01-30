@@ -212,6 +212,7 @@ extern "C"
     ScInternalResult sc_internal_compiler_set_entry_point(const ScInternalCompilerBase *compiler, const char *name, const spv::ExecutionModel execution_model);
     ScInternalResult sc_internal_compiler_compile(const ScInternalCompilerBase *compiler, const char **shader);
     ScInternalResult sc_internal_compiler_delete(ScInternalCompilerBase *compiler);
+    ScInternalResult sc_internal_compiler_get_active_interface_variables(const ScInternalCompilerBase *compiler, uint32_t **ids, size_t* size);
 
     ScInternalResult sc_internal_free_pointer(void *pointer);
 }
