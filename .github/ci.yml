@@ -98,4 +98,4 @@ jobs:
       - name: Install Cargo APK
         run: cargo install --force cargo-apk
       - name: Build APK
-        run: cargo apk build --bin glsl
+        run: (cd examples && cargo apk build --bin glsl)
