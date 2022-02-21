@@ -2,8 +2,11 @@
 //! and Emscripten pointer access (i.e. `u32` offset into the Emscripten heap).
 
 use crate::ErrorCode;
-use std::ffi::CStr;
-use std::slice;
+#[allow(unused_imports)]
+use std::{
+    slice,
+    ffi::CStr
+};
 
 #[cfg(target_arch = "wasm32")]
 use crate::emscripten;
