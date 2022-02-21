@@ -6,7 +6,7 @@
 //! those cases.
 
 use crate::emscripten;
-use crate::{bindings, ErrorCode};
+use crate::{bindings};
 use js_sys::{global, Object, Reflect, Uint32Array, Uint8Array};
 use std::ffi::CStr;
 use wasm_bindgen::prelude::*;

@@ -54,6 +54,8 @@ fn main() {
         .rustified_enum("spv::BuiltIn")
         .rustified_enum("spv::Decoration")
         .rustified_enum("spv::ExecutionModel")
+        .rustified_enum("spv::ImageFormat")
+        .rustified_enum("spv::Dim")
         .rustified_enum("ScInternalResult")
         .rustified_enum("spirv_cross::SPIRType_BaseType")
         .rustified_enum("spirv_cross::MSLVertexFormat")
