@@ -275,6 +275,11 @@ extern "C"
         INTERNAL_RESULT(((spirv_cross::Compiler *)compiler)->set_name(id, std::string(name));)
     }
 
+    ScInternalResult sc_internal_compiler_set_member_name(const ScInternalCompilerBase *compiler, const uint32_t id, const uint32_t index, const char *name)
+    {
+        INTERNAL_RESULT(((spirv_cross::Compiler *)compiler)->set_member_name(id, index, std::string(name));)
+    }
+
     ScInternalResult sc_internal_compiler_get_entry_points(const ScInternalCompilerBase *compiler, ScEntryPoint **entry_points, size_t *size)
     {
         INTERNAL_RESULT(
@@ -446,7 +451,7 @@ extern "C"
                     ty->array_size_literal = array_size_literal;
                 }
 
-                if (type.basetype == spirv_cross::SPIRType::Image || type.basetype == spirv_cross::SPIRType::SampledImage) 
+                if (type.basetype == spirv_cross::SPIRType::Image || type.basetype == spirv_cross::SPIRType::SampledImage)
                 {
                     ty->image = type.image;
                 }
