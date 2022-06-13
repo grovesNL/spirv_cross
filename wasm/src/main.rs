@@ -39,6 +39,7 @@ fn main() {
                 "_sc_internal_compiler_unset_decoration",
                 "_sc_internal_compiler_get_name",
                 "_sc_internal_compiler_set_name",
+                "_sc_internal_compiler_set_member_name",
                 "_sc_internal_compiler_get_entry_points",
                 "_sc_internal_compiler_get_cleansed_entry_point_name",
                 "_sc_internal_compiler_get_shader_resources",

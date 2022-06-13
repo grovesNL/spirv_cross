@@ -575,6 +575,11 @@ where
         self.compiler.set_name(id, name)
     }
 
+    /// Sets a member name.
+    pub fn set_member_name(&mut self, id: u32, index: u32, name: &str) -> Result<(), ErrorCode> {
+        self.compiler.set_member_name(id, index, name)
+    }
+
     /// Unsets a decoration.
     pub fn unset_decoration(&mut self, id: u32, decoration: Decoration) -> Result<(), ErrorCode> {
         self.compiler.unset_decoration(id, decoration)
