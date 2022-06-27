@@ -3019,6 +3019,13 @@ pub mod root {
         ) -> root::ScInternalResult;
     }
     extern "C" {
+        pub fn sc_internal_compiler_get_active_interface_variables(
+            compiler: *const root::ScInternalCompilerBase,
+            ids: *mut *mut u32,
+            size: *mut usize,
+        ) -> root::ScInternalResult;
+    }
+    extern "C" {
         pub fn sc_internal_free_pointer(
             pointer: *mut ::std::os::raw::c_void,
         ) -> root::ScInternalResult;

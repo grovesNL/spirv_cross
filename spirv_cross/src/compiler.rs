@@ -3,6 +3,7 @@ use crate::{bindings as br, spirv::ImageType};
 use crate::ptr_util::{read_from_ptr, read_into_vec_from_ptr, read_string_from_ptr};
 use crate::spirv::{self, Decoration, Type};
 use crate::ErrorCode;
+use std::collections::HashSet;
 use std::ffi::CString;
 use std::os::raw::c_void;
 use std::{mem::MaybeUninit, ptr};
@@ -668,6 +669,24 @@ impl<TTargetData> Compiler<TTargetData> {
                 separate_images,
                 separate_samplers,
             })
+        }
+    }
+
+    pub fn get_active_interface_variables(&self) -> Result<HashSet<u32>, ErrorCode> {
+        unsafe {
+            let mut ids: *mut u32 = ptr::null_mut();
+            let mut size: usize = 0;
+            check!(br::sc_internal_compiler_get_active_interface_variables(
+                self.sc_compiler,
+                &mut ids,
+                &mut size
+            ));
+            let result: HashSet<u32> = std::slice::from_raw_parts(ids, size)
+                .iter()
+                .cloned()
+                .collect();
+            check!(br::sc_internal_free_pointer(ids as *mut c_void));
+            Ok(result)
         }
     }
 

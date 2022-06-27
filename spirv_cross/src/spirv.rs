@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use crate::{compiler, ErrorCode};
 use std::marker::PhantomData;
 
@@ -683,6 +684,12 @@ where
     ) -> Result<(), ErrorCode> {
         self.compiler
             .rename_interface_variable(resources, location, name)
+    }
+    
+    /// get the active interface variable.
+    pub fn get_active_interface_variables(&mut self) -> Result<HashSet<u32>, ErrorCode> {
+        self.compiler
+            .get_active_interface_variables()
     }
 
     /// Gets work group size specialization constants.
