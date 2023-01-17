@@ -1,4 +1,12 @@
 fn main() {
+    // Don't attempt to build SPIRV-Cross native library on docs.rs
+    if std::env::var("DOCS_RS").is_ok() {
+        println!(
+            "cargo:warning=spirv_cross: docs.rs detected, will not attempt to build SPIRV-Cross native library"
+        );
+        return;
+    }
+
     // Prevent building SPIRV-Cross on wasm32 target
     let target_arch = std::env::var("CARGO_CFG_TARGET_ARCH");
     if let Ok(arch) = target_arch {
