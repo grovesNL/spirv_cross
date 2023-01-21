@@ -110,7 +110,7 @@ extern "C"
     }
 
     ScInternalResult sc_internal_compiler_msl_compile(const ScInternalCompilerBase *compiler, const char **shader,
-                                                      const spirv_cross::MSLShaderInput *p_vat_overrides, const size_t vat_override_count,
+                                                      const spirv_cross::MSLShaderInterfaceVariable *p_vat_overrides, const size_t vat_override_count,
                                                       const spirv_cross::MSLResourceBinding *p_res_overrides, const size_t res_override_count,
                                                       const ScMslConstSamplerMapping *p_const_samplers, const size_t const_sampler_count)
     {
