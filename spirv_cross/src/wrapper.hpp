@@ -49,6 +49,24 @@ extern "C"
         uint32_t space;
     } ScHlslRootConstant;
 
+    typedef struct ScHlslResourceBindingSpaceRegister
+    {
+        uint32_t register_space;
+        uint32_t register_binding;
+    } ScHlslResourceBindingSpaceRegister;
+
+    typedef struct ScHlslResourceBinding
+    {
+        spv::ExecutionModel stage;
+        uint32_t desc_set;
+        uint32_t binding;
+
+        ScHlslResourceBindingSpaceRegister cbv;
+        ScHlslResourceBindingSpaceRegister uav;
+        ScHlslResourceBindingSpaceRegister srv;
+        ScHlslResourceBindingSpaceRegister sampler;
+    } ScHlslResourceBinding;
+
     typedef struct ScHlslCompilerOptions
     {
         int32_t shader_model;
@@ -162,6 +180,7 @@ extern "C"
     ScInternalResult sc_internal_compiler_hlsl_new(ScInternalCompilerHlsl **compiler, const uint32_t *ir, const size_t size);
     ScInternalResult sc_internal_compiler_hlsl_set_options(const ScInternalCompilerHlsl *compiler, const ScHlslCompilerOptions *options);
     ScInternalResult sc_internal_compiler_hlsl_set_root_constant_layout(const ScInternalCompilerHlsl *compiler, const ScHlslRootConstant *constants, size_t count);
+    ScInternalResult sc_internal_compiler_hlsl_add_resource_binding(const ScInternalCompilerHlsl *compiler, ScHlslResourceBinding binding_override);
 #endif
 
 #ifdef SPIRV_CROSS_WRAPPER_MSL
