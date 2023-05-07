@@ -5,6 +5,7 @@ use std::marker::PhantomData;
 use std::ptr;
 
 pub use crate::bindings::root::ScHlslRootConstant as RootConstant;
+pub use crate::bindings::root::ScHlslResourceBinding as HlslResourceBinding;
 
 /// A HLSL target.
 #[derive(Debug, Clone)]
@@ -173,6 +174,18 @@ impl spirv::Ast<Target> {
                 self.compiler.sc_compiler,
                 layout.as_ptr(),
                 layout.len() as _,
+            ));
+        }
+
+        Ok(())
+    }
+
+    ///
+    pub fn add_resource_binding(&mut self, resource_binding: HlslResourceBinding) -> Result<(), ErrorCode> {
+        unsafe {
+            check!(br::sc_internal_compiler_hlsl_add_resource_binding(
+                self.compiler.sc_compiler,
+                resource_binding
             ));
         }
 
