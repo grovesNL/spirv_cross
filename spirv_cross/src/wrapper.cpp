@@ -101,6 +101,41 @@ extern "C"
                 compiler_hlsl->set_root_constant_layouts(root_constants);
             } while (0);)
     }
+
+    ScInternalResult sc_internal_compiler_hlsl_add_resource_binding(const ScInternalCompilerHlsl *compiler, ScHlslResourceBinding resource_binding)
+    {
+        INTERNAL_RESULT(
+            do {
+                spirv_cross::HLSLResourceBinding rb;
+                rb.stage = resource_binding.stage;
+                rb.desc_set = resource_binding.desc_set;
+                rb.binding = resource_binding.binding;
+                rb.cbv.register_space = resource_binding.cbv.register_space;
+                rb.cbv.register_binding = resource_binding.cbv.register_binding;
+                rb.uav.register_space = resource_binding.uav.register_space;
+                rb.uav.register_binding = resource_binding.uav.register_binding;
+                rb.srv.register_space = resource_binding.srv.register_space;
+                rb.srv.register_binding = resource_binding.srv.register_binding;
+                rb.sampler.register_space = resource_binding.sampler.register_space;
+                rb.sampler.register_binding = resource_binding.sampler.register_binding;
+
+                auto compiler_hlsl = (spirv_cross::CompilerHLSL *)compiler;
+                compiler_hlsl->add_hlsl_resource_binding(rb);
+            } while (0);)
+    }
+
+    ScInternalResult sc_internal_compiler_hlsl_add_vertex_attribute_remap(const ScInternalCompilerHlsl *compiler, ScHlslVertexAttributeRemap remap)
+    {
+        INTERNAL_RESULT(
+            do {
+                spirv_cross::HLSLVertexAttributeRemap r;
+                r.location = remap.location;
+                r.semantic = std::string(remap.semantic);
+
+                auto compiler_hlsl = (spirv_cross::CompilerHLSL *)compiler;
+                compiler_hlsl->add_vertex_attribute_remap(r);
+            } while (0);)
+    }
 #endif
 
 #ifdef SPIRV_CROSS_WRAPPER_MSL
