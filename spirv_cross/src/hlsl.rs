@@ -23,6 +23,12 @@ pub struct HlslResourceBinding {
     pub sampler: HlslResourceBindingSpaceRegister,
 }
 
+#[derive(Debug, Clone)]
+pub struct HlslVertexAttributeRemap {
+    pub location: u32,
+    pub semantic: String
+}
+
 /// A HLSL target.
 #[derive(Debug, Clone)]
 pub enum Target {}
@@ -191,6 +197,22 @@ impl spirv::Ast<Target> {
                 layout.as_ptr(),
                 layout.len() as _,
             ));
+        }
+
+        Ok(())
+    }
+
+    ///
+    pub fn add_vertex_attribute_remap(&mut self, remap: &HlslVertexAttributeRemap) -> Result<(), ErrorCode> {
+        let semantic = CString::new(remap.semantic.as_str()).map_err(|_| ErrorCode::Unhandled)?;
+
+        let r = crate::bindings::root::ScHlslVertexAttributeRemap {
+            location: remap.location,
+            semantic: semantic.as_ptr() as *mut _,
+        };
+
+        unsafe {
+            check!(br::sc_internal_compiler_hlsl_add_vertex_attribute_remap(self.compiler.sc_compiler, r));
         }
 
         Ok(())

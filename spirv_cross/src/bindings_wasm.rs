@@ -2586,6 +2586,12 @@ pub mod root {
     }
     #[repr(C)]
     #[derive(Debug, Copy, Clone)]
+    pub struct ScHlslVertexAttributeRemap {
+        pub location: u32,
+        pub semantic: *mut ::std::os::raw::c_char,
+    }
+    #[repr(C)]
+    #[derive(Debug, Copy, Clone)]
     pub struct ScHlslResourceBindingSpaceRegister {
         pub register_space: u32,
         pub register_binding: u32,

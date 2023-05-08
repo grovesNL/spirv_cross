@@ -2648,6 +2648,12 @@ pub mod root {
     }
     #[repr(C)]
     #[derive(Debug, Copy, Clone)]
+    pub struct ScHlslVertexAttributeRemap {
+        pub location: u32,
+        pub semantic: *mut ::std::os::raw::c_char,
+    }
+    #[repr(C)]
+    #[derive(Debug, Copy, Clone)]
     pub struct ScHlslResourceBindingSpaceRegister {
         pub register_space: u32,
         pub register_binding: u32,
@@ -2799,6 +2805,12 @@ pub mod root {
         pub fn sc_internal_compiler_hlsl_add_resource_binding(
             compiler: *const root::ScInternalCompilerHlsl,
             binding_override: root::ScHlslResourceBinding,
+        ) -> root::ScInternalResult;
+    }
+    extern "C" {
+        pub fn sc_internal_compiler_hlsl_add_vertex_attribute_remap(
+            compiler: *const root::ScInternalCompilerHlsl,
+            binding_override: root::ScHlslVertexAttributeRemap,
         ) -> root::ScInternalResult;
     }
     #[repr(C)]

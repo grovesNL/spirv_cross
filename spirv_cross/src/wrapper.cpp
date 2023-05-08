@@ -123,6 +123,19 @@ extern "C"
                 compiler_hlsl->add_hlsl_resource_binding(rb);
             } while (0);)
     }
+
+    ScInternalResult sc_internal_compiler_hlsl_add_vertex_attribute_remap(const ScInternalCompilerHlsl *compiler, ScHlslVertexAttributeRemap remap)
+    {
+        INTERNAL_RESULT(
+            do {
+                spirv_cross::HLSLVertexAttributeRemap r;
+                r.location = remap.location;
+                r.semantic = std::string(remap.semantic);
+
+                auto compiler_hlsl = (spirv_cross::CompilerHLSL *)compiler;
+                compiler_hlsl->add_vertex_attribute_remap(r);
+            } while (0);)
+    }
 #endif
 
 #ifdef SPIRV_CROSS_WRAPPER_MSL
