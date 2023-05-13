@@ -6,6 +6,29 @@ use std::ptr;
 
 pub use crate::bindings::root::ScHlslRootConstant as RootConstant;
 
+#[derive(Debug, Copy, Clone)]
+pub struct HlslResourceBindingSpaceRegister {
+    pub register_space: u32,
+    pub register_binding: u32,
+}
+
+#[derive(Debug, Clone)]
+pub struct HlslResourceBinding {
+    pub stage: spirv::ExecutionModel,
+    pub desc_set: u32,
+    pub binding: u32,
+    pub cbv: HlslResourceBindingSpaceRegister,
+    pub uav: HlslResourceBindingSpaceRegister,
+    pub srv: HlslResourceBindingSpaceRegister,
+    pub sampler: HlslResourceBindingSpaceRegister,
+}
+
+#[derive(Debug, Clone)]
+pub struct HlslVertexAttributeRemap {
+    pub location: u32,
+    pub semantic: String
+}
+
 /// A HLSL target.
 #[derive(Debug, Clone)]
 pub enum Target {}
@@ -77,6 +100,11 @@ pub struct CompilerOptions {
     pub nonwritable_uav_texture_as_srv: bool,
     /// Whether to force all uninitialized variables to be initialized to zero.
     pub force_zero_initialized_variables: bool,
+    /// If matrices are used as IO variables, flatten the attribute declaration to use
+    /// TEXCOORD{N,N+1,N+2,...} rather than TEXCOORDN_{0,1,2,3}.
+    /// If add_vertex_attribute_remap is used and this feature is used,
+    /// the semantic name will be queried once per active location.
+    pub flatten_matrix_vertex_input_semantics: bool,
     /// The name and execution model of the entry point to use. If no entry
     /// point is specified, then the first entry point found will be used.
     pub entry_point: Option<(String, spirv::ExecutionModel)>,
@@ -92,6 +120,7 @@ impl Default for CompilerOptions {
             force_storage_buffer_as_uav: false,
             nonwritable_uav_texture_as_srv: false,
             force_zero_initialized_variables: false,
+            flatten_matrix_vertex_input_semantics: false,
             entry_point: None,
         }
     }
@@ -147,6 +176,7 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
             vertex_transform_clip_space: options.vertex.transform_clip_space,
             force_storage_buffer_as_uav: options.force_storage_buffer_as_uav,
             nonwritable_uav_texture_as_srv: options.nonwritable_uav_texture_as_srv,
+            flatten_matrix_vertex_input_semantics: options.flatten_matrix_vertex_input_semantics,
             force_zero_initialized_variables: options.force_zero_initialized_variables,
         };
         unsafe {
@@ -173,6 +203,48 @@ impl spirv::Ast<Target> {
                 self.compiler.sc_compiler,
                 layout.as_ptr(),
                 layout.len() as _,
+            ));
+        }
+
+        Ok(())
+    }
+
+    ///
+    pub fn add_vertex_attribute_remap(&mut self, remap: &HlslVertexAttributeRemap) -> Result<(), ErrorCode> {
+        let semantic = CString::new(remap.semantic.as_str()).map_err(|_| ErrorCode::Unhandled)?;
+
+        let r = crate::bindings::root::ScHlslVertexAttributeRemap {
+            location: remap.location,
+            semantic: semantic.as_ptr() as *mut _,
+        };
+
+        unsafe {
+            check!(br::sc_internal_compiler_hlsl_add_vertex_attribute_remap(self.compiler.sc_compiler, r));
+        }
+
+        Ok(())
+    }
+
+    ///
+    pub fn add_resource_binding(&mut self, resource_binding: &HlslResourceBinding) -> Result<(), ErrorCode> {
+        fn convert_space_register(space_register: HlslResourceBindingSpaceRegister) -> crate::bindings::root::ScHlslResourceBindingSpaceRegister {
+            crate::bindings::root::ScHlslResourceBindingSpaceRegister { register_space: space_register.register_space, register_binding: space_register.register_binding }
+        }
+
+        let resource_binding = crate::bindings::root::ScHlslResourceBinding {
+            stage: resource_binding.stage.as_raw(),
+            desc_set: resource_binding.desc_set,
+            binding: resource_binding.binding,
+            cbv: convert_space_register(resource_binding.cbv),
+            uav: convert_space_register(resource_binding.uav),
+            srv: convert_space_register(resource_binding.srv),
+            sampler: convert_space_register(resource_binding.sampler),
+        };
+
+        unsafe {
+            check!(br::sc_internal_compiler_hlsl_add_resource_binding(
+                self.compiler.sc_compiler,
+                resource_binding
             ));
         }
 
