@@ -77,6 +77,7 @@ extern "C"
                 hlsl_options.point_coord_compat = options->point_coord_compat;
                 hlsl_options.force_storage_buffer_as_uav = options->force_storage_buffer_as_uav;
                 hlsl_options.nonwritable_uav_texture_as_srv = options->nonwritable_uav_texture_as_srv;
+                hlsl_options.flatten_matrix_vertex_input_semantics = options->flatten_matrix_vertex_input_semantics;
 
                 compiler_hlsl->set_hlsl_options(hlsl_options);
             } while (0);)

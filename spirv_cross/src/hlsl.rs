@@ -100,6 +100,11 @@ pub struct CompilerOptions {
     pub nonwritable_uav_texture_as_srv: bool,
     /// Whether to force all uninitialized variables to be initialized to zero.
     pub force_zero_initialized_variables: bool,
+    /// If matrices are used as IO variables, flatten the attribute declaration to use
+    /// TEXCOORD{N,N+1,N+2,...} rather than TEXCOORDN_{0,1,2,3}.
+    /// If add_vertex_attribute_remap is used and this feature is used,
+    /// the semantic name will be queried once per active location.
+    pub flatten_matrix_vertex_input_semantics: bool,
     /// The name and execution model of the entry point to use. If no entry
     /// point is specified, then the first entry point found will be used.
     pub entry_point: Option<(String, spirv::ExecutionModel)>,
@@ -115,6 +120,7 @@ impl Default for CompilerOptions {
             force_storage_buffer_as_uav: false,
             nonwritable_uav_texture_as_srv: false,
             force_zero_initialized_variables: false,
+            flatten_matrix_vertex_input_semantics: false,
             entry_point: None,
         }
     }
@@ -170,6 +176,7 @@ impl spirv::Compile<Target> for spirv::Ast<Target> {
             vertex_transform_clip_space: options.vertex.transform_clip_space,
             force_storage_buffer_as_uav: options.force_storage_buffer_as_uav,
             nonwritable_uav_texture_as_srv: options.nonwritable_uav_texture_as_srv,
+            flatten_matrix_vertex_input_semantics: options.flatten_matrix_vertex_input_semantics,
             force_zero_initialized_variables: options.force_zero_initialized_variables,
         };
         unsafe {

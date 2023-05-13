@@ -2617,6 +2617,7 @@ pub mod root {
         pub vertex_invert_y: bool,
         pub force_storage_buffer_as_uav: bool,
         pub nonwritable_uav_texture_as_srv: bool,
+        pub flatten_matrix_vertex_input_semantics: bool,
         pub force_zero_initialized_variables: bool,
     }
     #[repr(C)]

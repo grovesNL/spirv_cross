@@ -82,6 +82,7 @@ extern "C"
         bool vertex_invert_y;
         bool force_storage_buffer_as_uav;
         bool nonwritable_uav_texture_as_srv;
+        bool flatten_matrix_vertex_input_semantics;
         bool force_zero_initialized_variables;
     } ScHlslCompilerOptions;
 
