@@ -26,10 +26,6 @@ fn main() {
     }
 
     build
-        .flag("-DSPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS")
-        .flag("-DSPIRV_CROSS_WRAPPER_NO_EXCEPTIONS");
-
-    build
         .file("src/wrapper.cpp")
         .file("src/vendor/SPIRV-Cross/spirv_cfg.cpp")
         .file("src/vendor/SPIRV-Cross/spirv_cross.cpp")
